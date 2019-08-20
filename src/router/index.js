@@ -10,12 +10,12 @@ const router = new Router({
     {
       path: "/home",
       name: "home",
-      redirect: "home/p_master",
+      redirect: "home/property",
       component: () => import("@/layout/home.vue"),
       children: [
         {
-          path: "p_master",
-          name: "p_master",
+          path: "property",
+          name: "property",
           component: () => import("@/view/PMaster")
         } 
       ]

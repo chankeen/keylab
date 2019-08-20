@@ -4,7 +4,7 @@
       <a-layout-sider :trigger="null" collapsible v-model="collapsed">
         <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['1']">
           <a-menu-item v-for="(item,i) in memu" :key="item.r_name" @click="onMenuSelect(item)">
-            <a-icon type="link"></a-icon>
+            <a-icon type="bank"></a-icon>
             <span>{{item.title}}</span>
           </a-menu-item>
 
@@ -68,7 +68,7 @@ import { logout } from "@/api/user.js";
 export default {
   data() {
     return {
-      memu: [{ r_name: "p_master", title: "P Master" }],
+      memu: [{ r_name: "property", title: "Property" }],
       breadcrumb: [],
       activeItem: ["client_list"],
       collapsed: false

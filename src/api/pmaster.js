@@ -1,8 +1,8 @@
 import request from "@/utils/request.js"
 import Qs from "qs"
-export function get_pmasters() {
+export function get_pmasters(admin_wp_id, property_id) {
     return request({
-        url: "admin-index?page=pmaster&action=get_pmasters",
+        url: "api/data?page=property&action=r_property",
         method: "POST",
         data: Qs.stringify({
 
@@ -18,18 +18,18 @@ export function update_pmaster(values) {
         })
     });
 }
-export function delete_pmaster(pid) {
+export function delete_pmaster(property_id) {
     return request({
-        url: "admin-index?page=pmaster&action=delete_pmaster",
+        url: "api/data?page=property&action=d_property",
         method: "POST",
         data: Qs.stringify({
-            pid
+            property_id
         })
     });
 }
 export function new_pmaster(value) {
     return request({
-        url: "admin-index?page=pmaster&action=new_pmaster",
+        url: "api/data?page=property&action=c_property",
         method: "POST",
         data: Qs.stringify({
             ...value

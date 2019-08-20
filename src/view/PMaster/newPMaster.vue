@@ -5,169 +5,64 @@
     :closable="false"
     @close="onClose"
     :visible="visible"
-    width="1200px"
+    width="600px"
   >
     <div class="new-pmaster-modal">
       <a-row>
-        <a-col span="11">
+        <a-col>
           <p class="item">
-            <span class="label">客戶編碼</span>
-            <a-select @change="onlsnSelect" v-model="info.client_data_id">
-              <a-select-option
-                v-for="(item,i) in client_data_list"
-                :key="i"
-                :value="item.client_data_id"
-              >{{item.lsn}}</a-select-option>
+            <span class="label">物業狀態</span>
+            <a-select v-model="info.status">
+              <a-select-option value="正常">正常</a-select-option>
+              <a-select-option value="暫停">暫停</a-select-option>
+              <a-select-option value="封存">封存</a-select-option>
             </a-select>
           </p>
           <p class="item">
-            <span class="label">排序</span>
-            <a-input v-model="info.sort"></a-input>
+            <span class="label">物業種類</span>
+            <a-select v-model="info.type">
+              <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
+              <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
+              <a-select-option value="屋苑大廈">屋苑大廈</a-select-option>
+              <a-select-option value="商廈">商廈</a-select-option>
+              <a-select-option value="寫字樓">寫字樓</a-select-option>
+            </a-select>
           </p>
           <p class="item">
-            <span class="label">工程標號</span>
-            <a-input v-model="project_no"></a-input>
+            <span class="label">物業中文名稱</span>
+            <a-input v-model="info.name_zh"></a-input>
           </p>
           <p class="item">
-            <span class="label">工程地址短寫</span>
-            <a-input v-model="info.pshort"></a-input>
+            <span class="label">物業英文名稱</span>
+            <a-input v-model="info.name_en"></a-input>
           </p>
           <p class="item">
-            <span class="label">工程地點</span>
-            <a-input v-model="info.pl"></a-input>
+            <span class="label">物業中文地址</span>
+            <a-input v-model="info.address_zh"></a-input>
           </p>
           <p class="item">
-            <span class="label">客戶</span>
-            <a-input v-model="this.select_client_data.ccn" disabled="true"></a-input>
+            <span class="label">物業英文地址</span>
+            <a-input v-model="info.address_en"></a-input>
           </p>
           <p class="item">
-            <span class="label">負責同事</span>
-            <a-input v-model="this.select_client_data.sales_code" disabled="true"></a-input>
+            <span class="label">年度股東大會日期</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.agm_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">SITE location</span>
-            <a-input v-model="this.select_client_data.jca" disabled="true"></a-input>
+            <span class="label">落成年份</span>
+            <a-input v-model="info.build_year"></a-input>
           </p>
           <p class="item">
-            <span class="label">BILL TO</span>
-            <a-input v-model="this.select_client_data.bt" disabled="true"></a-input>
+            <span class="label">樓層總數</span>
+            <a-input v-model="info.floor_amount"></a-input>
           </p>
           <p class="item">
-            <span class="label">客戶聯絡電話</span>
-            <a-input v-model="this.select_client_data.ct" disabled="true"></a-input>
+            <span class="label">單位總數</span>
+            <a-input v-model="info.unit_amount"></a-input>
           </p>
           <p class="item">
-            <span class="label">客戶傳真號碼</span>
-            <a-input v-model="this.select_client_data.cf" disabled="true"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">客戶電郵</span>
-            <a-input v-model="this.select_client_data.ce" disabled="true"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">客戶聯絡人</span>
-            <a-input v-model="this.select_client_data.ccp" disabled="true"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">工程標題</span>
-            <a-input v-model="info.pt"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">被邀請報價日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.in_price_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">截標日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.end_bid_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">截標時間</span>
-            <a-input v-model="info.end_bid_time"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">交標日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.send_bid_date"></a-date-picker>
-          </p>
-        </a-col>
-        <a-col span="11" offset="1">
-          <p class="item">
-            <span class="label">交標方法</span>
-            <a-input v-model="info.send_bid_way"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">出標價錢</span>
-            <a-input v-model="info.out_price"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">是否中標</span>
-            <span style="width:100%;text-align:left">
-              <a-radio-group v-model="info.is_bidding">
-                <a-radio :value="'1'">是</a-radio>
-                <a-radio :value="'0'">否</a-radio>
-              </a-radio-group>
-            </span>
-          </p>
-          <p class="item">
-            <span class="label">接收中標日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.re_bidding_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">中標價錢</span>
-            <a-input v-model="info.biding_price"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">報價分判名稱</span>
-            <a-input v-model="info.sub_price_name"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">分判報價金額</span>
-            <a-input v-model="info.sub_price"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">報價單編號或呈報日期</span>
-            <a-input v-model="info.spn_date"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">中標分判名稱</span>
-            <a-input v-model="info.sub_bid_name"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">接收中標日期</span>
-            <a-input v-model="info.sub_re_bid_date"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">分判中標價錢</span>
-            <a-input v-model="info.sub_bid_price"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">分判中標編號</span>
-            <a-input v-model="info.sub_bid_number"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">開工日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.start_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">完工日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.end_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">是否需要小型工程</span>
-            <span style="width:100%;text-align:left">
-              <a-radio-group v-model="info.min_project">
-                <a-radio :value="'1'">是</a-radio>
-                <a-radio :value="'0'">否</a-radio>
-              </a-radio-group>
-            </span>
-          </p>
-          <p class="item">
-            <span class="label">申報記錄BW編號</span>
-            <a-input v-model="info.declare_number"></a-input>
-          </p>
-
-          <p class="item">
-            <span class="label">投標書付款條款</span>
-            <a-input v-model="info.regulation"></a-input>
+            <span class="label">總面積</span>
+            <a-input v-model="info.total_size"></a-input>
           </p>
         </a-col>
       </a-row>

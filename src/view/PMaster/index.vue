@@ -3,7 +3,7 @@
     <p class="header">
       <a-input-search placeholder="search by client name" style="width: 200px" @search="onSearch" />
       <span>
-        <a-dropdown @click="handleButtonClick">
+        <!--a-dropdown @click="handleButtonClick">
           <a-button style="margin-left: 8px" type="primary">
             Create form
             <a-icon type="down" />
@@ -26,7 +26,7 @@
               <a-icon type="file" />Create quotation
             </a-menu-item>
           </a-menu>
-        </a-dropdown>
+        </a-dropdown-->
         <a-button
           type="primary"
           @click="()=>{
@@ -45,7 +45,7 @@
         <a-popconfirm
           v-if="tableData.length"
           title="Sure to delete?"
-          @confirm="() => onDelete(record.pmaster_id)"
+          @confirm="() => onDelete(record.property_id)"
         >
           <a>
             <a-icon type="delete"></a-icon>
@@ -56,19 +56,30 @@
     <newPMaster ref="newPMaster" @done="()=>{
       this.getTableData();
       }" />
+<<<<<<< HEAD
     <createInvitationFile ref="createInvitationFile" />
     <createQuotation ref="createQuotation" />
     
+=======
+    <edit ref="edit" @done="()=>{
+      this.getTableData();
+      }"></edit>
+>>>>>>> nice
   </div>
 </template>
 <script>
 import newPMaster from "./newPMaster";
+<<<<<<< HEAD
 import createInvitationFile from "./createInvitationFile";
 import createQuotation from "./createQuotation";
 
+=======
+import edit from "./edit";
+>>>>>>> nice
 import { get_pmasters, delete_pmaster } from "@/api/pmaster.js";
 import uuiddv1 from 'uuid/v1';
 const columns = [
+<<<<<<< HEAD
   { title: "排序", dataIndex: "sort"},
   { title: "工程單編號", width: "150px", dataIndex: "p_no" },
   { title: "工程地址短寫", dataIndex: "pshort"},
@@ -80,6 +91,16 @@ const columns = [
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 
+=======
+  { title: "物業編號", dataIndex: "property_id", key: "property_id" },
+  { title: "物業種類", width: "150px", dataIndex: "type", key: "type" },
+  { title: "物業名稱(中文)", dataIndex: "name_zh", key: "name_zh" },
+  { title: "物業名稱(英文)", dataIndex: "name_en", key: "name_en" },
+  { title: "地址(中文)", dataIndex: "address_zh", key: "address_zh" },
+  { title: "地址(英文)", dataIndex: "address_en", key: "address_en" },
+  { width: "100px", scopedSlots: { customRender: "detail" } },
+  { width: "100px", scopedSlots: { customRender: "delete" } }
+>>>>>>> nice
 ];
 export default {
   data() {
@@ -169,7 +190,11 @@ export default {
         .catch(err => {});
     }
   },
+<<<<<<< HEAD
   components: { newPMaster, createInvitationFile, createQuotation }
+=======
+  components: { newPMaster, edit }
+>>>>>>> nice
 };
 </script>
 <style lang="scss">
