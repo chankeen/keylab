@@ -2,7 +2,7 @@ import request from "@/utils/request.js"
 import Qs from "qs"
 export function login(login, password) {
     return request({
-        url: "login",
+        url: "api/login",
         method: "POST",
         data: Qs.stringify({
             login, password
@@ -11,7 +11,7 @@ export function login(login, password) {
 }
 export function logout() {
     return request({
-        url: "logout",
+        url: "api/logout",
         method: "POST",
         data: Qs.stringify({
 
