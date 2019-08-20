@@ -56,42 +56,17 @@
     <newPMaster ref="newPMaster" @done="()=>{
       this.getTableData();
       }" />
-<<<<<<< HEAD
-    <createInvitationFile ref="createInvitationFile" />
-    <createQuotation ref="createQuotation" />
-    
-=======
     <edit ref="edit" @done="()=>{
       this.getTableData();
       }"></edit>
->>>>>>> nice
   </div>
 </template>
 <script>
 import newPMaster from "./newPMaster";
-<<<<<<< HEAD
-import createInvitationFile from "./createInvitationFile";
-import createQuotation from "./createQuotation";
-
-=======
 import edit from "./edit";
->>>>>>> nice
 import { get_pmasters, delete_pmaster } from "@/api/pmaster.js";
 import uuiddv1 from 'uuid/v1';
 const columns = [
-<<<<<<< HEAD
-  { title: "排序", dataIndex: "sort"},
-  { title: "工程單編號", width: "150px", dataIndex: "p_no" },
-  { title: "工程地址短寫", dataIndex: "pshort"},
-  { title: "負責同事", dataIndex: "sales_code" },
-  { title: "客戶編碼", dataIndex: "csn"},
-  { title: "客戶", dataIndex: "ccn" },
-  { title: "工程地點", dataIndex: "pl" },
-  { title: "工程標題", dataIndex: "pt"},
-  { width: "100px", scopedSlots: { customRender: "detail" } },
-  { width: "100px", scopedSlots: { customRender: "delete" } }
-
-=======
   { title: "物業編號", dataIndex: "property_id", key: "property_id" },
   { title: "物業種類", width: "150px", dataIndex: "type", key: "type" },
   { title: "物業名稱(中文)", dataIndex: "name_zh", key: "name_zh" },
@@ -100,7 +75,6 @@ const columns = [
   { title: "地址(英文)", dataIndex: "address_en", key: "address_en" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
->>>>>>> nice
 ];
 export default {
   data() {
@@ -190,11 +164,7 @@ export default {
         .catch(err => {});
     }
   },
-<<<<<<< HEAD
-  components: { newPMaster, createInvitationFile, createQuotation }
-=======
   components: { newPMaster, edit }
->>>>>>> nice
 };
 </script>
 <style lang="scss">
