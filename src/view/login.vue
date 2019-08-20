@@ -48,6 +48,7 @@ export default {
           if (response.rc == "1") {
             sessionStorage.setItem("token", response.token);
             sessionStorage.setItem("user_name", this.login);
+            this.$store.dispatch('app/setUser', {uid:response.admin_wp_id})
             this.$message.success("Welcome to Esolution!");
             this.$router.push({ name: "home", params: {} });
           } else {
@@ -56,6 +57,8 @@ export default {
           this.loading = false;
         })
         .catch(error => {
+          console.log(error);
+          
           this.loading = false;
           this.$message.error("Login error!");
         });

@@ -1,14 +1,20 @@
 const state = {
   domain: "http://34.92.191.50/",
-  user: {}
+  user: {
+    uid:""
+  }
 };
 const mutations = {
-  setUser(state, user) {
+  SET_USER: (state, user)=> {
     state.user = user;
   }
 };
-const actions = {};
-export default {
+const actions = {
+  setUser({commit},user){
+    commit('SET_USER',user)
+  }
+};
+export default {  
   namespaced: true,
   state,
   mutations,

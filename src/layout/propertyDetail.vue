@@ -1,32 +1,12 @@
 <template>
-  <div class="home-container">
+  <div class="buildingDetail-container">
     <a-layout style="height:100%">
       <a-layout-sider :trigger="null" collapsible v-model="collapsed">
         <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['1']">
           <a-menu-item v-for="(item,i) in memu" :key="item.r_name" @click="onMenuSelect(item)">
-            <a-icon type="link"></a-icon>
+            <a-icon :type="item.icon"></a-icon>
             <span>{{item.title}}</span>
           </a-menu-item>
-          <a-sub-menu key="sub1">
-            <span slot="title">
-              <a-icon type="mail" />
-              <span>test One</span>
-            </span>
-            <a-menu-item key="5">Option 5</a-menu-item>
-            <a-menu-item key="6">Option 6</a-menu-item>
-            <a-menu-item key="7">Option 7</a-menu-item>
-            <a-menu-item key="8">Option 8</a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub2">
-            <span slot="title">
-              <a-icon type="appstore" />
-              <span>Navigation Two</span>
-            </span>
-            <a-menu-item key="5">Option 5</a-menu-item>
-            <a-menu-item key="6">Option 6</a-menu-item>
-            <a-menu-item key="7">Option 7</a-menu-item>
-            <a-menu-item key="8">Option 8</a-menu-item>
-          </a-sub-menu>
            <a-menu-item key="back" @click="()=>{
                $router.go(-1)
            }">  <a-icon type="arrow-left"></a-icon>
@@ -41,7 +21,7 @@
             @click="()=> collapsed = !collapsed"
           />
          <span class="head_title">
-            XXXX大廈詳情
+            XXXX物業
          </span>
           <a-dropdown>
             <a-menu slot="overlay">
@@ -73,14 +53,20 @@
 import { logout } from "@/api/user.js";
 export default {
   data() {
+
     return {
-      memu: [{ r_name: "p_master", title: "test" }],
+      memu: [
+        { r_name: "property_home", title: "大廈詳情",icon:"info-circle" },
+        { r_name: "property_management", title: "物管人員" ,icon:"team"},
+        { r_name: "property_firm", title: "法團成員",icon:"team" },
+        ],
       breadcrumb: [],
       activeItem: ["client_list"],
       collapsed: false
     };
   },
   created() {
+    //麵包屑
     this.breadcrumb.push("Home");
     this.memu.some(item => {
       if (this.$route.name == item.r_name) {
@@ -91,11 +77,17 @@ export default {
     });
   },
   methods: {
+    //菜單欄選擇
     onMenuSelect(item) {
+      if(item.r_name=="property_home"){
       this.$router.push({ name: item.r_name });
       this.breadcrumb = [];
       this.breadcrumb.push("Home");
       this.breadcrumb.push(item.title);
+      }else{
+        this.$message.info("開發中")
+      }
+      
     },
     admin_logout() {
       logout()
@@ -114,7 +106,7 @@ export default {
 </script>
 
 <style lang="scss">
-.home-container {
+.buildingDetail-container {
   height: 100%;
   background: #f0f2f5;
   .head_title{

@@ -1,33 +1,13 @@
 <template>
   <div class="home-container">
     <a-layout style="height:100%">
+      <!-- 左側菜單欄 -->
       <a-layout-sider :trigger="null" collapsible v-model="collapsed">
-        <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['1']">
-          <a-menu-item v-for="(item,i) in memu" :key="item.r_name" @click="onMenuSelect(item)">
-            <a-icon type="bank"></a-icon>
+        <a-menu theme="dark" mode="inline" :defaultSelectedKeys="[memu[0].key]">
+          <a-menu-item v-for="(item,i) in memu" :key="item.key" @click="onMenuSelect(item)">
+            <a-icon :type="item.icon"></a-icon>
             <span>{{item.title}}</span>
           </a-menu-item>
-
-          <a-sub-menu key="sub1">
-            <span slot="title">
-              <a-icon type="mail" />
-              <span>Navigation One</span>
-            </span>
-            <a-menu-item key="5">Option 5</a-menu-item>
-            <a-menu-item key="6">Option 6</a-menu-item>
-            <a-menu-item key="7">Option 7</a-menu-item>
-            <a-menu-item key="8">Option 8</a-menu-item>
-          </a-sub-menu>
-          <a-sub-menu key="sub2">
-            <span slot="title">
-              <a-icon type="appstore" />
-              <span>Navigation Two</span>
-            </span>
-            <a-menu-item key="5">Option 5</a-menu-item>
-            <a-menu-item key="6">Option 6</a-menu-item>
-            <a-menu-item key="7">Option 7</a-menu-item>
-            <a-menu-item key="8">Option 8</a-menu-item>
-          </a-sub-menu>
         </a-menu>
       </a-layout-sider>
       <a-layout>
@@ -64,13 +44,20 @@
   </div>
 </template>
 <script>
+import uuidv1 from 'uuid/v1';
 import { logout } from "@/api/user.js";
 export default {
   data() {
     return {
-      memu: [{ r_name: "property", title: "Property" }],
+      memu: [
+        { r_name: "home_property", title: "Property / 物業" ,icon:"bank",key:uuidv1()},
+        { r_name: "home_oc", title: "Oc / 法團成員" ,icon:"team",},
+        { r_name: "home_propman", title: "Propman / 無關成員",icon:"user",key:uuidv1()},
+        { r_name: "home_user", title: "User",icon:"team",key:uuidv1()},
+        { r_name: "home_entity", title: "Entity",icon:"team",key:uuidv1()}
+        ],
       breadcrumb: [],
-      activeItem: ["client_list"],
+      activeItem: [],
       collapsed: false
     };
   },
