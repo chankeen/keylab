@@ -38,7 +38,7 @@
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $refs.edit.show(record)
+          $router.push({name:'building_detail',params:{bid:123}})
           }">更多</a>
       </template>
       <template slot="delete" slot-scope="record">
@@ -58,58 +58,76 @@
       }" />
     <createInvitationFile ref="createInvitationFile" />
     <createQuotation ref="createQuotation" />
-    <edit ref="edit" @done="()=>{
-      this.getTableData();
-      }"></edit>
+    
   </div>
 </template>
 <script>
 import newPMaster from "./newPMaster";
 import createInvitationFile from "./createInvitationFile";
 import createQuotation from "./createQuotation";
-import edit from "./edit";
+
 import { get_pmasters, delete_pmaster } from "@/api/pmaster.js";
+import uuiddv1 from 'uuid/v1';
 const columns = [
-  { title: "排序", dataIndex: "sort", key: "name" },
-  { title: "工程單編號", width: "150px", dataIndex: "p_no", key: "age" },
-  { title: "工程地址短寫", dataIndex: "pshort", key: "address" },
-  { title: "負責同事", dataIndex: "sales_code", key: "address" },
-  { title: "客戶編碼", dataIndex: "csn", key: "address" },
-  { title: "客戶", dataIndex: "ccn", key: "address" },
-  { title: "工程地點", dataIndex: "pl", key: "address" },
-  { title: "工程標題", dataIndex: "pt", key: "address" },
+  { title: "排序", dataIndex: "sort"},
+  { title: "工程單編號", width: "150px", dataIndex: "p_no" },
+  { title: "工程地址短寫", dataIndex: "pshort"},
+  { title: "負責同事", dataIndex: "sales_code" },
+  { title: "客戶編碼", dataIndex: "csn"},
+  { title: "客戶", dataIndex: "ccn" },
+  { title: "工程地點", dataIndex: "pl" },
+  { title: "工程標題", dataIndex: "pt"},
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 
-  // { title: "被邀請報價日期", dataIndex: "name" },
-  // { title: "截標日期", dataIndex: "name" },
-  // { title: "截標時間", dataIndex: "name" },
-  // { title: "交標日期", dataIndex: "name" },
-  // { title: "交標方法", dataIndex: "name" },
-  // { title: "出標價錢", dataIndex: "name" },
-  // { title: "是否中標", dataIndex: "name" },
-  // { title: "接收中標日期", dataIndex: "name" },
-  // { title: "中標價錢", dataIndex: "name" },
-
-  // { title: "報價分判名稱", dataIndex: "name" },
-  // { title: "分判報價金額", dataIndex: "name" },
-  // { title: "報價單編號或呈報日期", dataIndex: "name" },
-  // { title: "中標分判名稱", dataIndex: "name" },
-  // { title: "接收中標日期", dataIndex: "name" },
-  // { title: "分判中標價錢", dataIndex: "name" },
-  // { title: "分判中標編號", dataIndex: "name" },
-  // { title: "開工日期", dataIndex: "name" },
-  // { title: "完工日期", dataIndex: "name" },
-  // { title: "是否需要小型工程", dataIndex: "name" },
-  // { title: "申報記錄BW編號", dataIndex: "name" },
-  // { title: "投標書付款條款", dataIndex: "name" },
-  // { title: "SITE location", dataIndex: "name" },
-  // { title: "BILL TO", dataIndex: "name" }
 ];
 export default {
   data() {
     return {
-      tableData: [],
+      tableData: [{biding_price: "4",
+                  bt: "新界屯門海瑞路79號東華大樓14樓物業科",
+                  ccn: "佳定物業管理有限公司 ",
+                  ccp: "MS ABC",
+                  ce: "abc@tungwah.com",
+                  cen: "Guardian Property Management Limited ",
+                  cf: "98765413",
+                  client_data_id: "31",
+                  client_id: "29",
+                  csn: "c29",
+                  ct: "1234 5678",
+                  declare_number: "",
+                  end_bid_date: "2019-09-04",
+                  end_bid_time: "",
+                  end_date: "2019-08-21",
+                  in_price_date: "2019-08-29",
+                  is_bidding: "0",
+                  jca: "九龍大南街123號地下",
+                  lc: "大南街123號地下",
+                  le: "123 Tai Nan Street",
+                  lsn: "L00017",
+                  min_project: "0",
+                  out_price: "5",
+                  p_no: "19-c29-(BW)",
+                  pl: "short",
+                  pmaster_id: "41",
+                  project_area: "大南街123",
+                  pshort: "short",
+                  pt: "",
+                  re_bidding_date: "2019-08-27",
+                  regulation: "",
+                  sales_code: "(BW)",
+                  send_bid_date: "2019-08-15",
+                  send_bid_way: "",
+                  sort: "123",
+                  spn_date: "",
+                  start_date: "2019-08-01",
+                  sub_bid_name: "",
+                  sub_bid_number: "",
+                  sub_bid_price: "9",
+                  sub_price: "3",
+                  sub_price_name: "",
+                  sub_re_bid_date: "0000-00-00",
+}],
       dataSource: [],
       columns,
       onTableLoading: false
@@ -151,7 +169,7 @@ export default {
         .catch(err => {});
     }
   },
-  components: { newPMaster, edit, createInvitationFile, createQuotation }
+  components: { newPMaster, createInvitationFile, createQuotation }
 };
 </script>
 <style lang="scss">

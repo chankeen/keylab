@@ -17,6 +17,19 @@ const router = new Router({
           path: "p_master",
           name: "p_master",
           component: () => import("@/view/PMaster")
+        } 
+      ]
+    },
+    {
+      path: "/building/:bid",
+      name: "building",
+      redirect: "building/building_detail",
+      component: () => import("@/layout/building.vue"),
+      children: [
+        {
+          path: "buildingDetail",
+          name: "building_detail",
+          component: () => import("@/view/buildlingDetail/home.vue")
         }
       ]
     },
