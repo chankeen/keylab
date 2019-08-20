@@ -1,63 +1,54 @@
 <template>
-  <a-drawer
-    title="Add OC Record"
-    placement="right"
-    :closable="false"
+  <a-modal
+    title="Edit Propman Record"
     @close="onClose"
-    :visible="visible"
+    v-model="visible"
     width="600px"
+    :footer="null"
   >
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
           <p class="item">
             <span class="label">物業編號</span>
-            <a-select v-model="info.property_id"></a-select>
+            <a-select v-model="info.property_id">
+              <a-select-option value="正常">正常</a-select-option>
+              <a-select-option value="暫停">暫停</a-select-option>
+              <a-select-option value="封存">封存</a-select-option>
+            </a-select>
           </p>
           <p class="item">
-            <span class="label">名稱(中文)</span>
+            <span class="label">User ID</span>
+            <a-select v-model="info.user_id">
+              <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
+              <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
+              <a-select-option value="屋苑大廈">屋苑大廈</a-select-option>
+              <a-select-option value="商廈">商廈</a-select-option>
+              <a-select-option value="寫字樓">寫字樓</a-select-option>
+            </a-select>
+          </p>
+          <p class="item">
+            <span class="label">中文名稱</span>
             <a-input v-model="info.name_zh"></a-input>
           </p>
           <p class="item">
-            <span class="label">名稱(英文)</span>
+            <span class="label">英文名稱</span>
             <a-input v-model="info.name_en"></a-input>
           </p>
           <p class="item">
             <span class="label">職位</span>
             <a-input v-model="info.position"></a-input>
           </p>
-          <p class="item">
-            <span class="label">Year From</span>
-            <a-input v-model="info.year_from"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">Year To</span>
-            <a-input v-model="info.year_to"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">Term</span>
-            <a-input v-model="info.term"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">Elected Date</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.elected_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">Introduction</span>
-            <a-input v-model="info.introduction"></a-input>
-          </p>
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
     </div>
-  </a-drawer>
+  </a-modal>
 </template>
 <script>
 import moment from "moment";
-import { get_client_data } from "@/api/client_data";
 import { new_pmaster } from "@/api/property";
 export default {
   data() {
@@ -66,14 +57,8 @@ export default {
       onSubmiting: false,
       info: {
         property_id: "",
-        name_zh: "",
-        name_en: "",
-        position: "",
-        year_from: "",
-        year_to: "",
-        term: "",
-        elected_date: "",
-        introduction: ""
+        user_id: "",
+        position: ""
       }
     };
   },
@@ -81,12 +66,8 @@ export default {
     this.get_client();
   },
   methods: {
-    show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          this.info[key] = "";
-        }
-      }
+    show(info) {
+      this.info = info;
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -113,10 +94,8 @@ export default {
           } else {
             this.$message.error("添加失敗");
           }
-          this.onSubmiting = false;
         })
         .catch(err => {
-          this.onSubmiting = false;
           this.$message.error("添加失敗");
         });
     }

@@ -1,12 +1,5 @@
 <template>
-  <a-drawer
-    title="Add OC Record"
-    placement="right"
-    :closable="false"
-    @close="onClose"
-    :visible="visible"
-    width="600px"
-  >
+  <a-modal title="Edit OC Record" @close="onClose" v-model="visible" width="600px" :footer="null">
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
@@ -53,7 +46,7 @@
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
     </div>
-  </a-drawer>
+  </a-modal>
 </template>
 <script>
 import moment from "moment";
@@ -81,12 +74,9 @@ export default {
     this.get_client();
   },
   methods: {
-    show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          this.info[key] = "";
-        }
-      }
+    show(info) {
+      this.info = info;
+      this.info.elected_date = moment(this.info.elected_date, "YYYY-MM-DD");
       this.visible = true;
       this.onSubmiting = false;
     },

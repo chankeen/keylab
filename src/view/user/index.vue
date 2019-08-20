@@ -11,11 +11,11 @@
         >Add Record</a-button>
       </span>
     </p>
-    <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading" >
+    <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $router.push({name:'property_home',params:{bid:123}})
-          }">更多</a>
+          $refs.edit.show(record)
+          }">修改</a>
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
@@ -32,21 +32,25 @@
     <newRecord ref="newRecord" @done="()=>{
       this.getTableData();
       }" />
+    <edit ref="edit" @done="()=>{
+      this.getTableData();
+      }" />
   </div>
 </template>
 <script>
 import newRecord from "./new";
+import edit from "./edit";
 import { get_users } from "@/api/users.js";
-import uuiddv1 from 'uuid/v1';
+import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "User ID", dataIndex: "user_id" },
-  { title: "Status",  dataIndex: "status"},
-  { title: "Chinese Name", dataIndex: "name_zh"},
-  { title: "English Name", dataIndex: "name_en"},
-  { title: "Login Tel",width: "100px",  dataIndex: "login_tel"},
-  { title: "Email", dataIndex: "login_tel"},
-  { title: "Created By", dataIndex: "created_by"},
-  { title: "Created Date",width: "100px",  dataIndex: "creation_datetime"},
+  { title: "Status", dataIndex: "status" },
+  { title: "Chinese Name", dataIndex: "name_zh" },
+  { title: "English Name", dataIndex: "name_en" },
+  { title: "Login Tel", width: "100px", dataIndex: "login_tel" },
+  { title: "Email", dataIndex: "login_tel" },
+  { title: "Created By", dataIndex: "created_by" },
+  { title: "Created Date", width: "100px", dataIndex: "creation_datetime" },
   { scopedSlots: { customRender: "detail" } },
   { scopedSlots: { customRender: "delete" } }
 ];
@@ -67,7 +71,9 @@ export default {
       const dataSource = [...this.dataSource];
       this.tableData = dataSource.filter(
         item =>
-          (item.name_zh + item.name_en).toLowerCase().indexOf(val.toLowerCase()) > -1
+          (item.name_zh + item.name_en)
+            .toLowerCase()
+            .indexOf(val.toLowerCase()) > -1
       );
       if (val == "") {
         this.tableData = this.dataSource;
@@ -95,7 +101,7 @@ export default {
         .catch(err => {});
     }
   },
-  components: { newRecord }
+  components: { newRecord, edit }
 };
 </script>
 <style lang="scss">

@@ -7,10 +7,12 @@
             <a-icon :type="item.icon"></a-icon>
             <span>{{item.title}}</span>
           </a-menu-item>
-           <a-menu-item key="back" @click="()=>{
+          <a-menu-item key="back" @click="()=>{
                $router.go(-1)
-           }">  <a-icon type="arrow-left"></a-icon>
-            <span>Back To Home</span></a-menu-item>
+           }">
+            <a-icon type="arrow-left"></a-icon>
+            <span>Back To Home</span>
+          </a-menu-item>
         </a-menu>
       </a-layout-sider>
       <a-layout>
@@ -20,9 +22,7 @@
             :type="collapsed ? 'menu-unfold' : 'menu-fold'"
             @click="()=> collapsed = !collapsed"
           />
-         <span class="head_title">
-            XXXX物業
-         </span>
+          <span class="head_title">{{headTitle}}</span>
           <a-dropdown>
             <a-menu slot="overlay">
               <a-menu-item
@@ -40,10 +40,10 @@
             </p>
           </a-dropdown>
         </a-layout-header>
-        <a-layout-content
-          :style="{ margin: '24px 16px', padding: '24px', background: '#fff', minHeight: '280px' }"
-        >
-          <router-view />
+        <a-layout-content :style="{ height: '100vh', margin: '24px 16px 0', overflow: 'initial' }">
+          <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">
+            <router-view></router-view>
+          </div>
         </a-layout-content>
       </a-layout>
     </a-layout>
@@ -53,19 +53,20 @@
 import { logout } from "@/api/user.js";
 export default {
   data() {
-
     return {
       memu: [
-        { r_name: "property_home", title: "大廈詳情",icon:"info-circle" },
-        { r_name: "property_management", title: "物管人員" ,icon:"team"},
-        { r_name: "property_firm", title: "法團成員",icon:"team" },
-        ],
+        { r_name: "property_home", title: "大廈詳情", icon: "info-circle" },
+        { r_name: "property_management", title: "物管人員", icon: "team" },
+        { r_name: "property_firm", title: "法團成員", icon: "team" }
+      ],
       breadcrumb: [],
       activeItem: ["client_list"],
-      collapsed: false
+      collapsed: false,
+      headTitle: ""
     };
   },
   created() {
+    this.headTitle = this.$route.params.info.name_en;
     //麵包屑
     this.breadcrumb.push("Home");
     this.memu.some(item => {
@@ -79,15 +80,14 @@ export default {
   methods: {
     //菜單欄選擇
     onMenuSelect(item) {
-      if(item.r_name=="property_home"){
-      this.$router.push({ name: item.r_name });
-      this.breadcrumb = [];
-      this.breadcrumb.push("Home");
-      this.breadcrumb.push(item.title);
-      }else{
-        this.$message.info("開發中")
+      if (item.r_name == "property_home") {
+        this.$router.push({ name: item.r_name });
+        this.breadcrumb = [];
+        this.breadcrumb.push("Home");
+        this.breadcrumb.push(item.title);
+      } else {
+        this.$message.info("開發中");
       }
-      
     },
     admin_logout() {
       logout()
@@ -109,8 +109,8 @@ export default {
 .buildingDetail-container {
   height: 100%;
   background: #f0f2f5;
-  .head_title{
-      font-size: 1.6em;
+  .head_title {
+    font-size: 1.6em;
   }
   .trigger {
     font-size: 24px;

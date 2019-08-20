@@ -26,19 +26,14 @@ const router = new Router({
           component: () => import("@/view/oc")
         },
         {
-          path:"propman",
-          name:"home_propman",
-          component:()=>import("@/view/propman")
+          path: "propman",
+          name: "home_propman",
+          component: () => import("@/view/propman")
         },
         {
-          path:"user",
-          name:"home_user",
-          component:()=>import("@/view/user")
-        },
-        {
-          path:"entity",
-          name:"home_entity",
-          component:()=>import("@/view/entity")
+          path: "user",
+          name: "home_user",
+          component: () => import("@/view/user")
         }
       ]
     },

@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="Add PMaster Record"
+    title="Add Property"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -64,6 +64,39 @@
             <span class="label">總面積</span>
             <a-input v-model="info.total_size"></a-input>
           </p>
+          <p class="item">
+            <span class="label">Floor Plan File</span>
+            <span style="text-align:left;width:100%">
+              <a-upload
+                name="orm_file"
+                :multiple="true"
+                action
+                :headers="headers"
+                @change="handleChange"
+              >
+                <a-button>
+                  <a-icon type="upload" />Click to Upload
+                </a-button>
+              </a-upload>
+            </span>
+          </p>
+          <!-- DMC FIle -->
+          <p class="item">
+            <span class="label">DMC File</span>
+            <span style="text-align:left;width:100%">
+              <a-upload
+                name="orm_file"
+                :multiple="true"
+                action
+                :headers="headers"
+                @change="handleChange"
+              >
+                <a-button>
+                  <a-icon type="upload" />Click to Upload
+                </a-button>
+              </a-upload>
+            </span>
+          </p>
         </a-col>
       </a-row>
 
@@ -75,31 +108,29 @@
 </template>
 <script>
 import moment from "moment";
-import { new_pmaster,new_property } from "@/api/property.js";
+import { new_pmaster, new_property } from "@/api/property.js";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
       info: {
-      status: '',
-      agm_date: '',
-      name_zh: '',
-      name_en:'',
-      address_zh: '',
-      address_en: '',
-      type: '',
-      build_year: '',
-      floor_amount: '',
-      unit_amount: '',
-      total_size: '',
-      },
+        status: "",
+        agm_date: "",
+        name_zh: "",
+        name_en: "",
+        address_zh: "",
+        address_en: "",
+        type: "",
+        build_year: "",
+        floor_amount: "",
+        unit_amount: "",
+        total_size: ""
+      }
     };
   },
   created() {
-    console.log( this.$store.getters.user.uid);
-    
-
+    console.log(this.$store.getters.user.uid);
   },
   methods: {
     show() {
@@ -131,14 +162,14 @@ export default {
           if (res.status) {
             this.$message.success("成功添加");
             this.visible = false;
-             this.onSubmiting = false;
+            this.onSubmiting = false;
             this.$emit("done", {});
           } else {
             this.$message.error("添加失敗");
           }
         })
         .catch(err => {
-           this.onSubmiting = false;
+          this.onSubmiting = false;
           this.$message.error("添加失敗");
         });
     }

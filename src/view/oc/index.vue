@@ -14,8 +14,8 @@
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $router.push({name:'property_home',params:{bid:123}})
-          }">更多</a>
+          $refs.edit.show(record)
+          }">修改</a>
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
@@ -32,16 +32,20 @@
     <newRecord ref="newRecord" @done="()=>{
       this.getTableData();
       }" />
+    <edit ref="edit" @done="()=>{
+      this.getTableData();
+      }" />
   </div>
 </template>
 <script>
 import newRecord from "./new";
+import edit from "./edit";
 import { get_oc } from "@/api/oc.js";
-import uuiddv1 from 'uuid/v1';
+import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "物業編號", dataIndex: "property_id" },
-  { title: "名稱(中文)", dataIndex: "name_zh"},
-  { title: "名稱(英文)", dataIndex: "name_en"},
+  { title: "名稱(中文)", dataIndex: "name_zh" },
+  { title: "名稱(英文)", dataIndex: "name_en" },
   { title: "職位", dataIndex: "position" },
   { title: "Year From", dataIndex: "year_from" },
   { title: "Year To", dataIndex: "year_to" },
@@ -95,7 +99,7 @@ export default {
         .catch(err => {});
     }
   },
-  components: { newRecord }
+  components: { newRecord, edit }
 };
 </script>
 <style lang="scss">

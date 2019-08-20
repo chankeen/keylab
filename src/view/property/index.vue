@@ -1,20 +1,20 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="search by client name" style="width: 200px" @search="onSearch" />
+      <a-input-search placeholder="search by property name" style="width: 200px" @search="onSearch" />
       <span>
         <a-button
           type="primary"
           @click="()=>{
         this.$refs.newProperty.show()
         }"
-        >Add Record</a-button>
+        >Add Property</a-button>
       </span>
     </p>
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $router.push({name:'property_home',params:{bid:123}})
+          $router.push({name:'property_home',params:{bid:123,info:record},})
           }">更多</a>
       </template>
       <template slot="delete" slot-scope="record">

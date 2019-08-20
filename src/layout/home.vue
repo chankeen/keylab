@@ -44,18 +44,32 @@
   </div>
 </template>
 <script>
-import uuidv1 from 'uuid/v1';
+import uuidv1 from "uuid/v1";
 import { logout } from "@/api/user.js";
 export default {
   data() {
     return {
       memu: [
-        { r_name: "home_property", title: "Property / 物業" ,icon:"bank",key:uuidv1()},
-        { r_name: "home_oc", title: "Oc / 法團成員" ,icon:"team",},
-        { r_name: "home_propman", title: "Propman / 無關成員",icon:"user",key:uuidv1()},
-        { r_name: "home_user", title: "User",icon:"team",key:uuidv1()},
-        { r_name: "home_entity", title: "Entity",icon:"team",key:uuidv1()}
-        ],
+        {
+          r_name: "home_property",
+          title: "Property / 物業",
+          icon: "bank",
+          key: uuidv1()
+        },
+        { r_name: "home_oc", title: "Oc / 法團成員", icon: "team" },
+        {
+          r_name: "home_propman",
+          title: "Propman / 無關成員",
+          icon: "user",
+          key: uuidv1()
+        },
+        {
+          r_name: "home_user",
+          title: "User / Entity",
+          icon: "team",
+          key: uuidv1()
+        }
+      ],
       breadcrumb: [],
       activeItem: [],
       collapsed: false
