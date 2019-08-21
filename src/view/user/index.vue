@@ -21,7 +21,7 @@
         <a-popconfirm
           v-if="tableData.length"
           title="Sure to delete?"
-          @confirm="() => onDelete(record.property_id)"
+          @confirm="() => onDelete(record.user_id)"
         >
           <a>
             <a-icon type="delete"></a-icon>
@@ -40,7 +40,7 @@
 <script>
 import newRecord from "./new";
 import edit from "./edit";
-import { get_users } from "@/api/users.js";
+import { get_users, d_users } from "@/api/users.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "User ID", dataIndex: "user_id" },
@@ -91,7 +91,7 @@ export default {
         .catch(err => {});
     },
     onDelete(cid) {
-      delete_pmaster(cid)
+      d_users(cid)
         .then(res => {
           if (res.status) {
             this.getTableData();

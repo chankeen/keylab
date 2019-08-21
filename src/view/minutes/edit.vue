@@ -110,17 +110,17 @@ export default {
       u_minutes(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("成功添加");
+            this.$message.success("修改成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("修改失敗");
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("修改失敗");
         });
     }
   }

@@ -11,25 +11,19 @@
         <a-col>
           <p class="item">
             <span class="label">物業編號</span>
-            <a-select v-model="info.property_id"></a-select>
+            <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
             <span class="label">User ID</span>
-            <a-select v-model="info.user_id">
-              <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
-              <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
-              <a-select-option value="屋苑大廈">屋苑大廈</a-select-option>
-              <a-select-option value="商廈">商廈</a-select-option>
-              <a-select-option value="寫字樓">寫字樓</a-select-option>
-            </a-select>
+            <a-input v-model="info.user_id"></a-input>
           </p>
           <p class="item">
             <span class="label">中文名稱</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <a-input v-model="info.name_zh" disabled></a-input>
           </p>
           <p class="item">
             <span class="label">英文名稱</span>
-            <a-input v-model="info.name_en"></a-input>
+            <a-input v-model="info.name_en" disabled></a-input>
           </p>
           <p class="item">
             <span class="label">職位</span>
@@ -45,7 +39,7 @@
 </template>
 <script>
 import moment from "moment";
-import { new_property } from "@/api/property";
+import { u_propman } from "@/api/propman";
 export default {
   data() {
     return {
@@ -81,17 +75,19 @@ export default {
         }
       }
       this.onSubmiting = true;
-      new_property(this.info)
+      u_propman(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("更新成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
+            this.onSubmiting = false;
             this.$message.error("更新失敗");
           }
         })
         .catch(err => {
+          this.onSubmiting = false;
           this.$message.error("更新失敗");
         });
     }
