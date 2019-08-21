@@ -57,7 +57,8 @@ export default {
       memu: [
         { r_name: "property_home", title: "大廈詳情", icon: "info-circle" },
         { r_name: "property_management", title: "物管人員", icon: "team" },
-        { r_name: "property_firm", title: "法團成員", icon: "team" }
+        { r_name: "property_firm", title: "法團成員", icon: "team" },
+        { r_name: "property_important", title: "重要事項", icon: "team" }
       ],
       breadcrumb: [],
       activeItem: ["client_list"],
@@ -80,7 +81,7 @@ export default {
   methods: {
     //菜單欄選擇
     onMenuSelect(item) {
-      if (item.r_name == "property_home") {
+      if (item.r_name == "property_home" || item.r_name == "property_important") {
         this.$router.push({ name: item.r_name });
         this.breadcrumb = [];
         this.breadcrumb.push("Home");

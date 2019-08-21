@@ -108,7 +108,7 @@
 </template>
 <script>
 import moment from "moment";
-import { new_pmaster, new_property } from "@/api/property.js";
+import { new_property } from "@/api/property.js";
 export default {
   data() {
     return {

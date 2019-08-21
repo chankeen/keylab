@@ -58,7 +58,7 @@
 <script>
 import moment from "moment";
 import { get_client_data } from "@/api/client_data";
-import { new_pmaster } from "@/api/property";
+import { new_property } from "@/api/property";
 export default {
   data() {
     return {
@@ -104,7 +104,7 @@ export default {
         }
       }
       this.onSubmiting = true;
-      new_pmaster(this.info)
+      new_property(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");

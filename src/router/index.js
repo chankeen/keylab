@@ -48,6 +48,11 @@ const router = new Router({
           path: "propertyHome",
           name: "property_home",
           component: () => import("@/view/propertyDetail/home.vue")
+        },
+        {
+          path: "important",
+          name: "property_important",
+          component: () => import("@/view/important")
         }
       ]
     },

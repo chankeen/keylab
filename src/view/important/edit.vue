@@ -1,35 +1,41 @@
 <template>
-  <a-modal title="Edit User Record" @close="onClose" v-model="visible" width="600px" :footer="null">
+<a-drawer
+    title="修改/檢視重要事項"
+    placement="right"
+    :closable="false"
+    @close="onClose"
+    :visible="visible"
+    width="600px"
+  >
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">Status</span>
-            <a-select v-model="info.status"></a-select>
+            <span class="label">物業編號</span>
+            <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
-            <span class="label">Chinese Name</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <span class="label">重要事項種類</span>
+            <a-select v-model="info.type">
+              <a-select-option value="政府法令">政府法令</a-select-option>
+              <a-select-option value="其他事項">其他事項</a-select-option>
+            </a-select>
           </p>
           <p class="item">
-            <span class="label">English Name</span>
-            <a-input v-model="info.name_en"></a-input>
+            <span class="label">知悉日期</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.known_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">Login Tel</span>
-            <a-input v-model="info.login_tel"></a-input>
+            <span class="label">處理死線</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.deadline"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">Email</span>
-            <a-input v-model="info.email"></a-input>
+            <span class="label">重要事項內容</span>
+            <a-input v-model="info.content"></a-input>
           </p>
           <p class="item">
-            <span class="label">Created By</span>
-            <a-input v-model="info.created_by"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">Created Date</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.creation_datetime"></a-date-picker>
+            <span class="label">備註</span>
+            <a-input v-model="info.remarks"></a-input>
           </p>
         </a-col>
       </a-row>
@@ -38,34 +44,36 @@
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
     </div>
-  </a-modal>
+  </a-drawer>
 </template>
 <script>
 import moment from "moment";
-import { get_client_data } from "@/api/client_data";
-import { new_property } from "@/api/property";
+import { u_important, r_important } from "@/api/important";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
       info: {
-        status: "",
-        name_zh: "",
-        name_en: "",
-        login_tel: "",
-        email: "",
-        created_by: "",
-        creation_datetime: ""
+        property_id: "",
+        type: "",
+        known_date: "",
+        deadline: "",
+        content: "",
+        remarks: ""
       }
     };
   },
   created() {
-    this.get_client();
+    this.get_data();
   },
   methods: {
-    show(info) {
-      this.info = info;
+    show() {
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          this.info[key] = "";
+        }
+      }
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -82,9 +90,6 @@ export default {
           }
         }
       }
-
-      this.info.p_no = this.project_no;
-      console.log(this.info);
       this.onSubmiting = true;
       new_property(this.info)
         .then(res => {
@@ -95,10 +100,19 @@ export default {
           } else {
             this.$message.error("添加失敗");
           }
+          this.onSubmiting = false;
         })
         .catch(err => {
+          this.onSubmiting = false;
           this.$message.error("添加失敗");
         });
+    },
+    get_data(){
+      r_important(null)
+        .then(res => {
+
+        })
+        .catch(err => {});
     }
   }
 };
