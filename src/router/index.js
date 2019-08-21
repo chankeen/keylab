@@ -53,6 +53,16 @@ const router = new Router({
           path: "propertyImportant",
           name: "property_important",
           component: () => import("@/view/important")
+        },
+        {
+          path: "propertyMinutes",
+          name: "property_minutes",
+          component: () => import("@/view/minutes")
+        },
+        {
+          path: "propertyUnitList",
+          name: "property_unit_list",
+          component: () => import("@/view/unitList")
         }
       ]
     },

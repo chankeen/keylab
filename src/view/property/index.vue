@@ -14,7 +14,7 @@
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $router.push({name:'property_home',params:{bid:123,info:record},})
+          $router.push({name:'property_home',params:{bid:record.property_id,info:record},})
           }">更多</a>
       </template>
       <template slot="delete" slot-scope="record">

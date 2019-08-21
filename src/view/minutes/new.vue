@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改/檢視重要事項"
+    title="新增會議紀錄"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -11,31 +11,29 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">重要事項編號</span>
-            <a-input v-model="info.important_id"></a-input>
+            <span class="label">物業編號</span>
+            <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
             <span class="label">重要事項種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="政府法令">政府法令</a-select-option>
-              <a-select-option value="其他事項">其他事項</a-select-option>
+              <a-select-option value="常務會議">政府法令</a-select-option>
+              <a-select-option value="年度股東大會">年度股東大會</a-select-option>
+              <a-select-option value="特別會議">特別會議</a-select-option>
+              <a-select-option value="其他">其他</a-select-option>
             </a-select>
           </p>
           <p class="item">
-            <span class="label">知悉日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.known_date"></a-date-picker>
+            <span class="label">會議日期</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.meeting_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">處理死線</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.deadline"></a-date-picker>
+            <span class="label">第N屆</span>
+            <a-input v-model="info.oc_term"></a-input>
           </p>
           <p class="item">
-            <span class="label">重要事項內容</span>
-            <a-input v-model="info.content"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">備註</span>
-            <a-input v-model="info.remarks"></a-input>
+            <span class="label">第N次</span>
+            <a-input v-model="info.minutes_term"></a-input>
           </p>
         </a-col>
       </a-row>
@@ -48,23 +46,30 @@
 </template>
 <script>
 import moment from "moment";
-import { u_important } from "@/api/important";
+import { c_minutes } from "@/api/minutes";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
-      info: {}
+      info: {
+        property_id: "",
+        type: "",
+        meeting_date: "",
+        oc_term: "",
+        minutes_term: ""
+      }
     };
   },
   created() {
-    //this.get_data();
   },
   methods: {
-    show(info) {
-      this.info = JSON.parse(JSON.stringify(info));
-      this.info.known_date = moment(this.info.known_date, "YYYY-MM-DD");
-      this.info.deadline = moment(this.info.deadline, "YYYY-MM-DD");
+    show() {
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          this.info[key] = "";
+        }
+      }
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -82,7 +87,8 @@ export default {
         }
       }
       this.onSubmiting = true;
-      u_important(this.info)
+      console.log(this.info);
+      c_minutes(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
@@ -95,7 +101,7 @@ export default {
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("server error - 添加失敗");
         });
     }
   }

@@ -69,6 +69,16 @@ export default {
           r_name: "property_important",
           title: "Important / 重要事項",
           icon: "team"
+        },
+        {
+          r_name: "property_minutes",
+          title: "Minutes / 會議紀錄",
+          icon: "team"
+        },
+        {
+          r_name: "property_unit_list",
+          title: "Unit List / 單位列表",
+          icon: "team"
         }
       ],
       breadcrumb: [],
