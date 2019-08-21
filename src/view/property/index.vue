@@ -17,17 +17,9 @@
     </p>
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
-<<<<<<< HEAD
         <a @click="()=>{
           $router.push({name:'property_home',params:{bid:record.property_id,info:record},})
           }">更多</a>
-=======
-        <a
-          @click="()=>{
-          $router.push({name:'property_home',params:{bid:record.property_id,info:record},})
-          }"
-        >更多</a>
->>>>>>> c188ca6c2a7f5e23026dfcca090a9589410aee04
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
