@@ -68,27 +68,27 @@ export default {
         {
           r_name: "property_important",
           title: "Important / 重要事項",
-          icon: "team"
+          icon: "file"
         },
         {
           r_name: "property_minutes",
           title: "Minutes / 會議紀錄",
-          icon: "team"
+          icon: "ordered-list"
         },
         {
           r_name: "property_unit_list",
           title: "Unit List / 單位列表",
-          icon: "team"
+          icon: "ordered-list"
         },
         {
           r_name: "property_unit_fee",
           title: "Unit Fee / 管理費",
-          icon: "team"
+          icon: "pay-circle"
         },
         {
           r_name: "property_unit_file",
           title: "Unit File / 單位紀錄",
-          icon: "team"
+          icon: "ordered-list"
         }
       ],
       breadcrumb: [],
