@@ -84,15 +84,15 @@ export default {
       new_property(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("成功添加");
+            this.$message.success("更新成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("更新失敗");
           }
         })
         .catch(err => {
-          this.$message.error("添加失敗");
+          this.$message.error("更新失敗");
         });
     }
   }

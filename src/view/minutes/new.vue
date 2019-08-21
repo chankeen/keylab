@@ -75,8 +75,10 @@ export default {
   methods: {
     show() {
       for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
+        if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
           this.info[key] = "";
+        } else {
+          this.info[key] = [];
         }
       }
       this.visible = true;
