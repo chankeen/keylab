@@ -67,34 +67,14 @@
           <p class="item">
             <span class="label">Floor Plan File</span>
             <span style="text-align:left;width:100%">
-              <a-upload
-                name="orm_file"
-                :multiple="true"
-                action
-                :headers="headers"
-                @change="handleChange"
-              >
-                <a-button>
-                  <a-icon type="upload" />Click to Upload
-                </a-button>
-              </a-upload>
+              <uploadFile v-model="info.floor_plan_file" />
             </span>
           </p>
           <!-- DMC FIle -->
           <p class="item">
             <span class="label">DMC File</span>
             <span style="text-align:left;width:100%">
-              <a-upload
-                name="orm_file"
-                :multiple="true"
-                action
-                :headers="headers"
-                @change="handleChange"
-              >
-                <a-button>
-                  <a-icon type="upload" />Click to Upload
-                </a-button>
-              </a-upload>
+              <uploadFile v-model="info.dmc_file" />
             </span>
           </p>
         </a-col>
@@ -108,6 +88,7 @@
 </template>
 <script>
 import moment from "moment";
+import uploadFile from "@/components/uploadFile.vue";
 import { new_property } from "@/api/property.js";
 export default {
   data() {
@@ -124,14 +105,16 @@ export default {
         type: "",
         build_year: "",
         floor_amount: "",
+        floor_plan_file: [],
+        dmc_file: [],
         unit_amount: "",
         total_size: ""
-      }
+      },
+      action_url: ""
     };
   },
-  created() {
-    console.log(this.$store.getters.user.uid);
-  },
+  components: { uploadFile },
+  created() {},
   methods: {
     show() {
       for (const key in this.info) {
@@ -139,22 +122,46 @@ export default {
           this.info[key] = "";
         }
       }
+      this.info.floor_plan_file = [];
+      this.info.dmc_file = [];
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
+    get_file_info(item) {
+      //get info of file
+      item.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
+    },
     onSubmit() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
             this.info[key] = this.info[key]._isValid
               ? this.info[key].format("YYYY-MM-DD")
               : "";
           }
         }
       }
+      this.info.floor_plan_file = this.get_file_info(this.info.floor_plan_file);
+      this.info.dmc_file = this.get_file_info(this.info.dmc_file);
       this.onSubmiting = true;
       this.info.admin_wp_id = this.$store.getters.user.uid;
       new_property(this.info)

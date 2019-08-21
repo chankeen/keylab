@@ -50,38 +50,24 @@
         <p class="item">
           <span class="label">Floor Plan File</span>
           <span style="text-align:left;width:100%">
-            <a-upload
-              name="orm_file"
-              :multiple="true"
-              action
-              :headers="headers"
-              @change="handleChange"
-            >
-              <a-button>
-                <a-icon type="upload" />Click to Upload
-              </a-button>
-            </a-upload>
+            <uploadFile v-model="info.floor_plan_file"></uploadFile>
           </span>
         </p>
         <!-- DMC FIle -->
         <p class="item">
           <span class="label">DMC File</span>
           <span style="text-align:left;width:100%">
-            <a-upload
-              name="orm_file"
-              :multiple="true"
-              action
-              :headers="headers"
-              @change="handleChange"
-            >
-              <a-button>
-                <a-icon type="upload" />Click to Upload
-              </a-button>
-            </a-upload>
+            <uploadFile v-model="info.dmc_file"></uploadFile>
           </span>
         </p>
         <p style="text-align:right">
-          <a-button type="primary">Submit</a-button>
+          <a-button
+            type="primary"
+            :loading="onSubmiting"
+            @click="()=>{
+            onSubmit()
+            }"
+          >Submit</a-button>
         </p>
       </a-col>
     </a-row>
@@ -90,18 +76,19 @@
 
 <script>
 import moment from "moment";
-import { get_property } from "@/api/property.js";
+import uploadFile from "@/components/uploadFile.vue";
+import { get_property, update_property } from "@/api/property.js";
 export default {
   data() {
     return {
       property_id: "",
       uid: "",
-      info: {}
+      info: {},
+      onSubmiting: false
     };
   },
+  components: { uploadFile },
   created() {
-    console.log(this.$route);
-
     this.property_id = this.$route.params.bid;
     this.uid = this.$store.getters.user.uid;
     this.getInfo();
@@ -116,15 +103,54 @@ export default {
         })
         .catch(err => {});
     },
-    handleChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
+    get_file_info(item) {
+      //get info of file
+      item.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
+    },
+    onSubmit() {
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
+            this.info[key] = this.info[key]._isValid
+              ? this.info[key].format("YYYY-MM-DD")
+              : "";
+          }
+        }
       }
-      if (info.file.status === "done") {
-        this.$message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        this.$message.error(`${info.file.name} file upload failed.`);
-      }
+      this.info.floor_plan_file = this.get_file_info(this.info.floor_plan_file);
+      this.info.dmc_file = this.get_file_info(this.info.dmc_file);
+      this.onSubmiting = true;
+      this.info.admin_wp_id = this.$store.getters.user.uid;
+      update_property(this.info)
+        .then(res => {
+          if (res.status) {
+            this.$message.success("更新成功");
+            this.visible = false;
+            this.onSubmiting = false;
+          } else {
+            this.$message.error("更新失敗");
+          }
+        })
+        .catch(err => {
+          this.onSubmiting = false;
+          this.$message.error("更新失敗");
+        });
     }
   }
 };
