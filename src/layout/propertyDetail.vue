@@ -89,6 +89,11 @@ export default {
           r_name: "property_unit_file",
           title: "Unit File / 單位紀錄",
           icon: "ordered-list"
+        },
+        {
+          r_name: "property_term_contract",
+          title: "Term Contract / 常規合約",
+          icon: "team"
         }
       ],
       breadcrumb: [],
