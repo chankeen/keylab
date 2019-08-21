@@ -100,14 +100,15 @@ export default {
     };
   },
   created() {
-    this.property_id = this.$roure.params.bid;
-    this.uid = this.$store.getters.user.uid;
+    console.log(this.$route);
 
+    this.property_id = this.$route.params.bid;
+    this.uid = this.$store.getters.user.uid;
     this.getInfo();
   },
   methods: {
     //獲取property info
-    getInfo(bid) {
+    getInfo() {
       get_property(this.uid, this.property_id)
         .then(res => {
           this.info = res.list[0];
