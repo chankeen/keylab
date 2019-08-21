@@ -14,7 +14,7 @@
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          this.$refs.editImportant.show()
+          $refs.editImportant.show(record.important_id)
           }">更多</a>
       </template>
       <template slot="delete" slot-scope="record">

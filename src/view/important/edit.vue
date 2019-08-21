@@ -11,8 +11,8 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
+            <span class="label">重要事項編號</span>
+            <a-input v-model="info.important_id"></a-input>
           </p>
           <p class="item">
             <span class="label">重要事項種類</span>
@@ -65,15 +65,16 @@ export default {
     };
   },
   created() {
-    this.get_data();
+    //this.get_data();
   },
   methods: {
-    show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          this.info[key] = "";
-        }
-      }
+    show(important_id) {
+      console.log('importnat_id'+important_id);
+      r_important(important_id)
+        .then(res => {
+          this.info = res.list[0];
+        })
+        .catch(err => {});
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -107,13 +108,6 @@ export default {
           this.$message.error("添加失敗");
         });
     },
-    get_data(){
-      r_important(null)
-        .then(res => {
-
-        })
-        .catch(err => {});
-    }
   }
 };
 </script>
