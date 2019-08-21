@@ -11,11 +11,7 @@
         <a-col>
           <p class="item">
             <span class="label">物業編號</span>
-            <a-select v-model="info.property_id">
-              <a-select-option value="正常">正常</a-select-option>
-              <a-select-option value="暫停">暫停</a-select-option>
-              <a-select-option value="封存">封存</a-select-option>
-            </a-select>
+            <a-select v-model="info.property_id"></a-select>
           </p>
           <p class="item">
             <span class="label">User ID</span>

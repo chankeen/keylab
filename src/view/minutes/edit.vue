@@ -35,9 +35,16 @@
             <span class="label">第N次</span>
             <a-input v-model="info.minutes_term"></a-input>
           </p>
+          <a-divider></a-divider>
+          <p class="item">
+            <span class="label">Minutes File</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile v-model="info.minutes_file"></uploadFile>
+            </span>
+          </p>
+          <a-divider />
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
@@ -46,6 +53,7 @@
 </template>
 <script>
 import moment from "moment";
+import uploadFile from "@/components/uploadFile.vue";
 import { u_minutes } from "@/api/minutes";
 export default {
   data() {
@@ -55,9 +63,8 @@ export default {
       info: {}
     };
   },
-  created() {
-    //this.get_data();
-  },
+  components: { uploadFile },
+  created() {},
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
@@ -68,16 +75,37 @@ export default {
     onClose() {
       this.visible = false;
     },
+    //提取文件信息
+    get_file_info(item) {
+      item.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
+    },
     onSubmit() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
             this.info[key] = this.info[key]._isValid
               ? this.info[key].format("YYYY-MM-DD")
               : "";
           }
         }
       }
+      this.info.minutes_file = this.get_file_info(this.info.minutes_file);
       this.onSubmiting = true;
       u_minutes(this.info)
         .then(res => {

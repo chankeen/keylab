@@ -1,7 +1,7 @@
 import request from "@/utils/request.js"
 import Qs from "qs"
 
-export function c_import(values) {//分判商邀請函
+export function c_minutes(values) {//分判商邀請函
     return request({
         url: "api/data?page=minutes&action=c_minutes",
         method: "POST",
