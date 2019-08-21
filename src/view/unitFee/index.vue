@@ -1,27 +1,27 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="search by unitList id" style="width: 200px" @search="onSearch" />
+      <a-input-search placeholder="search by unitFee id" style="width: 200px" @search="onSearch" />
       <span>
         <a-button
           type="primary"
           @click="()=>{
-        this.$refs.newunitList.show()
+        this.$refs.newunitFee.show()
         }"
-        >新增單位</a-button>
+        >新增管理費</a-button>
       </span>
     </p>
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $refs.editunitList.show(record)
+          $refs.editunitFee.show(record)
           }">更多</a>
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
           v-if="tableData.length"
           title="Sure to delete?"
-          @confirm="() => onDelete(record.unit_id)"
+          @confirm="() => onDelete(record.unit_fee_id)"
         >
           <a>
             <a-icon type="delete"></a-icon>
@@ -29,23 +29,27 @@
         </a-popconfirm>
       </template>
     </a-table>
-    <newunitList ref="newunitList" @done="()=>{
+    <newunitFee ref="newunitFee" @done="()=>{
       this.getTableData(this.$route.params.bid);
       }" />
-    <editunitList ref="editunitList" @done="()=>{
+    <editunitFee ref="editunitFee" @done="()=>{
     this.getTableData(this.$route.params.bid);
     }" />
   </div>
 </template>
 <script>
-import newunitList from "./new";
-import editunitList from "./edit";
-import { r_unit_list, d_unit_list } from "@/api/unit_list.js";
+import newunitFee from "./new";
+import editunitFee from "./edit";
+import { r_unit_fee, d_unit_fee } from "@/api/unit_fee.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
-  { title: "單位編號", dataIndex: "unit_id", key: "unit_id" },
-  { title: "單位層數", width: "150px", dataIndex: "floor", key: "floor" },
-  { title: "單位號數", dataIndex: "unit", key: "unit" },
+  { title: "管理費編號", dataIndex: "unit_fee_id", key: "unit_fee_id" },
+  { title: "單位編號", width: "150px", dataIndex: "unit_id", key: "unit_id" },
+  { title: "收費種類", dataIndex: "type", key: "type" },
+  { title: "金額", dataIndex: "amount", key: "amount" },
+  { title: "繳付狀態", dataIndex: "payment_status", key: "payment_status" },
+  { title: "繳付方法", dataIndex: "payment_type", key: "payment_type" },
+  { title: "收款日期", dataIndex: "receive_date", key: "receive_date" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
@@ -110,14 +114,14 @@ export default {
   methods: {
     onSearch(val) {
       const dataSource = [...this.dataSource];
-      this.tableData = dataSource.filter(item => item.unit_id == val);
+      this.tableData = dataSource.filter(item => item.unit_fee_id == val);
       if (val == "") {
         this.tableData = this.dataSource;
       }
     },
     getTableData() {
       this.onTableLoading = true;
-      r_unit_list(this.$route.params.bid)
+      r_unit_fee(this.$route.params.bid)
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
@@ -125,8 +129,8 @@ export default {
         })
         .catch(err => {});
     },
-    onDelete(unit_id) {
-      d_unit_list(unit_id)
+    onDelete(unit_fee_id) {
+      d_unit_fee(unit_fee_id)
         .then(res => {
           if (res.status) {
             this.getTableData();
@@ -136,7 +140,7 @@ export default {
         .catch(err => {});
     }
   },
-  components: { newunitList, editunitList }
+  components: { newunitFee, editunitFee }
 };
 </script>
 <style lang="scss">

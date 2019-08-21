@@ -63,6 +63,16 @@ const router = new Router({
           path: "propertyUnitList",
           name: "property_unit_list",
           component: () => import("@/view/unitList")
+        },
+        {
+          path: "propertyUnitFee",
+          name: "property_unit_fee",
+          component: () => import("@/view/unitFee")
+        },
+        {
+          path: "propertyUnitFile",
+          name: "property_unit_file",
+          component: () => import("@/view/unitFile")
         }
       ]
     },

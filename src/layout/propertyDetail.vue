@@ -79,6 +79,16 @@ export default {
           r_name: "property_unit_list",
           title: "Unit List / 單位列表",
           icon: "team"
+        },
+        {
+          r_name: "property_unit_fee",
+          title: "Unit Fee / 管理費",
+          icon: "team"
+        },
+        {
+          r_name: "property_unit_file",
+          title: "Unit File / 單位紀錄",
+          icon: "team"
         }
       ],
       breadcrumb: [],
