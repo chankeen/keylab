@@ -50,6 +50,14 @@
             <span class="label">備註</span>
             <a-input v-model="info.remarks"></a-input>
           </p>
+          <a-divider></a-divider>
+          <p class="item">
+            <span class="label">Unit Fee File</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile v-model="info.unit_fee_file"></uploadFile>
+            </span>
+          </p>
+          <a-divider />
         </a-col>
       </a-row>
 
@@ -61,6 +69,7 @@
 </template>
 <script>
 import moment from "moment";
+import uploadFile from "@/components/uploadFile.vue";
 import { u_unit_fee } from "@/api/unit_fee";
 export default {
   data() {
@@ -73,6 +82,7 @@ export default {
   created() {
     //this.get_data();
   },
+  components: { uploadFile },
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
@@ -82,10 +92,30 @@ export default {
     onClose() {
       this.visible = false;
     },
+    //提取文件信息
+    get_file_info(item) {
+      item.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
+    },
     onSubmit() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
             this.info[key] = this.info[key]._isValid
               ? this.info[key].format("YYYY-MM-DD")
               : "";
@@ -93,20 +123,21 @@ export default {
         }
       }
       this.onSubmiting = true;
+      this.info.unit_fee_file = this.get_file_info(this.info.unit_fee_file);
       u_unit_fee(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("成功添加");
+            this.$message.success("修改成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("修改失敗");
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("修改失敗");
         });
     }
   }

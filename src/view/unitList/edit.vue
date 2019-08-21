@@ -68,17 +68,17 @@ export default {
       u_unit_list(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("成功添加");
+            this.$message.success("更新成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("更新失敗");
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("更新失敗");
         });
     }
   }

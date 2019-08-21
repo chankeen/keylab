@@ -32,9 +32,16 @@
             <span class="label">備註</span>
             <a-input v-model="info.remarks"></a-input>
           </p>
+          <a-divider></a-divider>
+          <p class="item">
+            <span class="label">Unit File File</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile v-model="info.unit_file_file"></uploadFile>
+            </span>
+          </p>
+          <a-divider />
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
@@ -43,6 +50,7 @@
 </template>
 <script>
 import moment from "moment";
+import uploadFile from "@/components/uploadFile.vue";
 import { c_unit_file } from "@/api/unit_file";
 export default {
   data() {
@@ -53,18 +61,21 @@ export default {
         property_id: "",
         unit_id: "",
         instrument_date: "",
+        unit_file_file: "",
         remarks: "",
         type: ""
       }
     };
   },
-  created() {
-  },
+  created() {},
+  components: { uploadFile },
   methods: {
     show() {
       for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
+        if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
           this.info[key] = "";
+        } else {
+          this.info[key] = [];
         }
       }
       this.visible = true;
@@ -72,6 +83,23 @@ export default {
     },
     onClose() {
       this.visible = false;
+    },
+    //提取文件信息
+    get_file_info(item) {
+      item.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
     },
     onSubmit() {
       for (const key in this.info) {
@@ -87,7 +115,7 @@ export default {
         }
       }
       this.onSubmiting = true;
-      console.log(this.info);
+      this.info.unit_file_file = this.get_file_info(this.info.unit_file_file);
       c_unit_file(this.info)
         .then(res => {
           if (res.status) {
