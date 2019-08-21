@@ -94,6 +94,11 @@ export default {
           r_name: "property_term_contract",
           title: "Term Contract / 常規合約",
           icon: "team"
+        },
+        {
+          r_name: "property_individual_contract",
+          title: "Individual Contract / 一次性合約",
+          icon: "team"
         }
       ],
       breadcrumb: [],

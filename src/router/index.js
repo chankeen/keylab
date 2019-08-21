@@ -78,6 +78,11 @@ const router = new Router({
           path: "propertyTermContract",
           name: "property_term_contract",
           component: () => import("@/view/termContract")
+        },
+        {
+          path: "propertyIndividualContract",
+          name: "property_individual_contract",
+          component: () => import("@/view/individualContract")
         }
       ]
     },
