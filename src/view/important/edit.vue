@@ -1,5 +1,5 @@
 <template>
-<a-drawer
+  <a-drawer
     title="修改/檢視重要事項"
     placement="right"
     :closable="false"
@@ -48,33 +48,23 @@
 </template>
 <script>
 import moment from "moment";
-import { u_important, r_important } from "@/api/important";
+import { u_important } from "@/api/important";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
-      info: {
-        property_id: "",
-        type: "",
-        known_date: "",
-        deadline: "",
-        content: "",
-        remarks: ""
-      }
+      info: {}
     };
   },
   created() {
     //this.get_data();
   },
   methods: {
-    show(important_id) {
-      console.log('importnat_id'+important_id);
-      r_important(important_id)
-        .then(res => {
-          this.info = res.list[0];
-        })
-        .catch(err => {});
+    show(info) {
+      this.info = JSON.parse(JSON.stringify(info));
+      this.info.known_date = moment(this.info.known_date, "YYYY-MM-DD");
+      this.info.deadline = moment(this.info.deadline, "YYYY-MM-DD");
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -107,7 +97,7 @@ export default {
           this.onSubmiting = false;
           this.$message.error("添加失敗");
         });
-    },
+    }
   }
 };
 </script>

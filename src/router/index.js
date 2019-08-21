@@ -21,16 +21,6 @@ const router = new Router({
           component: () => import("@/view/property")
         },
         {
-          path: "cc",
-          name: "home_oc",
-          component: () => import("@/view/oc")
-        },
-        {
-          path: "propman",
-          name: "home_propman",
-          component: () => import("@/view/propman")
-        },
-        {
           path: "user",
           name: "home_user",
           component: () => import("@/view/user")
@@ -50,7 +40,17 @@ const router = new Router({
           component: () => import("@/view/propertyDetail/home.vue")
         },
         {
-          path: "important",
+          path: "propertyOc",
+          name: "property_oc",
+          component: () => import("@/view/oc")
+        },
+        {
+          path: "propertyPropman",
+          name: "property_propman",
+          component: () => import("@/view/propman")
+        },
+        {
+          path: "propertyImportant",
           name: "property_important",
           component: () => import("@/view/important")
         }

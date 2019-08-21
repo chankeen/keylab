@@ -90,17 +90,31 @@
 
 <script>
 import moment from "moment";
+import { get_property } from "@/api/property.js";
 export default {
   data() {
     return {
+      property_id: "",
+      uid: "",
       info: {}
     };
   },
   created() {
-    this.info = this.$route.params.info;
-    this.info.agm_date = moment(this.info.agm_date, "YYYY-MM-DD");
+    this.property_id = this.$roure.params.bid;
+    this.uid = this.$store.getters.user.uid;
+
+    this.getInfo();
   },
   methods: {
+    //獲取property info
+    getInfo(bid) {
+      get_property(this.uid, this.property_id)
+        .then(res => {
+          this.info = res.list[0];
+          this.info.agm_date = moment(this.info.agm_date, "YYYY-MM-DD");
+        })
+        .catch(err => {});
+    },
     handleChange(info) {
       if (info.file.status !== "uploading") {
         console.log(info.file, info.fileList);

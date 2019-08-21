@@ -2,14 +2,17 @@
   <div class="buildingDetail-container">
     <a-layout style="height:100%">
       <a-layout-sider :trigger="null" collapsible v-model="collapsed">
-        <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['1']">
+        <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['property_home']">
           <a-menu-item v-for="(item,i) in memu" :key="item.r_name" @click="onMenuSelect(item)">
             <a-icon :type="item.icon"></a-icon>
             <span>{{item.title}}</span>
           </a-menu-item>
-          <a-menu-item key="back" @click="()=>{
-               $router.go(-1)
-           }">
+          <a-menu-item
+            key="back"
+            @click="()=>{
+               $router.push({name:'home'})
+           }"
+          >
             <a-icon type="arrow-left"></a-icon>
             <span>Back To Home</span>
           </a-menu-item>
@@ -56,9 +59,17 @@ export default {
     return {
       memu: [
         { r_name: "property_home", title: "大廈詳情", icon: "info-circle" },
-        { r_name: "property_management", title: "物管人員", icon: "team" },
-        { r_name: "property_firm", title: "法團成員", icon: "team" },
-        { r_name: "property_important", title: "重要事項", icon: "team" }
+        {
+          r_name: "property_propman",
+          title: "Propman / 物管人員",
+          icon: "team"
+        },
+        { r_name: "property_oc", title: "Oc / 法團成員", icon: "team" },
+        {
+          r_name: "property_important",
+          title: "Important / 重要事項",
+          icon: "team"
+        }
       ],
       breadcrumb: [],
       activeItem: ["client_list"],
@@ -81,14 +92,18 @@ export default {
   methods: {
     //菜單欄選擇
     onMenuSelect(item) {
-      if (item.r_name == "property_home" || item.r_name == "property_important") {
-        this.$router.push({ name: item.r_name });
-        this.breadcrumb = [];
-        this.breadcrumb.push("Home");
-        this.breadcrumb.push(item.title);
-      } else {
-        this.$message.info("開發中");
-      }
+      this.$router.push({ name: item.r_name });
+      this.breadcrumb = [];
+      this.breadcrumb.push("Home");
+      this.breadcrumb.push(item.title);
+      // if (
+      //   item.r_name == "property_home" ||
+      //   item.r_name == "property_important"
+      // ) {
+
+      // } else {
+      //   this.$message.info("開發中");
+      // }
     },
     admin_logout() {
       logout()

@@ -5,7 +5,8 @@ export function get_property(admin_wp_id, property_id) {
         url: "api/data?page=property&action=r_property",
         method: "POST",
         data: Qs.stringify({
-
+            property_id,
+            admin_wp_id
         })
     });
 }

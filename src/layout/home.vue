@@ -56,16 +56,9 @@ export default {
           icon: "bank",
           key: uuidv1()
         },
-        { r_name: "home_oc", title: "Oc / 法團成員", icon: "team" },
-        {
-          r_name: "home_propman",
-          title: "Propman / 無關成員",
-          icon: "user",
-          key: uuidv1()
-        },
         {
           r_name: "home_user",
-          title: "User / Entity",
+          title: "Users / Entity ",
           icon: "team",
           key: uuidv1()
         }
