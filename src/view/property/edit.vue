@@ -164,6 +164,7 @@
 </template>
 <script>
 import moment from "moment";
+import uploadFile from "@/components/uploadFile.vue";
 import { getDate } from "@/utils/validate.js";
 import { update_pmaster } from "@/api/pmaster.js";
 export default {

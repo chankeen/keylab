@@ -10,9 +10,9 @@ export function get_property(admin_wp_id, property_id) {
         })
     });
 }
-export function update_pmaster(values) {
+export function update_property(values) {
     return request({
-        url: "admin-index?page=pmaster&action=update_pmaster",
+        url: "api/data?page=property&action=u_property",
         method: "POST",
         data: Qs.stringify({
             ...values
