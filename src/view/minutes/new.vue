@@ -122,6 +122,7 @@ export default {
           if (res.status) {
             this.$message.success("成功添加");
             this.visible = false;
+            this.$emit("done", {});
           } else {
             this.$message.error("添加失敗");
           }
