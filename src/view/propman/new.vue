@@ -40,11 +40,7 @@
 </template>
 <script>
 import moment from "moment";
-<<<<<<< HEAD
-import { new_property } from "@/api/property"
-=======
 import { c_propman } from "@/api/propman";
->>>>>>> 41fce80bbdbe3c052aac3361de4de1c60f5ffe3d
 export default {
   data() {
     return {
@@ -84,11 +80,7 @@ export default {
         }
       }
       this.onSubmiting = true;
-<<<<<<< HEAD
-      new_property(this.info)
-=======
       c_propman(this.info)
->>>>>>> 41fce80bbdbe3c052aac3361de4de1c60f5ffe3d
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
