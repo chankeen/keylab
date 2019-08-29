@@ -43,7 +43,7 @@
 <script>
 import moment from "moment";
 import { get_client_data } from "@/api/client_data";
-import { new_property } from "@/api/property";
+import { u_users } from "@/api/users";
 export default {
   data() {
     return {
@@ -65,7 +65,11 @@ export default {
   },
   methods: {
     show(info) {
-      this.info = info;
+      this.info = JSON.parse(JSON.stringify(info));
+      this.info.creation_datetime = moment(
+        this.info.creation_datetime,
+        "YYYY-MM-DD"
+      );
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -82,22 +86,22 @@ export default {
           }
         }
       }
-
-      this.info.p_no = this.project_no;
-      console.log(this.info);
       this.onSubmiting = true;
-      new_property(this.info)
+      u_users(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("成功添加");
+            this.$message.success("更新成功");
             this.visible = false;
+            this.onSubmiting = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.onSubmiting = false;
+            this.$message.error("更新失敗");
           }
         })
         .catch(err => {
-          this.$message.error("添加失敗");
+          this.onSubmiting = false;
+          this.$message.error("更新失敗");
         });
     }
   }

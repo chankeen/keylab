@@ -51,7 +51,7 @@
 <script>
 import moment from "moment";
 import { get_client_data } from "@/api/client_data";
-import { new_property } from "@/api/property";
+import { u_oc } from "@/api/oc";
 export default {
   data() {
     return {
@@ -94,7 +94,8 @@ export default {
         }
       }
       this.onSubmiting = true;
-      new_property(this.info)
+      this.info.user_id = this.$store.getters.user.uid;
+      u_oc(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("修改成功");

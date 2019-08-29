@@ -12,21 +12,11 @@
         <a-col>
           <p class="item">
             <span class="label">物業編號</span>
-            <a-select v-model="info.property_id">
-              <a-select-option value="正常">正常</a-select-option>
-              <a-select-option value="暫停">暫停</a-select-option>
-              <a-select-option value="封存">封存</a-select-option>
-            </a-select>
+            <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
             <span class="label">User ID</span>
-            <a-select v-model="info.user_id">
-              <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
-              <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
-              <a-select-option value="屋苑大廈">屋苑大廈</a-select-option>
-              <a-select-option value="商廈">商廈</a-select-option>
-              <a-select-option value="寫字樓">寫字樓</a-select-option>
-            </a-select>
+            <a-input v-model="info.user_id"></a-input>
           </p>
           <p class="item">
             <span class="label">中文名稱</span>
@@ -50,7 +40,11 @@
 </template>
 <script>
 import moment from "moment";
+<<<<<<< HEAD
 import { new_property } from "@/api/property"
+=======
+import { c_propman } from "@/api/propman";
+>>>>>>> 41fce80bbdbe3c052aac3361de4de1c60f5ffe3d
 export default {
   data() {
     return {
@@ -90,7 +84,11 @@ export default {
         }
       }
       this.onSubmiting = true;
+<<<<<<< HEAD
       new_property(this.info)
+=======
+      c_propman(this.info)
+>>>>>>> 41fce80bbdbe3c052aac3361de4de1c60f5ffe3d
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");

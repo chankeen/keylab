@@ -12,7 +12,9 @@
         <a-col>
           <p class="item">
             <span class="label">Status</span>
-            <a-select v-model="info.status"></a-select>
+            <a-select v-model="info.status">
+              <a-select-option value="正常">正常</a-select-option>
+            </a-select>
           </p>
           <p class="item">
             <span class="label">Chinese Name</span>
@@ -31,10 +33,6 @@
             <a-input v-model="info.email"></a-input>
           </p>
           <p class="item">
-            <span class="label">Created By</span>
-            <a-input v-model="info.created_by"></a-input>
-          </p>
-          <p class="item">
             <span class="label">Created Date</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.creation_datetime"></a-date-picker>
           </p>
@@ -50,7 +48,7 @@
 <script>
 import moment from "moment";
 import { get_client_data } from "@/api/client_data";
-import { new_property } from "@/api/property";
+import { c_users } from "@/api/users.js";
 export default {
   data() {
     return {
@@ -93,11 +91,9 @@ export default {
           }
         }
       }
-
-      this.info.p_no = this.project_no;
-      console.log(this.info);
       this.onSubmiting = true;
-      new_property(this.info)
+      this.info.created_by = this.$store.getters.user.uid;
+      c_users(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
@@ -108,6 +104,7 @@ export default {
           }
         })
         .catch(err => {
+          this.visible = false;
           this.$message.error("添加失敗");
         });
     }

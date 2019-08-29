@@ -1,7 +1,7 @@
 <template>
   <div class="buildingDetail-container">
     <a-layout style="height:100%">
-      <a-layout-sider :trigger="null" collapsible v-model="collapsed">
+      <a-layout-sider :trigger="null" collapsible v-model="collapsed" :style="menu_style">
         <a-menu theme="dark" mode="inline" :defaultSelectedKeys="['property_home']">
           <a-menu-item v-for="(item,i) in memu" :key="item.r_name" @click="onMenuSelect(item)">
             <a-icon :type="item.icon"></a-icon>
@@ -23,7 +23,21 @@
           <a-icon
             class="trigger"
             :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="()=> collapsed = !collapsed"
+            @click="()=>{
+               collapsed = !collapsed
+               let width = '';
+                if(collapsed){
+                  //关
+                 width = 80;
+                }else{
+                 //开
+                   width = 300;
+                }
+                 this.menu_style.flex = '0 0 '+width+'px';
+                 this.menu_style.width = width+'px';
+                 this.menu_style['max-width'] = width+'px';
+            
+            }"
           />
           <span class="head_title">{{headTitle}}</span>
           <a-dropdown>
@@ -104,10 +118,28 @@ export default {
       breadcrumb: [],
       activeItem: ["client_list"],
       collapsed: false,
-      headTitle: ""
+      headTitle: "",
+      menu_style: {},
+      memu_300: {
+        flex: "0 0 300px",
+        "max-width": "300px",
+        "min-width": "0px",
+        width: "300px",
+        overflow: "auto",
+        height: "100vh"
+      },
+      memu_80: {
+        flex: "0 0 80px",
+        "max-width": "80px",
+        "min-width": "0px",
+        width: "80px !important",
+        overflow: "auto",
+        height: "100vh"
+      }
     };
   },
   created() {
+    this.menu_style = this.memu_300;
     this.headTitle = this.$route.params.info.name_en;
     //麵包屑
     this.breadcrumb.push("Home");

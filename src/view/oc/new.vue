@@ -12,7 +12,7 @@
         <a-col>
           <p class="item">
             <span class="label">物業編號</span>
-            <a-select v-model="info.property_id"></a-select>
+            <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
             <span class="label">名稱(中文)</span>
@@ -58,7 +58,7 @@
 <script>
 import moment from "moment";
 import { get_client_data } from "@/api/client_data";
-import { new_property } from "@/api/property";
+import { c_oc } from "@/api/oc";
 export default {
   data() {
     return {
@@ -104,7 +104,8 @@ export default {
         }
       }
       this.onSubmiting = true;
-      new_property(this.info)
+      this.info.user_id = this.$store.getters.user.uid;
+      c_oc(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");

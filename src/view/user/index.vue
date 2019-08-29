@@ -1,7 +1,11 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="用戶中文名 / 用戶英文名 / 電話 / 電郵" style="width: 600px" @search="onSearch" />
+      <a-input-search
+        placeholder="用戶中文名 / 用戶英文名 / 電話 / 電郵"
+        style="width: 600px"
+        @search="onSearch"
+      />
       <span>
         <a-button
           type="primary"
@@ -11,7 +15,12 @@
         >Add Record</a-button>
       </span>
     </p>
-    <a-table :columns="columns" :rowKey="record => record.user_id" :dataSource="tableData" :loading="onTableLoading">
+    <a-table
+      :columns="columns"
+      :rowKey="record => record.user_id"
+      :dataSource="tableData"
+      :loading="onTableLoading"
+    >
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
           $refs.edit.show(record)
@@ -21,7 +30,7 @@
         <a-popconfirm
           v-if="tableData.length"
           title="Sure to delete?"
-          @confirm="() => onDelete(record.property_id)"
+          @confirm="() => onDelete(record.user_id)"
         >
           <a>
             <a-icon type="delete"></a-icon>
@@ -40,7 +49,11 @@
 <script>
 import newRecord from "./new";
 import edit from "./edit";
+<<<<<<< HEAD
 import { r_users, d_users } from "@/api/users.js";
+=======
+import { get_users, d_users } from "@/api/users.js";
+>>>>>>> 41fce80bbdbe3c052aac3361de4de1c60f5ffe3d
 import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "User ID", dataIndex: "user_id" },
