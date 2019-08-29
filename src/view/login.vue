@@ -1,7 +1,7 @@
 <template>
   <div style="background:black">
     <div class="loginbox">
-      <h2 class="uname">KeyLab</h2>
+      <h2 class="uname">KeyMana</h2>
       <p class="input-item">
         <a-input v-model="login" name="user_name" placeholder="用户名" ref="userNameInput">
           <a-icon slot="prefix" type="user" />
@@ -30,6 +30,7 @@
 </template>
 <script>
 import { login } from "@/api/user.js";
+import { mapMutations } from 'vuex'
 export default {
   data() {
     return {
@@ -46,11 +47,9 @@ export default {
       login(this.login, this.password)
         .then(response => {
           if (response.rc == "1") {
-            sessionStorage.setItem("token", response.token);
-            sessionStorage.setItem("user_name", this.login);
-            this.$store.dispatch('app/setUser', {uid:response.admin_wp_id})
-            this.$message.success("Welcome to Esolution!");
-            this.$router.push({ name: "home", params: {} });
+              sessionStorage.setItem("token", response.token);
+              this.$message.success("Welcome to KeyMana!");
+              this.$router.push({ name: "home", params: {} });
           } else {
             this.$message.error("Invalid user name or password!");
           }
@@ -62,7 +61,7 @@ export default {
           this.loading = false;
           this.$message.error("Login error!");
         });
-    }
+    },
   }
 };
 </script>

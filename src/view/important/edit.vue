@@ -26,7 +26,7 @@
             <a-date-picker format="DD/MM/YYYY" v-model="info.known_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">處理死線</span>
+            <span class="label">限期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.deadline"></a-date-picker>
           </p>
           <p class="item">

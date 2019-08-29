@@ -90,7 +90,7 @@ export default {
   components: { uploadFile },
   created() {
     this.property_id = this.$route.params.bid;
-    this.uid = this.$store.getters.user.uid;
+    this.uid = sessionStorage.getItem('admin_wp_id');
     this.getInfo();
   },
   methods: {
@@ -136,7 +136,7 @@ export default {
       this.info.floor_plan_file = this.get_file_info(this.info.floor_plan_file);
       this.info.dmc_file = this.get_file_info(this.info.dmc_file);
       this.onSubmiting = true;
-      this.info.admin_wp_id = this.$store.getters.user.uid;
+      this.info.admin_wp_id = sessionStorage.getItem('admin_wp_id');
       update_property(this.info)
         .then(res => {
           if (res.status) {

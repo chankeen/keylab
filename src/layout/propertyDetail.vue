@@ -73,7 +73,7 @@ export default {
         {
           r_name: "property_minutes",
           title: "Minutes / 會議紀錄",
-          icon: "ordered-list"
+          icon: "solution"
         },
         {
           r_name: "property_unit_list",
@@ -93,12 +93,12 @@ export default {
         {
           r_name: "property_term_contract",
           title: "Term Contract / 常規合約",
-          icon: "team"
+          icon: "file-sync"
         },
         {
           r_name: "property_individual_contract",
           title: "Individual Contract / 一次性合約",
-          icon: "team"
+          icon: "file-exclamation"
         }
       ],
       breadcrumb: [],

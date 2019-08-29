@@ -46,6 +46,28 @@
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
+
+      <a-row>
+        <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
+          <template slot="detail" slot-scope="record">
+            <a @click="()=>{
+              $refs.edittermContract.show(record)
+              }">更多</a>
+          </template>
+          <template slot="delete" slot-scope="record">
+            <a-popconfirm
+              v-if="tableData.length"
+              title="Sure to delete?"
+              @confirm="() => onDelete(record.term_contract_id)"
+            >
+              <a>
+                <a-icon type="delete"></a-icon>
+              </a>
+            </a-popconfirm>
+          </template>
+        </a-table>
+      </a-row>
+      
     </div>
   </a-drawer>
 </template>
@@ -53,23 +75,45 @@
 import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
 import { u_unit_list } from "@/api/unit_list";
+import uuiddv1 from "uuid/v1";
+const columns = [
+  { title: "檢查日期", dataIndex: "checking_date", key: "checking_date" },
+  { title: "額外合約", dataIndex: "extra_contract", key: "extra_contract" },
+  { title: "負責人", dataIndex: "buyer_name_zh", key: "buyer_name_zh" },
+  { width: "100px", scopedSlots: { customRender: "detail" }},
+  { width: "100px", scopedSlots: { customRender: "delete" }}
+];
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
-      info: {}
+      info: {},
+      dataSource: [],
+      columns,
+      onTableLoading: false
     };
   },
   components: { uploadFile },
   created() {
-    //this.get_data();
+    this.getTableData();
   },
   methods: {
     show(term_contract_id) {
       this.visible = true;
       this.onSubmiting = false;
       this.info.term_contract_id = term_contract_id;
+    },
+     getTableData() {
+      this.onTableLoading = true;
+      this.onTableLoading = false;
+      var fake_obj = [{
+        checking_date: "08/11/2018",
+        extra_contract: "No",
+        buyer_name_zh: "陳大文",
+      }];
+      this.tableData = fake_obj;
+      this.dataSource = fake_obj;
     },
     onClose() {
       this.visible = false;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="search by user name" style="width: 200px" @search="onSearch" />
+      <a-input-search placeholder="用戶中文名 / 用戶英文名 / 電話 / 電郵" style="width: 600px" @search="onSearch" />
       <span>
         <a-button
           type="primary"
@@ -11,7 +11,7 @@
         >Add Record</a-button>
       </span>
     </p>
-    <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
+    <a-table :columns="columns" :rowKey="record => record.user_id" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
           $refs.edit.show(record)
@@ -40,7 +40,7 @@
 <script>
 import newRecord from "./new";
 import edit from "./edit";
-import { get_users } from "@/api/users.js";
+import { r_users, d_users } from "@/api/users.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "User ID", dataIndex: "user_id" },
@@ -48,7 +48,7 @@ const columns = [
   { title: "Chinese Name", dataIndex: "name_zh" },
   { title: "English Name", dataIndex: "name_en" },
   { title: "Login Tel", width: "100px", dataIndex: "login_tel" },
-  { title: "Email", dataIndex: "login_tel" },
+  { title: "Email", dataIndex: "email" },
   { title: "Created By", dataIndex: "created_by" },
   { title: "Created Date", width: "100px", dataIndex: "creation_datetime" },
   { scopedSlots: { customRender: "detail" } },
@@ -60,7 +60,8 @@ export default {
       tableData: [],
       dataSource: [],
       columns,
-      onTableLoading: false
+      onTableLoading: false,
+      admin_wp_id: 0
     };
   },
   created() {
@@ -71,7 +72,7 @@ export default {
       const dataSource = [...this.dataSource];
       this.tableData = dataSource.filter(
         item =>
-          (item.name_zh + item.name_en)
+          (item.name_zh + item.name_en + item.login_tel + item.email)
             .toLowerCase()
             .indexOf(val.toLowerCase()) > -1
       );
@@ -82,7 +83,7 @@ export default {
     //獲取表格數據
     getTableData() {
       this.onTableLoading = true;
-      get_users()
+      r_users(sessionStorage.getItem('admin_wp_id'))
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
@@ -90,12 +91,13 @@ export default {
         })
         .catch(err => {});
     },
-    onDelete(cid) {
-      delete_pmaster(cid)
+    onDelete(user_id) {
+      d_users(user_id)
         .then(res => {
           if (res.status) {
             this.getTableData();
           } else {
+            this.$message.error("Fail");
           }
         })
         .catch(err => {});

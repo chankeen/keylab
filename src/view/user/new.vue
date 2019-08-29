@@ -68,7 +68,7 @@ export default {
     };
   },
   created() {
-    this.get_client();
+    //this.get_client();
   },
   methods: {
     show() {

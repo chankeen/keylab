@@ -47,7 +47,7 @@ const columns = [
   { title: "重要事項種類", width: "150px", dataIndex: "type", key: "type" },
   { title: "重要事項內容", dataIndex: "content", key: "content" },
   { title: "知悉日期", dataIndex: "known_date", key: "known_date" },
-  { title: "處理死線", dataIndex: "deadline", key: "deadline" },
+  { title: "處理限期", dataIndex: "deadline", key: "deadline" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
