@@ -1,6 +1,6 @@
 const getters = {
-  domain: state => state.domain,
-  TOKEN: state => state.TOKEN
+  domain: state => state.app.domain,
+  TOKEN: state => state.app.TOKEN
 };
 // gettes should be a function
 export default getters;
