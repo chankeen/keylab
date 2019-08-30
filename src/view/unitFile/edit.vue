@@ -68,6 +68,10 @@ export default {
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
+      this.info.instrument_date = moment(
+        this.info.instrument_date,
+        "YYYY-MM-DD"
+      );
       this.visible = true;
       this.onSubmiting = false;
     },

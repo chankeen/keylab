@@ -21,7 +21,7 @@
         <a-popconfirm
           v-if="tableData.length"
           title="Sure to delete?"
-          @confirm="() => onDelete(record.property_id)"
+          @confirm="() => onDelete(record.oc_id)"
         >
           <a>
             <a-icon type="delete"></a-icon>
@@ -40,7 +40,7 @@
 <script>
 import newRecord from "./new";
 import edit from "./edit";
-import { get_oc } from "@/api/oc.js";
+import { r_oc, d_oc } from "@/api/oc.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "物業編號", dataIndex: "property_id" },
@@ -80,7 +80,7 @@ export default {
     },
     getTableData() {
       this.onTableLoading = true;
-      get_oc()
+      r_oc()
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
@@ -89,7 +89,7 @@ export default {
         .catch(err => {});
     },
     onDelete(cid) {
-      delete_pmaster(cid)
+      d_oc(cid)
         .then(res => {
           if (res.status) {
             this.getTableData();
