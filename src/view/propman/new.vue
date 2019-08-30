@@ -57,7 +57,9 @@ export default {
       info: {
         property_id: "",
         user_id: "",
-        position: ""
+        position: "",
+        name_zh: "",
+        name_en:""
       }
     };
   },
@@ -69,6 +71,8 @@ export default {
     onUserSelect(e) {
       console.log(e.selectedRowKeys[0]);
       this.info.user_id = e.selectedRowKeys[0];
+      this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
+      this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
     },
     show() {
       for (const key in this.info) {

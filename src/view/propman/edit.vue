@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     show(info) {
-      this.info = info;
+      this.info = JSON.parse(JSON.stringify(info));
       this.visible = true;
       this.onSubmiting = false;
     },

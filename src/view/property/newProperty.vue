@@ -89,7 +89,7 @@
 <script>
 import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
-import { new_property } from "@/api/property.js";
+import { c_property } from "@/api/property.js";
 export default {
   data() {
     return {
@@ -165,7 +165,7 @@ export default {
       this.onSubmiting = true;
       this.info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
       console.log("wp_id" + sessionStorage.getItem("admin_wp_id"));
-      new_property(this.info)
+      c_property(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");

@@ -68,7 +68,7 @@ export default {
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
-      this.info.known_date = moment(this.info.meeting_date, "YYYY-MM-DD");
+      this.info.meeting_date = moment(this.info.meeting_date, "YYYY-MM-DD");
       this.visible = true;
       this.onSubmiting = false;
     },

@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     show(info) {
-      this.info = info;
+      this.info = JSON.parse(JSON.stringify(info));
       this.info.elected_date = moment(this.info.elected_date, "YYYY-MM-DD");
       this.visible = true;
       this.onSubmiting = false;
@@ -93,7 +93,6 @@ export default {
         }
       }
       this.onSubmiting = true;
-      this.info.user_id = this.$store.getters.user.uid;
       u_oc(this.info)
         .then(res => {
           if (res.status) {

@@ -83,7 +83,7 @@ export default {
         }
       }
       this.onSubmiting = true;
-      this.info.created_by = this.$store.getters.user.uid;
+      this.info.created_by = sessionStorage.admin_wp_id;
       c_users(this.info)
         .then(res => {
           if (res.status) {
