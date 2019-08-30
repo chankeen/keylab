@@ -77,7 +77,7 @@
 <script>
 import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
-import { get_property, update_property } from "@/api/property.js";
+import { r_property, u_property } from "@/api/property.js";
 export default {
   data() {
     return {
@@ -96,7 +96,7 @@ export default {
   methods: {
     //獲取property info
     getInfo() {
-      get_property(this.uid, this.property_id)
+      r_property(this.uid, this.property_id)
         .then(res => {
           this.info = res.list[0];
           let agm_date = moment(this.info.agm_date, "YYYY-MM-DD");
@@ -142,7 +142,7 @@ export default {
       this.info.dmc_file = this.get_file_info(this.info.dmc_file);
       this.onSubmiting = true;
       this.info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
-      update_property(this.info)
+      u_property(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("更新成功");

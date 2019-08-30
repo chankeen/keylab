@@ -2,6 +2,7 @@ import request from "@/utils/request.js"
 import Qs from "qs"
 
 export function c_individual_contract(values) {//分判商邀請函
+    console.log(values);
     return request({
         url: "api/data?page=individual_contract&action=c_individual_contract",
         method: "POST",

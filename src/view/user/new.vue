@@ -32,10 +32,6 @@
             <span class="label">Email</span>
             <a-input v-model="info.email"></a-input>
           </p>
-          <p class="item">
-            <span class="label">Created Date</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.creation_datetime"></a-date-picker>
-          </p>
         </a-col>
       </a-row>
 
@@ -46,8 +42,6 @@
   </a-drawer>
 </template>
 <script>
-import moment from "moment";
-import { get_client_data } from "@/api/client_data";
 import { c_users } from "@/api/users.js";
 export default {
   data() {
@@ -55,19 +49,16 @@ export default {
       visible: false,
       onSubmiting: false,
       info: {
-        status: "",
+        status: "正常",
         name_zh: "",
         name_en: "",
         login_tel: "",
         email: "",
-        created_by: "",
-        creation_datetime: ""
+        created_by: ""
       }
     };
   },
-  created() {
-    //this.get_client();
-  },
+  created() {},
   methods: {
     show() {
       for (const key in this.info) {

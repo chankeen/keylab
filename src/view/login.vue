@@ -30,7 +30,7 @@
 </template>
 <script>
 import { login } from "@/api/user.js";
-import { mapMutations } from 'vuex'
+import { mapMutations } from "vuex";
 export default {
   data() {
     return {
@@ -47,9 +47,10 @@ export default {
       login(this.login, this.password)
         .then(response => {
           if (response.rc == "1") {
-              sessionStorage.setItem("token", response.token);
-              this.$message.success("Welcome to KeyMana!");
-              this.$router.push({ name: "home", params: {} });
+            sessionStorage.setItem("token", response.token);
+            sessionStorage.setItem("admin_wp_id", response.admin_wp_id);
+            this.$message.success("Welcome to KeyMana!");
+            this.$router.push({ name: "home", params: {} });
           } else {
             this.$message.error("Invalid user name or password!");
           }
@@ -57,11 +58,11 @@ export default {
         })
         .catch(error => {
           console.log(error);
-          
+
           this.loading = false;
           this.$message.error("Login error!");
         });
-    },
+    }
   }
 };
 </script>

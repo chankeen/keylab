@@ -1,6 +1,6 @@
 import request from "@/utils/request.js"
 import Qs from "qs"
-export function get_property(admin_wp_id, property_id) {
+export function r_property(admin_wp_id, property_id) {
     return request({
         url: "api/data?page=property&action=r_property",
         method: "POST",
@@ -10,7 +10,7 @@ export function get_property(admin_wp_id, property_id) {
         })
     });
 }
-export function update_property(values) {
+export function u_property(values) {
     return request({
         url: "api/data?page=property&action=u_property",
         method: "POST",
@@ -19,7 +19,7 @@ export function update_property(values) {
         })
     });
 }
-export function delete_property(property_id) {
+export function d_property(property_id) {
     return request({
         url: "api/data?page=property&action=d_property",
         method: "POST",
@@ -28,21 +28,12 @@ export function delete_property(property_id) {
         })
     });
 }
-export function new_property(value) {
+export function c_property(value) {
     return request({
         url: "api/data?page=property&action=c_property",
         method: "POST",
         data: Qs.stringify({
             ...value
-        })
-    });
-}
-
-export function get_sub_contractor() {
-    return request({
-        url: "admin-index?page=pmaster&action=get_sub_contractor",
-        method: "POST",
-        data: Qs.stringify({
         })
     });
 }

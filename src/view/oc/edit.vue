@@ -50,7 +50,6 @@
 </template>
 <script>
 import moment from "moment";
-import { get_client_data } from "@/api/client_data";
 import { u_oc } from "@/api/oc";
 export default {
   data() {

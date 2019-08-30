@@ -114,9 +114,7 @@ export default {
     };
   },
   components: { uploadFile },
-  created() {
-    console.log('wp_id'+sessionStorage.getItem('admin_wp_id'));
-  },
+  created() {},
   methods: {
     show() {
       for (const key in this.info) {
@@ -165,8 +163,8 @@ export default {
       this.info.floor_plan_file = this.get_file_info(this.info.floor_plan_file);
       this.info.dmc_file = this.get_file_info(this.info.dmc_file);
       this.onSubmiting = true;
-      this.info.admin_wp_id = sessionStorage.getItem('admin_wp_id');
-      console.log('wp_id'+sessionStorage.getItem('admin_wp_id'));
+      this.info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
+      console.log("wp_id" + sessionStorage.getItem("admin_wp_id"));
       new_property(this.info)
         .then(res => {
           if (res.status) {
