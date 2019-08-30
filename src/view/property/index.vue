@@ -7,19 +7,18 @@
         @search="onSearch"
       />
       <span>
-        <a-button
-          type="primary"
-          @click="()=>{
+        <a-button type="primary" @click="()=>{
         this.$refs.newProperty.show()
-        }"
-        >Add Property</a-button>
+        }">新增物業</a-button>
       </span>
     </p>
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
-        <a @click="()=>{
+        <a
+          @click="()=>{
           $router.push({name:'property_home',params:{bid:record.property_id,info:record},})
-          }">更多</a>
+          }"
+        >更多</a>
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
@@ -40,7 +39,7 @@
 </template>
 <script>
 import newProperty from "./newProperty";
-import { get_property, delete_property } from "@/api/property.js";
+import { r_property, d_property } from "@/api/property.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "物業編號", dataIndex: "property_id", key: "property_id" },
@@ -109,7 +108,7 @@ export default {
   },
   created() {
     this.getTableData();
-    console.log(sessionStorage.getItem('admin_wp_id'));
+    console.log("admin_wp_id" + sessionStorage.getItem("admin_wp_id"));
   },
   methods: {
     onSearch(val) {
@@ -124,7 +123,7 @@ export default {
     },
     getTableData() {
       this.onTableLoading = true;
-      get_property()
+      r_property(sessionStorage.getItem("admin_wp_id"), null)
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
@@ -133,7 +132,7 @@ export default {
         .catch(err => {});
     },
     onDelete(cid) {
-      delete_property(cid)
+      d_property(cid)
         .then(res => {
           if (res.status) {
             this.getTableData();
