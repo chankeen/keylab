@@ -20,26 +20,29 @@
           </p>
           <p class="item">
             <span class="label">檢查種類</span>
-            <a-input v-model="info.floor"></a-input>
+            <a-select v-model="info.type">
+              <a-select-option value="冷氣">冷氣</a-select-option>
+              <a-select-option value="電梯">電梯</a-select-option>
+              <a-select-option value="其他">其他</a-select-option>
+            </a-select>
           </p>
           <p class="item">
             <span class="label">檢查負責人</span>
-            <a-input v-model="info.unit"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">檢查負責人公司</span>
-            <a-input v-model="info.unit"></a-input>
+            <a-input v-model="info.handler"></a-input>
           </p>
           <p class="item">
             <span class="label">是否需要額外工程合約</span>
-            <a-checkbox v-model="info.check"></a-checkbox>
+            <a-select v-model="info.extra_contract">
+              <a-select-option value="否">否</a-select-option>
+              <a-select-option value="是">是</a-select-option>
+            </a-select>
           </p>
           <p class="item">
-          <span class="label">上載檢查報告檔案</span>
-          <span style="text-align:left;width:100%">
-            <uploadFile v-model="info.floor_plan_file"></uploadFile>
-          </span>
-        </p>
+            <span class="label">上載檢查報告檔案</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile v-model="info.regular_report_file"></uploadFile>
+            </span>
+          </p>
         </a-col>
       </a-row>
 
@@ -52,13 +55,13 @@
           <template slot="detail" slot-scope="record">
             <a @click="()=>{
               $refs.edittermContract.show(record)
-              }">更多</a>
+              }">建立合約</a>
           </template>
           <template slot="delete" slot-scope="record">
             <a-popconfirm
               v-if="tableData.length"
               title="Sure to delete?"
-              @confirm="() => onDelete(record.term_contract_id)"
+              @confirm="() => onDelete(record.regular_report_id)"
             >
               <a>
                 <a-icon type="delete"></a-icon>
@@ -67,21 +70,26 @@
           </template>
         </a-table>
       </a-row>
-      
     </div>
   </a-drawer>
 </template>
 <script>
 import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
-import { u_unit_list } from "@/api/unit_list";
+import {
+  c_regular_report,
+  d_regular_report,
+  r_regular_report,
+  u_regular_report
+} from "@/api/regular_report";
+
 import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "檢查日期", dataIndex: "checking_date", key: "checking_date" },
   { title: "額外合約", dataIndex: "extra_contract", key: "extra_contract" },
-  { title: "負責人", dataIndex: "buyer_name_zh", key: "buyer_name_zh" },
-  { width: "100px", scopedSlots: { customRender: "detail" }},
-  { width: "100px", scopedSlots: { customRender: "delete" }}
+  { title: "負責人", dataIndex: "handler", key: "handler" },
+  { width: "100px", scopedSlots: { customRender: "detail" } },
+  { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
 export default {
   data() {
@@ -104,33 +112,67 @@ export default {
       this.onSubmiting = false;
       this.info.term_contract_id = term_contract_id;
     },
-     getTableData() {
+    getTableData() {
       this.onTableLoading = true;
       this.onTableLoading = false;
-      var fake_obj = [{
-        checking_date: "08/11/2018",
-        extra_contract: "No",
-        buyer_name_zh: "陳大文",
-      }];
-      this.tableData = fake_obj;
-      this.dataSource = fake_obj;
+      r_regular_report(this.info.term_contract_id)
+        .then(res => {
+          this.onTableLoading = false;
+          this.tableData = res.list;
+          this.dataSource = res.list;
+        })
+        .catch(err => {});
     },
     onClose() {
       this.visible = false;
     },
+    get_file_info(item) {
+      //get info of file
+      item.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
+    },
+    onDelete(regular_report_id) {
+      d_regular_report(regular_report_id)
+        .then(res => {
+          if (res.status) {
+            this.getTableData();
+          } else {
+          }
+        })
+        .catch(err => {});
+    },
     onSubmit() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
             this.info[key] = this.info[key]._isValid
               ? this.info[key].format("YYYY-MM-DD")
               : "";
           }
         }
       }
+      this.info.regular_report_file = this.get_file_info(
+        this.info.regular_report_file
+      );
       this.onSubmiting = true;
-      u_unit_list(this.info)
+      c_regular_report(this.info)
         .then(res => {
+          console.log(res);
           if (res.status) {
             this.$message.success("成功添加");
             this.visible = false;
@@ -144,6 +186,7 @@ export default {
           this.onSubmiting = false;
           this.$message.error("添加失敗");
         });
+      this.getTableData();
     }
   }
 };

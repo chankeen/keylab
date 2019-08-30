@@ -2,6 +2,7 @@ import request from "@/utils/request.js"
 import Qs from "qs"
 
 export function c_regular_report(values) {//分判商邀請函
+    console.log(values);
     return request({
         url: "api/data?page=regular_report&action=c_regular_report",
         method: "POST",
