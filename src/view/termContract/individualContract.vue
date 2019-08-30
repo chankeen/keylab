@@ -24,6 +24,12 @@
             </a-select>
           </p>
           <p class="item">
+            <span class="label">合約種類</span>
+            <a-select v-model="info.status">
+              <a-select-option value="招標">招標</a-select-option>
+            </a-select>
+          </p>
+          <p class="item">
             <span class="label">招標日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.tender_start"></a-date-picker>
           </p>
@@ -66,9 +72,12 @@ export default {
       info: {
         term_contract_id: 0,
         type: "",
+        status: "",
         tender_start: "",
         tender_end: "",
-        tender_amount: ""
+        tender_amount: "",
+        content: "",
+        contract_file: []
       }
     };
   },
@@ -103,18 +112,6 @@ export default {
       return item;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (
-            typeof this.info[key] == "object" &&
-            !Array.isArray(this.info[key])
-          ) {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
       this.info.property_id = this.$route.params.bid;
       this.info.contract_file = this.get_file_info(this.info.contract_file);
       this.onSubmiting = true;
