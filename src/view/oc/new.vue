@@ -95,7 +95,6 @@ export default {
   components: { selectUser },
   methods: {
     onUserSelect(e) {
-      console.log(e.selectedRowKeys[0]);
       this.info.user_id = e.selectedRowKeys[0];
       this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
       this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;

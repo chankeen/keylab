@@ -63,15 +63,33 @@
           </p>
           <p class="item">
             <span class="label">管理公司負責人id</span>
-            <a-input v-model="info.propman_user_id"></a-input>
+            <a-input
+              v-model="info.propman_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('propman_user_id',[]);
+              }"
+            ></a-input>
           </p>
           <p class="item">
             <span class="label">合約批核人員id</span>
-            <a-input v-model="info.contract_approval_user_id"></a-input>
+            <a-input
+              v-model="info.contract_approval_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('contract_approval_user_id',[]);
+              }"
+            ></a-input>
           </p>
           <p class="item">
             <span class="label">跟進人id</span>
-            <a-input v-model="info.buyer_user_id"></a-input>
+            <a-input
+              v-model="info.buyer_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('buyer_user_id',[]);
+              }"
+            ></a-input>
           </p>
           <p class="item">
             <span class="label">合約服務週期為 每 (數值)(單位) 服務一次</span>
@@ -91,10 +109,10 @@
           </p>
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
+      <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
   </a-drawer>
 </template>
@@ -102,20 +120,30 @@
 import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
 import { c_term_contract } from "@/api/term_contract";
+import selectUser from "@/components/selectUser";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
-      info: {}
+      info: {
+        work_file: [],
+        contract_file: [],
+        propman_user_id: "",
+        contract_approval_user_id: "",
+        buyer_user_id: ""
+      }
     };
   },
-  components: { uploadFile },
+  components: { uploadFile, selectUser },
   created() {},
   methods: {
+    onUserSelect(e) {
+      this.$set(this.info, e.context, e.selectedRowKeys[0]);
+    },
     show() {
       for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
+        if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
           this.info[key] = "";
         }
       }
@@ -160,7 +188,7 @@ export default {
       this.info.work_file = this.get_file_info(this.info.work_file);
       this.onSubmiting = true;
       console.log(this.info);
-      c_unit_list(this.info)
+      c_term_contract(this.info)
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
