@@ -15,6 +15,16 @@
             <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
+            <span class="label">User ID</span>
+            <a-input
+              v-model="info.user_id"
+              readonly
+              @click="()=>{
+                   $refs.selectUser.showModal('',[])
+              }"
+            ></a-input>
+          </p>
+          <p class="item">
             <span class="label">名稱(中文)</span>
             <a-input v-model="info.name_zh"></a-input>
           </p>
@@ -52,11 +62,13 @@
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
+      <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
   </a-drawer>
 </template>
 <script>
 import moment from "moment";
+import selectUser from "@/components/selectUser";
 import { get_client_data } from "@/api/client_data";
 import { c_oc } from "@/api/oc";
 export default {
@@ -67,6 +79,7 @@ export default {
       info: {
         property_id: "",
         name_zh: "",
+        user_id: "",
         name_en: "",
         position: "",
         year_from: "",
@@ -80,7 +93,14 @@ export default {
   created() {
     this.get_client();
   },
+  components: { selectUser },
   methods: {
+    onUserSelect(e) {
+      console.log(e.selectedRowKeys[0]);
+      this.info.user_id = e.selectedRowKeys[0];
+      this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
+      this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
+    },
     show() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
@@ -104,7 +124,6 @@ export default {
         }
       }
       this.onSubmiting = true;
-      this.info.user_id = this.$store.getters.user.uid;
       c_oc(this.info)
         .then(res => {
           if (res.status) {

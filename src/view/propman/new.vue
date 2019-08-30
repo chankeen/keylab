@@ -16,7 +16,13 @@
           </p>
           <p class="item">
             <span class="label">User ID</span>
-            <a-input v-model="info.user_id"></a-input>
+            <a-input
+              v-model="info.user_id"
+              readonly
+              @click="()=>{
+              $refs.selectUser.showModal('',[])
+              }"
+            ></a-input>
           </p>
           <p class="item">
             <span class="label">中文名稱</span>
@@ -35,11 +41,13 @@
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
+      <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
   </a-drawer>
 </template>
 <script>
 import moment from "moment";
+import selectUser from "@/components/selectUser";
 import { c_propman } from "@/api/propman";
 export default {
   data() {
@@ -56,7 +64,12 @@ export default {
   created() {
     this.get_client();
   },
+  components: { selectUser },
   methods: {
+    onUserSelect(e) {
+      console.log(e.selectedRowKeys[0]);
+      this.info.user_id = e.selectedRowKeys[0];
+    },
     show() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {

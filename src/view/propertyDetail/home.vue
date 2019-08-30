@@ -90,7 +90,7 @@ export default {
   components: { uploadFile },
   created() {
     this.property_id = this.$route.params.bid;
-    this.uid = sessionStorage.getItem('admin_wp_id');
+    this.uid = sessionStorage.getItem("admin_wp_id");
     this.getInfo();
   },
   methods: {
@@ -99,7 +99,12 @@ export default {
       get_property(this.uid, this.property_id)
         .then(res => {
           this.info = res.list[0];
-          this.info.agm_date = moment(this.info.agm_date, "YYYY-MM-DD");
+          let agm_date = moment(this.info.agm_date, "YYYY-MM-DD");
+          if (agm_date._isValid) {
+            this.info.agm_date = agm_date;
+          } else {
+            this.info.agm_date = "";
+          }
         })
         .catch(err => {});
     },
@@ -136,7 +141,7 @@ export default {
       this.info.floor_plan_file = this.get_file_info(this.info.floor_plan_file);
       this.info.dmc_file = this.get_file_info(this.info.dmc_file);
       this.onSubmiting = true;
-      this.info.admin_wp_id = sessionStorage.getItem('admin_wp_id');
+      this.info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
       update_property(this.info)
         .then(res => {
           if (res.status) {

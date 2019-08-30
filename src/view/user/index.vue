@@ -49,11 +49,7 @@
 <script>
 import newRecord from "./new";
 import edit from "./edit";
-<<<<<<< HEAD
 import { r_users, d_users } from "@/api/users.js";
-=======
-import { get_users, d_users } from "@/api/users.js";
->>>>>>> 41fce80bbdbe3c052aac3361de4de1c60f5ffe3d
 import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "User ID", dataIndex: "user_id" },

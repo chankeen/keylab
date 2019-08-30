@@ -47,6 +47,22 @@ export default {
     onRemoveFile(file) {
       if (file["url"] == undefined) return true;
       return true;
+    },
+    get_file_info() {
+      this.List.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
     }
   },
   watch: {
@@ -54,7 +70,6 @@ export default {
       immediate: true,
       handler(nval, oval) {
         this.List = nval;
-        console.log(nval);
       }
     }
   }
