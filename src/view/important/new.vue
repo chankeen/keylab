@@ -11,12 +11,9 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
-          </p>
-          <p class="item">
             <span class="label">重要事項種類</span>
             <a-select v-model="info.type">
+              <a-select-option value="---">--- 請選擇種類 ---</a-select-option>
               <a-select-option value="政府法令">政府法令</a-select-option>
               <a-select-option value="其他事項">其他事項</a-select-option>
             </a-select>
@@ -26,22 +23,22 @@
             <a-date-picker format="DD/MM/YYYY" v-model="info.known_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">限期</span>
+            <span class="label">處理限期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.deadline"></a-date-picker>
           </p>
           <p class="item">
             <span class="label">重要事項內容</span>
-            <a-input v-model="info.content"></a-input>
+            <a-input placeholder="任意填寫" v-model="info.content"></a-input>
           </p>
           <p class="item">
             <span class="label">備註</span>
-            <a-input v-model="info.remarks"></a-input>
+            <a-input placeholder="任意填寫" v-model="info.remarks"></a-input>
           </p>
           <a-divider></a-divider>
           <p class="item">
-            <span class="label">Important File</span>
+            <span class="label">相關文件</span>
             <span style="text-align:left;width:100%">
-              <uploadFile v-model="info.important_file"></uploadFile>
+              <uploadFile ref="importantFile" v-model="info.important_file"></uploadFile>
             </span>
           </p>
           <a-divider />
@@ -63,6 +60,7 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
       info: {
         property_id: "",
         type: "",
@@ -78,65 +76,46 @@ export default {
   created() {},
   methods: {
     show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
-          this.info[key] = "";
-        } else {
-          this.info[key] = [];
-        }
-      }
+      this.info.type = "---";
+      this.info.known_date = null;
+      this.info.deadline = null;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
-    //提取文件信息
-    get_file_info(item) {
-      item.forEach(value => {
-        for (var key in value) {
-          if (
-            key == "name" ||
-            key == "url" ||
-            key == "uid" ||
-            key == "status"
-          ) {
-            continue;
-          }
-          delete value[key];
-        }
-      });
-      return item;
+    handle_submit_data(submit_info) {
+      //submit info data handling
+      submit_info.known_date = submit_info.known_date._isValid
+        ? submit_info.known_date.format("YYYY-MM-DD")
+        : "";
+      submit_info.deadline = submit_info.deadline._isValid
+        ? submit_info.deadline.format("YYYY-MM-DD")
+        : "";
+      submit_info.important_file = this.$refs.importantFile.get_file_info(
+        submit_info.important_file
+      );
+      submit_info.property_id = this.$route.params.bid;
+      return submit_info;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (
-            typeof this.info[key] == "object" &&
-            !Array.isArray(this.info[key])
-          ) {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      this.info.important_file = this.get_file_info(this.info.important_file);
-      c_important(this.info)
+      c_important(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("添加失敗 - api return - " + res.error);
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("server error - 添加失敗");
+          this.$message.error("添加失敗 - system error - " + err);
         });
     }
   }

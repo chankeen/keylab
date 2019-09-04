@@ -11,13 +11,10 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
-          </p>
-          <p class="item">
             <span class="label">重要事項種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="常務會議">政府法令</a-select-option>
+              <a-select-option value="---">--- 請選擇種類 ---</a-select-option>
+              <a-select-option value="常務會議">常務會議</a-select-option>
               <a-select-option value="年度股東大會">年度股東大會</a-select-option>
               <a-select-option value="特別會議">特別會議</a-select-option>
               <a-select-option value="其他">其他</a-select-option>
@@ -29,17 +26,17 @@
           </p>
           <p class="item">
             <span class="label">第N屆</span>
-            <a-input v-model="info.oc_term"></a-input>
+            <a-input-number placeholder="例如: 1" :min="1" :max="99" v-model="info.oc_term"></a-input-number>
           </p>
           <p class="item">
             <span class="label">第N次</span>
-            <a-input v-model="info.minutes_term"></a-input>
+            <a-input-number placeholder="例如: 1" :min="1" :max="999" v-model="info.minutes_term"></a-input-number>
           </p>
           <a-divider></a-divider>
           <p class="item">
-            <span class="label">Minutes File</span>
+            <span class="label">相關文件</span>
             <span style="text-align:left;width:100%">
-              <uploadFile v-model="info.minutes_file"></uploadFile>
+              <uploadFile ref="minutesFile" v-model="info.minutes_file"></uploadFile>
             </span>
           </p>
           <a-divider />
@@ -60,6 +57,7 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
       info: {
         property_id: "",
         type: "",
@@ -74,65 +72,42 @@ export default {
   created() {},
   methods: {
     show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
-          this.info[key] = "";
-        } else {
-          this.info[key] = [];
-        }
-      }
+      this.info.type = "---";
+      this.info.meeting_date = null;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
-    //提取文件信息
-    get_file_info(item) {
-      item.forEach(value => {
-        for (var key in value) {
-          if (
-            key == "name" ||
-            key == "url" ||
-            key == "uid" ||
-            key == "status"
-          ) {
-            continue;
-          }
-          delete value[key];
-        }
-      });
-      return item;
+    handle_submit_data(submit_info) {
+      //submit info data handling
+      submit_info.meeting_date = submit_info.meeting_date._isValid
+        ? submit_info.meeting_date.format("YYYY-MM-DD")
+        : "";
+      submit_info.minutes_file = this.$refs.minutesFile.get_file_info(
+        submit_info.minutes_file
+      );
+      submit_info.property_id = this.$route.params.bid;
+      return submit_info;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (
-            typeof this.info[key] == "object" &&
-            !Array.isArray(this.info[key])
-          ) {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
-      this.info.minutes_file = this.get_file_info(this.info.minutes_file);
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      c_minutes(this.info)
+      c_minutes(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("添加失敗 - api return - " + res.error);
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("server error - 添加失敗");
+          this.$message.error("添加失敗 - system error - " + err);
         });
     }
   }

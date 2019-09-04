@@ -28,11 +28,11 @@
 <script>
 import { r_users } from "@/api/users.js";
 const columns = [
-  { title: "User ID", dataIndex: "id" },
-  { title: "Status", dataIndex: "status" },
-  { title: "Chinese Name", dataIndex: "name_zh" },
-  { title: "English Name", dataIndex: "name_en" },
-  { title: "Created By", dataIndex: "created_by" }
+  { title: "用戶編號", dataIndex: "user_id" },
+  { title: "狀態", dataIndex: "status" },
+  { title: "用戶中文名", dataIndex: "name_zh" },
+  { title: "用戶英文名", dataIndex: "name_en" },
+  { title: "電話號碼", dataIndex: "login_tel" }
 ];
 
 export default {

@@ -1,12 +1,12 @@
 import request from "@/utils/request.js"
 import Qs from "qs"
 
-export function r_oc() {
+export function r_oc(property_id) {
     return request({
         url: "api/data?page=oc&action=r_oc",
         method: "POST",
         data: Qs.stringify({
-
+            property_id
         })
     })
 }

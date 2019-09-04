@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="Add Propman Record"
+    title="新增物管人員"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -11,30 +11,30 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">User ID</span>
-            <a-input
-              v-model="info.user_id"
-              readonly
+            <span class="label">從用戶中揀選</span>
+            <a-button
+              type="primary"
+              icon="search"
               @click="()=>{
               $refs.selectUser.showModal('',[])
               }"
-            ></a-input>
+            >Search</a-button>
           </p>
           <p class="item">
             <span class="label">中文名稱</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <a-input readonly v-model="info.name_zh"></a-input>
           </p>
           <p class="item">
             <span class="label">英文名稱</span>
-            <a-input v-model="info.name_en"></a-input>
+            <a-input readonly v-model="info.name_en"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">電話號碼</span>
+            <a-input readonly v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
             <span class="label">職位</span>
-            <a-input v-model="info.position"></a-input>
+            <a-input placeholder="例如: 經理 / 執行 / 秘書" v-model="info.position"></a-input>
           </p>
         </a-col>
       </a-row>
@@ -59,20 +59,22 @@ export default {
         user_id: "",
         position: "",
         name_zh: "",
-        name_en:""
+        name_en: "",
+        login_tel: ""
       }
     };
   },
   created() {
-    this.get_client();
+    this;
   },
   components: { selectUser },
   methods: {
     onUserSelect(e) {
-      console.log(e.selectedRowKeys[0]);
+      console.log(e.list[e.selectedRowKeys[0]]);
       this.info.user_id = e.selectedRowKeys[0];
       this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
       this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
+      this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
     },
     show() {
       for (const key in this.info) {
@@ -87,15 +89,7 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
+      this.info.property_id = this.$route.params.bid;
       this.onSubmiting = true;
       c_propman(this.info)
         .then(res => {
@@ -104,11 +98,11 @@ export default {
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("添加失敗 - api return - " + res.error);
           }
         })
         .catch(err => {
-          this.$message.error("添加失敗");
+          this.$message.error("添加失敗 - system error - " + err);
         });
     }
   }

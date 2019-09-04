@@ -49,9 +49,9 @@ export default {
       if (file["url"] == undefined) return true;
       return true;
     },
-    get_file_info() {
+    get_file_info(item) {
       //get info of file
-      this.List.forEach(value => {
+      item.forEach(value => {
         for (var key in value) {
           if (
             key == "name" ||

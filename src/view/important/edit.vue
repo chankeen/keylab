@@ -11,10 +11,6 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">重要事項編號</span>
-            <a-input v-model="info.important_id"></a-input>
-          </p>
-          <p class="item">
             <span class="label">重要事項種類</span>
             <a-select v-model="info.type">
               <a-select-option value="政府法令">政府法令</a-select-option>
@@ -39,9 +35,9 @@
           </p>
           <a-divider></a-divider>
           <p class="item">
-            <span class="label">Important File</span>
+            <span class="label">相關文件</span>
             <span style="text-align:left;width:100%">
-              <uploadFile v-model="info.important_file"></uploadFile>
+              <uploadFile ref="importantFile" v-model="info.important_file"></uploadFile>
             </span>
           </p>
           <a-divider />
@@ -63,12 +59,11 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
       info: {}
     };
   },
-  created() {
-    //this.get_data();
-  },
+  created() {},
   components: { uploadFile },
   methods: {
     show(info) {
@@ -81,49 +76,37 @@ export default {
     onClose() {
       this.visible = false;
     },
-    //提取文件信息
-    get_file_info(item) {
-      item.forEach(value => {
-        for (var key in value) {
-          if (
-            key == "name" ||
-            key == "url" ||
-            key == "uid" ||
-            key == "status"
-          ) {
-            continue;
-          }
-          delete value[key];
-        }
-      });
-      return item;
+    handle_submit_data(submit_info) {
+      //submit info data handling
+      submit_info.known_date = submit_info.known_date._isValid
+        ? submit_info.known_date.format("YYYY-MM-DD")
+        : "";
+      submit_info.deadline = submit_info.deadline._isValid
+        ? submit_info.deadline.format("YYYY-MM-DD")
+        : "";
+      submit_info.important_file = this.$refs.importantFile.get_file_info(
+        submit_info.important_file
+      );
+      submit_info.property_id = this.$route.params.bid;
+      return submit_info;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
-          if (typeof this.info[key] == "object") {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      this.info.important_file = this.get_file_info(this.info.important_file);
-      u_important(this.info)
+      u_important(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("修改成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("修改失敗");
+            this.$message.error("修改失敗 - api return - " + res.error);
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("修改失敗");
+          this.$message.error("修改失敗 - system error - " + err);
         });
     }
   }
