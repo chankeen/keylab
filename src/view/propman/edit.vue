@@ -1,22 +1,8 @@
 <template>
-  <a-modal
-    title="Edit Propman Record"
-    @close="onClose"
-    v-model="visible"
-    width="600px"
-    :footer="null"
-  >
+  <a-modal title="修改物管人員" @close="onClose" v-model="visible" width="600px" :footer="null">
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
-          <p class="item">
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id" disabled></a-input>
-          </p>
-          <p class="item">
-            <span class="label">User ID</span>
-            <a-input v-model="info.user_id" disabled></a-input>
-          </p>
           <p class="item">
             <span class="label">中文名稱</span>
             <a-input v-model="info.name_zh" disabled></a-input>
@@ -24,6 +10,10 @@
           <p class="item">
             <span class="label">英文名稱</span>
             <a-input v-model="info.name_en" disabled></a-input>
+          </p>
+          <p class="item">
+            <span class="label">電話號碼</span>
+            <a-input v-model="info.login_tel" disabled></a-input>
           </p>
           <p class="item">
             <span class="label">職位</span>
@@ -52,9 +42,7 @@ export default {
       }
     };
   },
-  created() {
-    this.get_client();
-  },
+  created() {},
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
@@ -65,15 +53,7 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
+      this.info.property_id = this.$route.params.bid;
       this.onSubmiting = true;
       u_propman(this.info)
         .then(res => {
@@ -83,12 +63,12 @@ export default {
             this.$emit("done", {});
           } else {
             this.onSubmiting = false;
-            this.$message.error("更新失敗");
+            this.$message.error("更新失敗 - api return - " + res.error);
           }
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("更新失敗");
+          this.$message.error("更新失敗 - system error - " + err);
         });
     }
   }

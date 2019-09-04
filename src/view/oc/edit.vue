@@ -1,42 +1,42 @@
 <template>
-  <a-modal title="Edit OC Record" @close="onClose" v-model="visible" width="600px" :footer="null">
+  <a-modal title="修改法團成員" @close="onClose" v-model="visible" width="600px" :footer="null">
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">物業編號</span>
-            <a-select v-model="info.property_id"></a-select>
+            <span class="label">中文名稱</span>
+            <a-input disabled v-model="info.name_zh"></a-input>
           </p>
           <p class="item">
-            <span class="label">名稱(中文)</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <span class="label">英文名稱</span>
+            <a-input disabled v-model="info.name_en"></a-input>
           </p>
           <p class="item">
-            <span class="label">名稱(英文)</span>
-            <a-input v-model="info.name_en"></a-input>
+            <span class="label">電話號碼</span>
+            <a-input disabled v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
             <span class="label">職位</span>
             <a-input v-model="info.position"></a-input>
           </p>
           <p class="item">
-            <span class="label">Year From</span>
-            <a-input v-model="info.year_from"></a-input>
+            <span class="label">年度由</span>
+            <a-input maxlength="4" v-model="info.year_from"></a-input>
           </p>
           <p class="item">
-            <span class="label">Year To</span>
-            <a-input v-model="info.year_to"></a-input>
+            <span class="label">年度至</span>
+            <a-input maxlength="4" v-model="info.year_to"></a-input>
           </p>
           <p class="item">
-            <span class="label">Term</span>
-            <a-input v-model="info.term"></a-input>
+            <span class="label">第N屆</span>
+            <a-input-number :min="1" :max="99" v-model="info.term"></a-input-number>
           </p>
           <p class="item">
-            <span class="label">Elected Date</span>
+            <span class="label">當選日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.elected_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">Introduction</span>
+            <span class="label">個人簡介</span>
             <a-input v-model="info.introduction"></a-input>
           </p>
         </a-col>
@@ -56,6 +56,7 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
       info: {
         property_id: "",
         name_zh: "",
@@ -69,9 +70,7 @@ export default {
       }
     };
   },
-  created() {
-    this.get_client();
-  },
+  created() {},
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
@@ -82,31 +81,30 @@ export default {
     onClose() {
       this.visible = false;
     },
+    handle_submit_data(submit_info) {
+      submit_info.elected_date = submit_info.elected_date._isValid
+        ? submit_info.elected_date.format("YYYY-MM-DD")
+        : "";
+      submit_info.property_id = this.$route.params.bid;
+      return submit_info;
+    },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      u_oc(this.info)
+      u_oc(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("修改成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("修改失敗");
+            this.$message.error("修改失敗 - api return - " + res.error);
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("修改失敗");
+          this.$message.error("修改失敗 - system error - " + err);
         });
     }
   }

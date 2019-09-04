@@ -1,7 +1,7 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="search by important id" style="width: 200px" @search="onSearch" />
+      <a-input-search placeholder="重要事項編號" style="width: 200px" @search="onSearch" />
       <span>
         <a-button
           type="primary"
@@ -11,7 +11,12 @@
         >新增重要事項</a-button>
       </span>
     </p>
-    <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
+    <a-table
+      :rowKey="record => record.important_id"
+      :columns="columns"
+      :dataSource="tableData"
+      :loading="onTableLoading"
+    >
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
           $refs.editImportant.show(record)
@@ -43,11 +48,11 @@ import editImportant from "./edit";
 import { r_important, d_important } from "@/api/important.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
-  { title: "重要事項編號", dataIndex: "important_id", key: "important_id" },
-  { title: "重要事項種類", width: "150px", dataIndex: "type", key: "type" },
-  { title: "重要事項內容", dataIndex: "content", key: "content" },
-  { title: "知悉日期", dataIndex: "known_date", key: "known_date" },
-  { title: "處理限期", dataIndex: "deadline", key: "deadline" },
+  { title: "重要事項編號", dataIndex: "important_id" },
+  { title: "重要事項種類", width: "150px", dataIndex: "type" },
+  { title: "重要事項內容", dataIndex: "content" },
+  { title: "知悉日期", dataIndex: "known_date" },
+  { title: "處理限期", dataIndex: "deadline" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
@@ -73,7 +78,7 @@ export default {
     },
     getTableData() {
       this.onTableLoading = true;
-      r_important(null)
+      r_important(this.$route.params.bid)
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
@@ -86,10 +91,14 @@ export default {
         .then(res => {
           if (res.status) {
             this.getTableData();
+            this.$message.success("成功刪除");
           } else {
+            this.$message.error("刪除失敗 - api return - " + res.error);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error("刪除失敗 - system error - " + err);
+        });
     }
   },
   components: { newImportant, editImportant }

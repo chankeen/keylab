@@ -43,15 +43,12 @@ import edit from "./edit";
 import { r_oc, d_oc } from "@/api/oc.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
-  { title: "物業編號", dataIndex: "property_id" },
+  { title: "年度由", dataIndex: "year_from" },
+  { title: "年度至", dataIndex: "year_to" },
+  { title: "第N屆", dataIndex: "term" },
   { title: "名稱(中文)", dataIndex: "name_zh" },
   { title: "名稱(英文)", dataIndex: "name_en" },
   { title: "職位", dataIndex: "position" },
-  { title: "Year From", dataIndex: "year_from" },
-  { title: "Year To", dataIndex: "year_to" },
-  { title: "Term", dataIndex: "term" },
-  { title: "Elected Date", dataIndex: "elected_date" },
-  { title: "Introduction", dataIndex: "introduction" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
@@ -80,7 +77,7 @@ export default {
     },
     getTableData() {
       this.onTableLoading = true;
-      r_oc()
+      r_oc(this.$route.params.bid)
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
@@ -93,10 +90,14 @@ export default {
         .then(res => {
           if (res.status) {
             this.getTableData();
+            this.$message.success("成功刪除");
           } else {
+            this.$message.error("刪除失敗 - api return - " + res.error);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error("刪除失敗 - system error - " + err);
+        });
     }
   },
   components: { newRecord, edit }

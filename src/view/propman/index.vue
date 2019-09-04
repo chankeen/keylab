@@ -42,6 +42,7 @@ import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "名稱(中文)", dataIndex: "name_zh" },
   { title: "名稱(英文)", dataIndex: "name_en" },
+  { title: "電話號碼", dataIndex: "login_tel" },
   { title: "職位", dataIndex: "position" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
@@ -84,10 +85,14 @@ export default {
         .then(res => {
           if (res.status) {
             this.getTableData();
+            this.$message.success("成功刪除");
           } else {
+            this.$message.error("刪除失敗 - api return - " + res.error);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error("刪除失敗 - system error - " + err);
+        });
     }
   },
   components: { newRecord, edit }

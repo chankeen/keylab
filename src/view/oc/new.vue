@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="Add OC Record"
+    title="新增法團成員"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -11,50 +11,50 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">User ID</span>
-            <a-input
-              v-model="info.user_id"
-              readonly
+            <span class="label">從用戶中揀選</span>
+            <a-button
+              type="primary"
+              icon="search"
               @click="()=>{
-                   $refs.selectUser.showModal('',[])
+              $refs.selectUser.showModal('',[])
               }"
-            ></a-input>
+            >Search</a-button>
           </p>
           <p class="item">
-            <span class="label">名稱(中文)</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <span class="label">中文名稱</span>
+            <a-input readonly v-model="info.name_zh"></a-input>
           </p>
           <p class="item">
-            <span class="label">名稱(英文)</span>
-            <a-input v-model="info.name_en"></a-input>
+            <span class="label">英文名稱</span>
+            <a-input readonly v-model="info.name_en"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">電話號碼</span>
+            <a-input readonly v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
             <span class="label">職位</span>
-            <a-input v-model="info.position"></a-input>
+            <a-input placeholder="例如: 司庫 / 主席 / 秘書 / 財務" v-model="info.position"></a-input>
           </p>
           <p class="item">
-            <span class="label">Year From</span>
-            <a-input v-model="info.year_from"></a-input>
+            <span class="label">年度由</span>
+            <a-input placeholder="例如: 2019" maxlength="4" v-model="info.year_from"></a-input>
           </p>
           <p class="item">
-            <span class="label">Year To</span>
-            <a-input v-model="info.year_to"></a-input>
+            <span class="label">年度至</span>
+            <a-input placeholder="例如: 2020" maxlength="4" v-model="info.year_to"></a-input>
           </p>
           <p class="item">
-            <span class="label">Term</span>
-            <a-input v-model="info.term"></a-input>
+            <span class="label">第N屆</span>
+            <a-input-number :min="1" :max="99" v-model="info.term"></a-input-number>
           </p>
           <p class="item">
-            <span class="label">Elected Date</span>
+            <span class="label">當選日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.elected_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">Introduction</span>
-            <a-input v-model="info.introduction"></a-input>
+            <span class="label">個人簡介</span>
+            <a-input placeholder="任意填寫" v-model="info.introduction"></a-input>
           </p>
         </a-col>
       </a-row>
@@ -75,6 +75,7 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
       info: {
         property_id: "",
         name_zh: "",
@@ -89,53 +90,47 @@ export default {
       }
     };
   },
-  created() {
-    this.get_client();
-  },
+  created() {},
   components: { selectUser },
   methods: {
     onUserSelect(e) {
       this.info.user_id = e.selectedRowKeys[0];
       this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
       this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
+      this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
     },
     show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          this.info[key] = "";
-        }
-      }
+      this.info.elected_date = null;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
+    handle_submit_data(submit_info) {
+      submit_info.elected_date = submit_info.elected_date._isValid
+        ? submit_info.elected_date.format("YYYY-MM-DD")
+        : "";
+      submit_info.property_id = this.$route.params.bid;
+      return submit_info;
+    },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      c_oc(this.info)
+      c_oc(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("添加失敗 - api return - " + res.error);
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("添加失敗 - system error - " + err);
         });
     }
   }
