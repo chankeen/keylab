@@ -1,12 +1,12 @@
 import request from "@/utils/request.js"
 import Qs from "qs"
 
-export function get_propman() {
+export function r_propman(property_id) {
     return request({
         url: "api/data?page=propman&action=r_propman",
         method: "POST",
         data: Qs.stringify({
-
+            property_id
         })
     })
 }

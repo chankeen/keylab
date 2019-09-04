@@ -5,7 +5,9 @@
         <a-col>
           <p class="item">
             <span class="label">Status</span>
-            <a-select v-model="info.status"></a-select>
+            <a-select v-model="info.status">
+              <a-select-option value="正常">正常</a-select-option>
+            </a-select>
           </p>
           <p class="item">
             <span class="label">Chinese Name</span>
@@ -17,19 +19,11 @@
           </p>
           <p class="item">
             <span class="label">Login Tel</span>
-            <a-input v-model="info.login_tel"></a-input>
+            <a-input maxlength="8" v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
             <span class="label">Email</span>
             <a-input v-model="info.email"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">Created By</span>
-            <a-input v-model="info.created_by"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">Created Date</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.creation_datetime"></a-date-picker>
           </p>
         </a-col>
       </a-row>
@@ -65,10 +59,6 @@ export default {
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
-      this.info.creation_datetime = moment(
-        this.info.creation_datetime,
-        "YYYY-MM-DD"
-      );
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -76,15 +66,6 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
       this.onSubmiting = true;
       u_users(this.info)
         .then(res => {
@@ -95,12 +76,12 @@ export default {
             this.$emit("done", {});
           } else {
             this.onSubmiting = false;
-            this.$message.error("更新失敗");
+            this.$message.error("更新失敗 - api return - " + res.error);
           }
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("更新失敗");
+          this.$message.error("更新失敗 - system error -" + err);
         });
     }
   }

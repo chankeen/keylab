@@ -21,6 +21,7 @@
           <p class="item">
             <span class="label">物業種類</span>
             <a-select v-model="info.type">
+              <a-select-option value="---">---請選擇物業種類---</a-select-option>
               <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
               <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
               <a-select-option value="屋苑大廈">屋苑大廈</a-select-option>
@@ -30,39 +31,43 @@
           </p>
           <p class="item">
             <span class="label">物業中文名稱</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <a-input v-model="info.name_zh" placeholder="例如: 萬利豐中心"></a-input>
           </p>
           <p class="item">
             <span class="label">物業英文名稱</span>
-            <a-input v-model="info.name_en"></a-input>
+            <a-input v-model="info.name_en" placeholder="例如: Malahon Centre"></a-input>
           </p>
           <p class="item">
             <span class="label">物業中文地址</span>
-            <a-input v-model="info.address_zh"></a-input>
+            <a-input v-model="info.address_zh" placeholder="例如: 士丹利街8-12號"></a-input>
           </p>
           <p class="item">
             <span class="label">物業英文地址</span>
-            <a-input v-model="info.address_en"></a-input>
+            <a-input v-model="info.address_en" placeholder="例如: 8-12 Stanley Street"></a-input>
           </p>
           <p class="item">
+            <span class="label">是否擁有業主立案立團</span>
+            <a-switch v-model="info.oc_exist"></a-switch>
+          </p>
+          <p v-if="info.oc_exist" class="item">
             <span class="label">年度股東大會日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.agm_date"></a-date-picker>
+            <a-date-picker required format="DD/MM/YYYY" v-model="info.agm_date"></a-date-picker>
           </p>
           <p class="item">
             <span class="label">落成年份</span>
-            <a-input v-model="info.build_year"></a-input>
+            <a-input v-model="info.build_year" placeholder="例如: 1987"></a-input>
           </p>
           <p class="item">
             <span class="label">樓層總數</span>
-            <a-input v-model="info.floor_amount"></a-input>
+            <a-input v-model="info.floor_amount" placeholder="例如: 10"></a-input>
           </p>
           <p class="item">
             <span class="label">單位總數</span>
-            <a-input v-model="info.unit_amount"></a-input>
+            <a-input v-model="info.unit_amount" placeholder="例如: 38"></a-input>
           </p>
           <p class="item">
-            <span class="label">總面積</span>
-            <a-input v-model="info.total_size"></a-input>
+            <span class="label">總面積(平方米)</span>
+            <a-input v-model="info.total_size" placeholder="例如: 580"></a-input>
           </p>
           <p class="item">
             <span class="label">Floor Plan File</span>
@@ -74,7 +79,7 @@
           <p class="item">
             <span class="label">DMC File</span>
             <span style="text-align:left;width:100%">
-              <uploadFile v-model="info.dmc_file" />
+              <uploadFile ref="uploadFile" v-model="info.dmc_file" />
             </span>
           </p>
         </a-col>
@@ -95,7 +100,9 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
+      sumbmit_info: {},
       info: {
+        oc_exist: "",
         status: "",
         agm_date: "",
         name_zh: "",
@@ -117,56 +124,51 @@ export default {
   created() {},
   methods: {
     show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          this.info[key] = "";
-        }
-      }
+      // for (const key in this.info) {
+      //   if (this.info.hasOwnProperty(key)) {
+      //     this.info[key] = "";
+      //   }
+      // }
+      this.info.oc_exist = true;
+      this.info.status = "正常";
+      this.info.type = "---";
+      this.info.agm_date = null;
       this.info.floor_plan_file = [];
       this.info.dmc_file = [];
       this.visible = true;
       this.onSubmiting = false;
+      console.log(this.info);
     },
     onClose() {
       this.visible = false;
     },
-    get_file_info(item) {
-      //get info of file
-      item.forEach(value => {
-        for (var key in value) {
-          if (
-            key == "name" ||
-            key == "url" ||
-            key == "uid" ||
-            key == "status"
-          ) {
-            continue;
-          }
-          delete value[key];
-        }
-      });
-      return item;
+    handle_submit_data_with_admin_wp_id(sumbmit_info) {
+      //submit info data handling
+      sumbmit_info.agm_date = sumbmit_info.agm_date._isValid
+        ? sumbmit_info.agm_date.format("YYYY-MM-DD")
+        : "";
+      sumbmit_info.floor_plan_file = this.$refs.uploadFile.get_file_info(
+        sumbmit_info.floor_plan_file
+      );
+      sumbmit_info.dmc_file = this.$refs.uploadFile.get_file_info(
+        sumbmit_info.dmc_file
+      );
+      if (sumbmit_info.oc_exist == true) {
+        sumbmit_info.oc_exist = 1;
+      } else {
+        sumbmit_info.oc_exist = 0;
+        sumbmit_info.agm_date = null;
+      }
+      sumbmit_info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
+      return sumbmit_info;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (
-            typeof this.info[key] == "object" &&
-            !Array.isArray(this.info[key])
-          ) {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
-      this.info.floor_plan_file = this.get_file_info(this.info.floor_plan_file);
-      this.info.dmc_file = this.get_file_info(this.info.dmc_file);
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      this.info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
       console.log("wp_id" + sessionStorage.getItem("admin_wp_id"));
-      c_property(this.info)
+      c_property(this.handle_submit_data_with_admin_wp_id(this.submit_info))
         .then(res => {
+          console.log(res);
           if (res.status) {
             this.$message.success("成功添加");
             this.visible = false;
@@ -178,7 +180,7 @@ export default {
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("添加失敗 - system error");
         });
     }
   }

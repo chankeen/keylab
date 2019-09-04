@@ -7,12 +7,9 @@
         @search="onSearch"
       />
       <span>
-        <a-button
-          type="primary"
-          @click="()=>{
+        <a-button type="primary" @click="()=>{
         this.$refs.newRecord.show()
-        }"
-        >Add Record</a-button>
+        }">新增用戶</a-button>
       </span>
     </p>
     <a-table
@@ -58,7 +55,6 @@ const columns = [
   { title: "English Name", dataIndex: "name_en" },
   { title: "Login Tel", width: "100px", dataIndex: "login_tel" },
   { title: "Email", dataIndex: "email" },
-  { title: "Created By", dataIndex: "created_by" },
   { title: "Created Date", width: "100px", dataIndex: "creation_datetime" },
   { scopedSlots: { customRender: "detail" } },
   { scopedSlots: { customRender: "delete" } }
@@ -103,13 +99,17 @@ export default {
     onDelete(user_id) {
       d_users(user_id)
         .then(res => {
+          console.log(res);
           if (res.status) {
             this.getTableData();
+            this.$message.success("刪除成功");
           } else {
-            this.$message.error("Fail");
+            this.$message.error("刪除失敗 - api return - " + res.error);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error("刪除失敗 - system error - " + err);
+        });
     }
   },
   components: { newRecord, edit }

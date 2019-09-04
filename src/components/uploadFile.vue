@@ -50,6 +50,7 @@ export default {
       return true;
     },
     get_file_info() {
+      //get info of file
       this.List.forEach(value => {
         for (var key in value) {
           if (

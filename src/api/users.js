@@ -29,12 +29,12 @@ export function u_users(values) {
         })
     })
 }
-export function d_users(users_id) {
+export function d_users(user_id) {
     return request({
         url: "api/data?page=users&action=d_users",
         method: "POST",
         data: Qs.stringify({
-            users_id
+            user_id
         })
     })
 }

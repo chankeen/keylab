@@ -4,11 +4,21 @@
       <a-col>
         <p class="item">
           <span class="label">物業狀態</span>
-          <a-input v-model="info.status" />
+          <a-select v-model="info.status">
+            <a-select-option value="正常">正常</a-select-option>
+            <a-select-option value="暫停">暫停</a-select-option>
+            <a-select-option value="封存">封存</a-select-option>
+          </a-select>
         </p>
         <p class="item">
           <span class="label">物業種類</span>
-          <a-input v-model="info.type" />
+          <a-select v-model="info.type">
+            <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
+            <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
+            <a-select-option value="屋苑大廈">屋苑大廈</a-select-option>
+            <a-select-option value="商廈">商廈</a-select-option>
+            <a-select-option value="寫字樓">寫字樓</a-select-option>
+          </a-select>
         </p>
         <p class="item">
           <span class="label">物業中文名稱</span>
@@ -27,6 +37,10 @@
           <a-input v-model="info.address_en"></a-input>
         </p>
         <p class="item">
+          <span class="label">是否擁有業主立案立團</span>
+          <a-switch v-model="info.oc_exist"></a-switch>
+        </p>
+        <p v-if="info.oc_exist" class="item">
           <span class="label">年度股東大會日期</span>
           <a-date-picker format="DD/MM/YYYY" v-model="info.agm_date"></a-date-picker>
         </p>
@@ -50,7 +64,7 @@
         <p class="item">
           <span class="label">Floor Plan File</span>
           <span style="text-align:left;width:100%">
-            <uploadFile v-model="info.floor_plan_file"></uploadFile>
+            <uploadFile ref="uploadFile" v-model="info.floor_plan_file"></uploadFile>
           </span>
         </p>
         <!-- DMC FIle -->
@@ -84,6 +98,7 @@ export default {
       property_id: "",
       uid: "",
       info: {},
+      submit_info: {},
       onSubmiting: false
     };
   },
@@ -105,45 +120,39 @@ export default {
           } else {
             this.info.agm_date = "";
           }
+          if (this.info.oc_exist == "1") {
+            this.info.oc_exist = true;
+          } else {
+            this.info.oc_exist = false;
+          }
         })
         .catch(err => {});
     },
-    get_file_info(item) {
-      //get info of file
-      item.forEach(value => {
-        for (var key in value) {
-          if (
-            key == "name" ||
-            key == "url" ||
-            key == "uid" ||
-            key == "status"
-          ) {
-            continue;
-          }
-          delete value[key];
-        }
-      });
-      return item;
+    handle_submit_data(sumbmit_info) {
+      //submit info data handling
+      sumbmit_info.agm_date = sumbmit_info.agm_date._isValid
+        ? sumbmit_info.agm_date.format("YYYY-MM-DD")
+        : "";
+      sumbmit_info.floor_plan_file = this.$refs.uploadFile.get_file_info(
+        sumbmit_info.floor_plan_file
+      );
+      sumbmit_info.dmc_file = this.$refs.uploadFile.get_file_info(
+        sumbmit_info.dmc_file
+      );
+      if (sumbmit_info.oc_exist == true) {
+        sumbmit_info.oc_exist = 1;
+      } else {
+        sumbmit_info.oc_exist = 0;
+        sumbmit_info.agm_date = null;
+      }
+      return sumbmit_info;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (
-            typeof this.info[key] == "object" &&
-            !Array.isArray(this.info[key])
-          ) {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
-      this.info.floor_plan_file = this.get_file_info(this.info.floor_plan_file);
-      this.info.dmc_file = this.get_file_info(this.info.dmc_file);
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      this.info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
-      u_property(this.info)
+      u_property(this.handle_submit_data(this.submit_info))
         .then(res => {
+          console.log(res);
           if (res.status) {
             this.$message.success("更新成功");
             this.visible = false;

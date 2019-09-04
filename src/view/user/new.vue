@@ -18,19 +18,19 @@
           </p>
           <p class="item">
             <span class="label">Chinese Name</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <a-input placeholder="例如: 陳大文" v-model="info.name_zh"></a-input>
           </p>
           <p class="item">
             <span class="label">English Name</span>
-            <a-input v-model="info.name_en"></a-input>
+            <a-input placeholder="Chan Tai Man" v-model="info.name_en"></a-input>
           </p>
           <p class="item">
             <span class="label">Login Tel</span>
-            <a-input v-model="info.login_tel"></a-input>
+            <a-input placeholder="例如: 98769876" maxlength="8" v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
             <span class="label">Email</span>
-            <a-input v-model="info.email"></a-input>
+            <a-input placeholder="例如: chantaiman@gmail.com" v-model="info.email"></a-input>
           </p>
         </a-col>
       </a-row>
@@ -66,6 +66,7 @@ export default {
           this.info[key] = "";
         }
       }
+      this.info.status = "正常";
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -84,6 +85,7 @@ export default {
       }
       this.onSubmiting = true;
       this.info.created_by = sessionStorage.admin_wp_id;
+      console.log(this.info);
       c_users(this.info)
         .then(res => {
           if (res.status) {
@@ -91,12 +93,12 @@ export default {
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("添加失敗 - api return - " + res.error);
           }
         })
         .catch(err => {
           this.visible = false;
-          this.$message.error("添加失敗");
+          this.$message.error("添加失敗 - system error - " + err);
         });
     }
   }
