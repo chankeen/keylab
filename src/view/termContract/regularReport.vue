@@ -28,7 +28,13 @@
           </p>
           <p class="item">
             <span class="label">檢查負責人</span>
-            <a-input v-model="info.handler"></a-input>
+            <a-input
+              v-model="info.handler"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('handler',[]);
+              }"
+            ></a-input>
           </p>
           <p class="item">
             <span class="label">是否需要額外工程合約</span>
@@ -71,9 +77,11 @@
         </a-table>
       </a-row>
     </div>
+    <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
   </a-drawer>
 </template>
 <script>
+import selectUser from "@/components/selectUser";
 import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
 import {
@@ -96,17 +104,20 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
-      info: {},
+      info: { handler: "" },
       dataSource: [],
       columns,
       onTableLoading: false
     };
   },
-  components: { uploadFile },
+  components: { uploadFile, selectUser },
   created() {
     this.getTableData();
   },
   methods: {
+    onUserSelect(e) {
+      this.$set(this.info, e.context, e.selectedRowKeys[0]);
+    },
     show(term_contract_id) {
       this.visible = true;
       this.onSubmiting = false;

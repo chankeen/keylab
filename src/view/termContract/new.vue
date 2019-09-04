@@ -35,7 +35,13 @@
           </p>
           <p class="item">
             <span class="label">相關工程公司id</span>
-            <a-input v-model="info.contractor_user_id"></a-input>
+            <a-input
+              v-model="info.contractor_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('contractor_user_id',[]);
+              }"
+            ></a-input>
           </p>
           <p class="item">
             <span class="label">合約內容</span>
@@ -187,7 +193,7 @@ export default {
       this.info.contract_file = this.get_file_info(this.info.contract_file);
       this.info.work_file = this.get_file_info(this.info.work_file);
       this.onSubmiting = true;
-      console.log(this.info);
+
       c_term_contract(this.info)
         .then(res => {
           if (res.status) {
