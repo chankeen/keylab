@@ -15,11 +15,15 @@
             <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
-            <span class="label">單位層數</span>
+            <span class="label">一次性合約編號</span>
             <a-input v-model="info.floor"></a-input>
           </p>
           <p class="item">
-            <span class="label">單位號數</span>
+            <span class="label">檢查報告編號</span>
+            <a-input v-model="info.unit"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">狀態</span>
             <a-input v-model="info.unit"></a-input>
           </p>
         </a-col>

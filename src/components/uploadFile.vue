@@ -24,7 +24,6 @@ export default {
     };
   },
   created() {
-    console.log("action_url", this.$store.getters.domain);
     if (location.hostname == "localhost") {
       this.action_url = "api/api/upload-file/";
     }
