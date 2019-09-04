@@ -100,7 +100,7 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
-      sumbmit_info: {},
+      submit_info: {},
       info: {
         oc_exist: "",
         status: "",
