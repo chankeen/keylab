@@ -10,7 +10,7 @@
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
-          <p class="item">
+          <p class="item" hidden>
             <span class="label">物業編號</span>
             <a-input v-model="info.property_id"></a-input>
           </p>

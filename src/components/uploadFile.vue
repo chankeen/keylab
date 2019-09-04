@@ -50,7 +50,7 @@ export default {
     },
     get_file_info(item) {
       //get info of file
-      item.forEach(value => {
+      this.List.forEach(value => {
         for (var key in value) {
           if (
             key == "name" ||
@@ -63,7 +63,7 @@ export default {
           delete value[key];
         }
       });
-      return item;
+      return this.List;
     }
   },
   watch: {

@@ -12,7 +12,7 @@
         <a-col>
           <p class="item">
             <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
+            <a-input v-model="info.property_id" readonly></a-input>
           </p>
           <p class="item">
             <span class="label">一次性合約編號</span>
@@ -63,13 +63,13 @@
           <p class="item">
             <span class="label">合約文件</span>
             <span style="text-align:left;width:100%">
-              <uploadFile v-model="info.contract_file"></uploadFile>
+              <uploadFile ref="contract_file" v-model="info.contract_file"></uploadFile>
             </span>
           </p>
           <p class="item">
             <span class="label">報價文件</span>
             <span style="text-align:left;width:100%">
-              <uploadFile v-model="info.quotation_file"></uploadFile>
+              <uploadFile ref="quotation_file" v-model="info.quotation_file"></uploadFile>
             </span>
           </p>
           <p class="item">
@@ -123,6 +123,8 @@ export default {
           this.info[key] = "";
         }
       }
+      this.info.contract_file = [];
+      this.info.quotation_file = [];
       this.info.property_id = this.$route.params.bid;
       this.visible = true;
       this.onSubmiting = false;
@@ -131,24 +133,38 @@ export default {
       this.visible = false;
     },
     onSubmit() {
-      let values = Object.assign();
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
+            this.info[key] = this.info[key]._isValid
+              ? this.info[key].format("YYYY-MM-DD")
+              : "";
+          }
+        }
+      }
+      this.info.quotation_file = this.$refs.quotation_file.get_file_info();
+      this.info.contract_file = this.$refs.contract_file.get_file_info();
+
       // this.onSubmiting = true;
       console.log(this.info);
-      //   c_individual_contract(this.info)
-      //     .then(res => {
-      //       if (res.status) {
-      //         this.$message.success("成功添加");
-      //         this.visible = false;
-      //         this.$emit("done", {});
-      //       } else {
-      //         this.$message.error("添加失敗");
-      //       }
-      //       this.onSubmiting = false;
-      //     })
-      //     .catch(err => {
-      //       this.onSubmiting = false;
-      //       this.$message.error("server error - 添加失敗");
-      //     });
+      c_individual_contract(this.info)
+        .then(res => {
+          if (res.status) {
+            this.$message.success("成功添加");
+            this.visible = false;
+            this.$emit("done", {});
+          } else {
+            this.$message.error("添加失敗");
+          }
+          this.onSubmiting = false;
+        })
+        .catch(err => {
+          this.onSubmiting = false;
+          this.$message.error("server error - 添加失敗");
+        });
     }
   }
 };
