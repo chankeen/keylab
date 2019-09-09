@@ -10,7 +10,7 @@
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
-          <p class="item">
+          <p class="item" hidden>
             <span class="label">物業編號</span>
             <a-input v-model="info.property_id"></a-input>
           </p>
@@ -46,8 +46,7 @@ export default {
       }
     };
   },
-  created() {
-  },
+  created() {},
   methods: {
     show() {
       for (const key in this.info) {
@@ -55,6 +54,7 @@ export default {
           this.info[key] = "";
         }
       }
+      this.info.property_id = this.$route.params.bid;
       this.visible = true;
       this.onSubmiting = false;
     },

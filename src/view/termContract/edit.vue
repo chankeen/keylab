@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改/檢視重要事項"
+    title="修改常規合約"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -15,25 +15,118 @@
             <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
-            <span class="label">單位層數</span>
-            <a-input v-model="info.floor"></a-input>
+            <span class="label">工程種類</span>
+            <a-select v-model="info.type">
+              <a-select-option value="冷氣">冷氣</a-select-option>
+              <a-select-option value="電梯">電梯</a-select-option>
+            </a-select>
           </p>
           <p class="item">
-            <span class="label">單位號數</span>
-            <a-input v-model="info.unit"></a-input>
+            <span class="label">合約由</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.contract_start_date"></a-date-picker>
+          </p>
+          <p class="item">
+            <span class="label">合約至</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.contract_end_date"></a-date-picker>
+          </p>
+          <p class="item">
+            <span class="label">合約金額</span>
+            <a-input v-model="info.amount"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">相關工程公司id</span>
+            <a-input
+              v-model="info.contractor_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('contractor_user_id',[]);
+              }"
+            ></a-input>
+          </p>
+          <p class="item">
+            <span class="label">合約內容</span>
+            <a-input v-model="info.content"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">合約文件</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile v-model="info.contract_file"></uploadFile>
+            </span>
+          </p>
+          <p class="item">
+            <span class="label">工程由</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.work_start_date"></a-date-picker>
+          </p>
+          <p class="item">
+            <span class="label">工程至</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.work_end_date"></a-date-picker>
+          </p>
+          <p class="item">
+            <span class="label">工程文件</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile v-model="info.work_file"></uploadFile>
+            </span>
+          </p>
+          <p class="item">
+            <span class="label">管理公司負責人id</span>
+            <a-input
+              v-model="info.propman_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('propman_user_id',[]);
+              }"
+            ></a-input>
+          </p>
+          <p class="item">
+            <span class="label">合約批核人員id</span>
+            <a-input
+              v-model="info.contract_approval_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('contract_approval_user_id',[]);
+              }"
+            ></a-input>
+          </p>
+          <p class="item">
+            <span class="label">跟進人id</span>
+            <a-input
+              v-model="info.buyer_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('buyer_user_id',[]);
+              }"
+            ></a-input>
+          </p>
+          <p class="item">
+            <span class="label">合約服務週期為 每 (數值)(單位) 服務一次</span>
+          </p>
+          <p class="item">
+            <span class="label">合約服務週期(數值)</span>
+            <a-input v-model="info.job_period_value"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">合約服務週期(單位)</span>
+            <a-select v-model="info.job_period_unit">
+              <a-select-option value="天">天</a-select-option>
+              <a-select-option value="週">週</a-select-option>
+              <a-select-option value="月">月</a-select-option>
+              <a-select-option value="年">年</a-select-option>
+            </a-select>
           </p>
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
+      <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
   </a-drawer>
 </template>
 <script>
 import moment from "moment";
-import { u_unit_list } from "@/api/unit_list";
+import uploadFile from "@/components/uploadFile.vue";
+import { u_term_contract } from "@/api/term_contract";
+import selectUser from "@/components/selectUser";
 export default {
   data() {
     return {
@@ -42,43 +135,90 @@ export default {
       info: {}
     };
   },
-  created() {
-    //this.get_data();
-  },
+  components: { uploadFile, selectUser },
+  created() {},
   methods: {
-    show(info) {
-      this.info = JSON.parse(JSON.stringify(info));
+    onUserSelect(e) {
+      this.$set(this.info, e.context, e.selectedRowKeys[0]);
+    },
+    show(record) {
+      this.info = JSON.parse(JSON.stringify(record));
+      if (moment(this.info.contract_start_date, "YYYY-MM-DD")._isValid) {
+        this.info.contract_start_date = moment(
+          this.info.contract_start_date,
+          "YYYY-MM-DD"
+        );
+      }
+      if (moment(this.info.contract_end_date, "YYYY-MM-DD")._isValid) {
+        this.info.contract_end_date = moment(
+          this.info.contract_end_date,
+          "YYYY-MM-DD"
+        );
+      }
+      if (moment(this.info.work_start_date, "YYYY-MM-DD")._isValid) {
+        this.info.work_start_date = moment(
+          this.info.work_start_date,
+          "YYYY-MM-DD"
+        );
+      }
+      if (moment(this.info.work_end_date, "YYYY-MM-DD")._isValid) {
+        this.info.work_end_date = moment(this.info.work_end_date, "YYYY-MM-DD");
+      }
+      this.info.property_id = this.$route.params.bid;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
+    get_file_info(item) {
+      //get info of file
+      item.forEach(value => {
+        for (var key in value) {
+          if (
+            key == "name" ||
+            key == "url" ||
+            key == "uid" ||
+            key == "status"
+          ) {
+            continue;
+          }
+          delete value[key];
+        }
+      });
+      return item;
+    },
     onSubmit() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
             this.info[key] = this.info[key]._isValid
               ? this.info[key].format("YYYY-MM-DD")
               : "";
           }
         }
       }
+      this.info.contract_file = this.get_file_info(this.info.contract_file);
+      this.info.work_file = this.get_file_info(this.info.work_file);
+
       this.onSubmiting = true;
-      u_unit_list(this.info)
+      u_term_contract(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("成功添加");
+            this.$message.success("更新成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("更新失败");
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("server error - 更新失败");
         });
     }
   }

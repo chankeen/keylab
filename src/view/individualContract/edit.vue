@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改/檢視重要事項"
+    title="修改一次性合约"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -15,39 +15,117 @@
             <a-input v-model="info.property_id"></a-input>
           </p>
           <p class="item">
-            <span class="label">單位層數</span>
-            <a-input v-model="info.floor"></a-input>
+            <span class="label">一次性合約編號</span>
+            <a-input v-model="info.term_contract_id"></a-input>
           </p>
           <p class="item">
-            <span class="label">單位號數</span>
-            <a-input v-model="info.unit"></a-input>
+            <span class="label">檢查報告編號</span>
+            <a-input v-model="info.regular_report_id"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">狀態</span>
+            <a-select v-model="info.status">
+              <a-select-option value="招標">招標</a-select-option>
+              <a-select-option value="已收報價">已收報價</a-select-option>
+              <a-select-option value="合約進行中">合約進行中</a-select-option>
+              <a-select-option value="已完成">已完成</a-select-option>
+            </a-select>
+          </p>
+          <p class="item">
+            <span class="label">工程種類</span>
+            <a-select v-model="info.type">
+              <a-select-option value="冷氣">冷氣</a-select-option>
+              <a-select-option value="電梯">電梯</a-select-option>
+            </a-select>
+          </p>
+          <p class="item">
+            <span class="label">招標由</span>
+            <a-date-picker v-model="info.tender_start" format="DD/MM/YYYY"></a-date-picker>
+          </p>
+          <p class="item">
+            <span class="label">招標至</span>
+            <a-date-picker v-model="info.tender_end" format="DD/MM/YYYY"></a-date-picker>
+          </p>
+          <p class="item">
+            <span class="label">招標金額</span>
+            <a-input v-model="info.tender_amount"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">相關工程公司ID</span>
+            <a-input
+              v-model="info.contractor_user_id"
+              readonly
+              @click="()=>{
+              this.$refs.selectUser.showModal('contractor_user_id',[]);
+              }"
+            ></a-input>
+          </p>
+          <p class="item">
+            <span class="label">合約文件</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile ref="contract_file" v-model="info.contract_file"></uploadFile>
+            </span>
+          </p>
+          <p class="item">
+            <span class="label">報價文件</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile ref="quotation_file" v-model="info.quotation_file"></uploadFile>
+            </span>
+          </p>
+          <p class="item">
+            <span class="label">合約內容</span>
+            <a-input v-model="info.content"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">工程地點</span>
+            <a-input v-model="info.location"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">保養期</span>
+            <a-input v-model="info.waranty_period"></a-input>
           </p>
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
+      <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
   </a-drawer>
 </template>
 <script>
+import uploadFile from "@/components/uploadFile.vue";
 import moment from "moment";
-import { u_unit_list } from "@/api/unit_list";
+import { u_individual_contract } from "@/api/individual_contract.js";
+import selectUser from "@/components/selectUser";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
-      info: {}
+      info: {
+        property_id: "",
+        contract_file: [],
+        quotation_file: [],
+        type: ""
+      }
     };
   },
-  created() {
-    //this.get_data();
-  },
+  components: { uploadFile, selectUser },
+  created() {},
   methods: {
-    show(info) {
-      this.info = JSON.parse(JSON.stringify(info));
+    onUserSelect(e) {
+      this.$set(this.info, e.context, e.selectedRowKeys[0]);
+    },
+    show(record) {
+      this.info = JSON.parse(JSON.stringify(record));
+      if (moment(this.info.tender_start, "YYYY-MM-DD")._isValid) {
+        this.info.tender_start = moment(this.info.tender_start, "YYYY-MM-DD");
+      }
+      if (moment(this.info.tender_end, "YYYY-MM-DD")._isValid) {
+        this.info.tender_end = moment(this.info.tender_end, "YYYY-MM-DD");
+      }
+      this.info.property_id = this.$route.params.bid;
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -57,28 +135,35 @@ export default {
     onSubmit() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
+          if (
+            typeof this.info[key] == "object" &&
+            !Array.isArray(this.info[key])
+          ) {
             this.info[key] = this.info[key]._isValid
               ? this.info[key].format("YYYY-MM-DD")
               : "";
           }
         }
       }
-      this.onSubmiting = true;
-      u_unit_list(this.info)
+      this.info.quotation_file = this.$refs.quotation_file.get_file_info();
+      this.info.contract_file = this.$refs.contract_file.get_file_info();
+
+      // this.onSubmiting = true;
+      console.log(this.info);
+      u_individual_contract(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("成功添加");
+            this.$message.success("修改成功");
             this.visible = false;
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("修改失敗");
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("server error - 修改失敗");
         });
     }
   }
