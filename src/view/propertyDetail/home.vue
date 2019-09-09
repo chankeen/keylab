@@ -108,7 +108,7 @@
 
 <script>
 import moment from "moment";
-import tinymce from "@/components/Tinymce";
+import tinymce from "@/components/tinymce";
 import uploadFile from "@/components/uploadFile.vue";
 import { r_property, u_property } from "@/api/property.js";
 export default {
@@ -117,7 +117,10 @@ export default {
       visible: false,
       property_id: "",
       uid: "",
-      info: {},
+      info: {
+        content: ""
+      },
+      content: "",
       submit_info: {},
       onSubmiting: false
     };

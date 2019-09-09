@@ -33,6 +33,7 @@
         </a-popconfirm>
       </template>
     </a-table>
+    <tinymce v-model="content" ref="tinymce" :height="300"></tinymce>
     <newProperty ref="newProperty" @done="()=>{
       this.getTableData();
       }" />
@@ -58,11 +59,13 @@ export default {
       tableData: [],
       dataSource: [],
       columns,
-      onTableLoading: false
+      onTableLoading: false,
+      content: "Hi"
     };
   },
   created() {
     this.getTableData();
+
     console.log("admin_wp_id" + sessionStorage.getItem("admin_wp_id"));
   },
   methods: {
