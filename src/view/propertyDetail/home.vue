@@ -37,12 +37,8 @@
           <a-input v-model="info.address_en"></a-input>
         </p>
         <p class="item">
-          <span class="label">是否擁有業主立案立團</span>
+          <span class="label">是否擁有業主立案法團</span>
           <a-switch v-model="info.oc_exist"></a-switch>
-        </p>
-        <p v-if="info.oc_exist" class="item">
-          <span class="label">年度股東大會日期</span>
-          <a-date-picker format="DD/MM/YYYY" v-model="info.agm_date"></a-date-picker>
         </p>
         <p class="item">
           <span class="label">落成年份</span>
@@ -59,6 +55,15 @@
         <p class="item">
           <span class="label">總面積</span>
           <a-input v-model="info.total_size"></a-input>
+        </p>
+        <p class="item">
+          <span class="label">備註</span>
+          <a-textarea
+            style="width:100%"
+            :autosize="{ minRows: 2, maxRows: 6 }"
+            @click="showTinymceEditor()"
+            v-model="info.remarks"
+          />
         </p>
         <!-- Floor Plan FIle -->
         <p class="item">
@@ -85,16 +90,31 @@
         </p>
       </a-col>
     </a-row>
+    <a-modal
+      title="Editer"
+      v-model="visible"
+      width="900px"
+      @cancel="
+        () => {
+          this.visible = false;
+        }
+      "
+      @ok="modalclose"
+    >
+      <tinymce v-model="info.content" ref="tinymce" :height="300" key="123" />
+    </a-modal>
   </div>
 </template>
 
 <script>
 import moment from "moment";
+import tinymce from "@/components/Tinymce";
 import uploadFile from "@/components/uploadFile.vue";
 import { r_property, u_property } from "@/api/property.js";
 export default {
   data() {
     return {
+      visible: false,
       property_id: "",
       uid: "",
       info: {},
@@ -102,10 +122,11 @@ export default {
       onSubmiting: false
     };
   },
-  components: { uploadFile },
+  components: { tinymce, uploadFile },
   created() {
     this.property_id = this.$route.params.bid;
     this.uid = sessionStorage.getItem("admin_wp_id");
+    this.info.content = "";
     this.getInfo();
   },
   methods: {
@@ -114,12 +135,6 @@ export default {
       r_property(this.uid, this.property_id)
         .then(res => {
           this.info = res.list[0];
-          let agm_date = moment(this.info.agm_date, "YYYY-MM-DD");
-          if (agm_date._isValid) {
-            this.info.agm_date = agm_date;
-          } else {
-            this.info.agm_date = "";
-          }
           if (this.info.oc_exist == "1") {
             this.info.oc_exist = true;
           } else {
@@ -128,11 +143,21 @@ export default {
         })
         .catch(err => {});
     },
+    showTinymceEditor(activeTextarea) {
+      this.visible = !this.visible;
+
+      this.$nextTick(() => {
+        setTimeout(() => {
+          this.$refs.tinymce.setContent(this.info.remarks);
+        }, 10);
+      });
+    },
+    modalclose() {
+      this.visible = false;
+      this.info.remarks = this.content;
+    },
     handle_submit_data(sumbmit_info) {
       //submit info data handling
-      sumbmit_info.agm_date = sumbmit_info.agm_date._isValid
-        ? sumbmit_info.agm_date.format("YYYY-MM-DD")
-        : "";
       sumbmit_info.floor_plan_file = this.$refs.uploadFile.get_file_info(
         sumbmit_info.floor_plan_file
       );
@@ -143,7 +168,6 @@ export default {
         sumbmit_info.oc_exist = 1;
       } else {
         sumbmit_info.oc_exist = 0;
-        sumbmit_info.agm_date = null;
       }
       return sumbmit_info;
     },

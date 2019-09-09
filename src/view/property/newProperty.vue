@@ -46,12 +46,8 @@
             <a-input v-model="info.address_en" placeholder="例如: 8-12 Stanley Street"></a-input>
           </p>
           <p class="item">
-            <span class="label">是否擁有業主立案立團</span>
+            <span class="label">是否擁有業主立案法團</span>
             <a-switch v-model="info.oc_exist"></a-switch>
-          </p>
-          <p v-if="info.oc_exist" class="item">
-            <span class="label">年度股東大會日期</span>
-            <a-date-picker required format="DD/MM/YYYY" v-model="info.agm_date"></a-date-picker>
           </p>
           <p class="item">
             <span class="label">落成年份</span>
@@ -104,7 +100,6 @@ export default {
       info: {
         oc_exist: "",
         status: "",
-        agm_date: "",
         name_zh: "",
         name_en: "",
         address_zh: "",
@@ -132,7 +127,6 @@ export default {
       this.info.oc_exist = true;
       this.info.status = "正常";
       this.info.type = "---";
-      this.info.agm_date = null;
       this.info.floor_plan_file = [];
       this.info.dmc_file = [];
       this.visible = true;
@@ -144,9 +138,6 @@ export default {
     },
     handle_submit_data_with_admin_wp_id(sumbmit_info) {
       //submit info data handling
-      sumbmit_info.agm_date = sumbmit_info.agm_date._isValid
-        ? sumbmit_info.agm_date.format("YYYY-MM-DD")
-        : "";
       sumbmit_info.floor_plan_file = this.$refs.uploadFile.get_file_info(
         sumbmit_info.floor_plan_file
       );
@@ -157,7 +148,6 @@ export default {
         sumbmit_info.oc_exist = 1;
       } else {
         sumbmit_info.oc_exist = 0;
-        sumbmit_info.agm_date = null;
       }
       sumbmit_info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
       return sumbmit_info;
