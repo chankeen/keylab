@@ -11,11 +11,12 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">重要事項種類</span>
+            <span class="label">政府法令種類</span>
             <a-select v-model="info.type">
               <a-select-option value="---">--- 請選擇種類 ---</a-select-option>
               <a-select-option value="常務會議">常務會議</a-select-option>
-              <a-select-option value="年度股東大會">年度股東大會</a-select-option>
+              <a-select-option value="年度業主大會">年度業主大會</a-select-option>
+              <a-select-option value="特別業主大會">特別業主大會</a-select-option>
               <a-select-option value="特別會議">特別會議</a-select-option>
               <a-select-option value="其他">其他</a-select-option>
             </a-select>
@@ -32,9 +33,15 @@
             <span class="label">第N次</span>
             <a-input-number placeholder="例如: 1" :min="1" :max="999" v-model="info.minutes_term"></a-input-number>
           </p>
-          <a-divider></a-divider>
+          <a-divider />
           <p class="item">
-            <span class="label">相關文件</span>
+            <span class="label">議程文件</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile ref="agendaFile" v-model="info.agenda_file"></uploadFile>
+            </span>
+          </p>
+          <p class="item">
+            <span class="label">會議紀錄文件</span>
             <span style="text-align:left;width:100%">
               <uploadFile ref="minutesFile" v-model="info.minutes_file"></uploadFile>
             </span>
@@ -87,6 +94,9 @@ export default {
         : "";
       submit_info.minutes_file = this.$refs.minutesFile.get_file_info(
         submit_info.minutes_file
+      );
+      submit_info.agenda_file = this.$refs.agendaFile.get_file_info(
+        submit_info.agenda_file
       );
       submit_info.property_id = this.$route.params.bid;
       return submit_info;

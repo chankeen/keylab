@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改/檢視重要事項"
+    title="修改/檢視政府法令"
     placement="right"
     :closable="false"
     @close="onClose"

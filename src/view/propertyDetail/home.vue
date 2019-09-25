@@ -58,23 +58,23 @@
         </p>
         <p class="item">
           <span class="label">備註</span>
-          <a-textarea
-            style="width:100%"
-            :autosize="{ minRows: 2, maxRows: 6 }"
-            @click="showTinymceEditor()"
+          <tinymce-editor
+            api-key="mozvg0we1rlktvz6lus7pmfhq3u22gjcw0i5ndkthiwflpei"
             v-model="info.remarks"
-          />
+            style="width:100%"
+            :init="{plugins: 'wordcount'}"
+          ></tinymce-editor>
         </p>
         <!-- Floor Plan FIle -->
         <p class="item">
-          <span class="label">Floor Plan File</span>
+          <span class="label">圖則檔案(jpg,png or pdf)</span>
           <span style="text-align:left;width:100%">
             <uploadFile ref="uploadFile" v-model="info.floor_plan_file"></uploadFile>
           </span>
         </p>
         <!-- DMC FIle -->
         <p class="item">
-          <span class="label">DMC File</span>
+          <span class="label">地契檔案(jpg,png or pdf)</span>
           <span style="text-align:left;width:100%">
             <uploadFile v-model="info.dmc_file"></uploadFile>
           </span>
@@ -90,25 +90,12 @@
         </p>
       </a-col>
     </a-row>
-    <a-modal
-      title="Editer"
-      v-model="visible"
-      width="900px"
-      @cancel="
-        () => {
-          this.visible = false;
-        }
-      "
-      @ok="modalclose"
-    >
-      <tinymce v-model="info.content" ref="tinymce" :height="300" key="123" />
-    </a-modal>
   </div>
 </template>
 
 <script>
 import moment from "moment";
-import tinymce from "@/components/tinymce";
+import Editor from "@tinymce/tinymce-vue";
 import uploadFile from "@/components/uploadFile.vue";
 import { r_property, u_property } from "@/api/property.js";
 export default {
@@ -117,19 +104,17 @@ export default {
       visible: false,
       property_id: "",
       uid: "",
-      info: {
-        content: ""
-      },
+      info: {},
       content: "",
       submit_info: {},
       onSubmiting: false
     };
   },
-  components: { tinymce, uploadFile },
+  components: { uploadFile, "tinymce-editor": Editor },
   created() {
     this.property_id = this.$route.params.bid;
     this.uid = sessionStorage.getItem("admin_wp_id");
-    this.info.content = "";
+    this.info.remarks = "";
     this.getInfo();
   },
   methods: {
@@ -145,19 +130,6 @@ export default {
           }
         })
         .catch(err => {});
-    },
-    showTinymceEditor(activeTextarea) {
-      this.visible = !this.visible;
-
-      this.$nextTick(() => {
-        setTimeout(() => {
-          this.$refs.tinymce.setContent(this.info.remarks);
-        }, 10);
-      });
-    },
-    modalclose() {
-      this.visible = false;
-      this.info.remarks = this.content;
     },
     handle_submit_data(sumbmit_info) {
       //submit info data handling

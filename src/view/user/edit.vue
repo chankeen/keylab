@@ -7,6 +7,7 @@
             <span class="label">Status</span>
             <a-select v-model="info.status">
               <a-select-option value="正常">正常</a-select-option>
+              <a-select-option value="離職">離職</a-select-option>
             </a-select>
           </p>
           <p class="item">

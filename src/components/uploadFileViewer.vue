@@ -1,18 +1,16 @@
 <template>
   <div class="uploadfile">
     <a-upload
+      :showUploadList="{
+        showRemoveIcon:false
+        }"
       :action="action_url"
       listType="picture"
       name="orm_file"
       :defaultFileList="List"
       :fileList="List"
       @change="handleChange"
-      :remove="onRemoveFile"
-    >
-      <a-button>
-        <a-icon type="upload" />upload
-      </a-button>
-    </a-upload>
+    ></a-upload>
   </div>
 </template>
 <script>
@@ -20,6 +18,7 @@ export default {
   data() {
     return {
       List: [],
+      disable_upload: 0,
       action_url: this.$store.getters.domain + "api/upload-file/"
     };
   },

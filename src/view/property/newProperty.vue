@@ -66,14 +66,14 @@
             <a-input v-model="info.total_size" placeholder="例如: 580"></a-input>
           </p>
           <p class="item">
-            <span class="label">Floor Plan File</span>
+            <span class="label">圖則檔案(jpg,png or pdf)</span>
             <span style="text-align:left;width:100%">
               <uploadFile v-model="info.floor_plan_file" />
             </span>
           </p>
           <!-- DMC FIle -->
           <p class="item">
-            <span class="label">DMC File</span>
+            <span class="label">地契檔案(jpg,png or pdf)</span>
             <span style="text-align:left;width:100%">
               <uploadFile ref="uploadFile" v-model="info.dmc_file" />
             </span>

@@ -11,6 +11,7 @@ export function r_propman(property_id) {
     })
 }
 export function u_propman(values) {
+    console.log(values);
     return request({
         url: "api/data?page=propman&action=u_propman",
         method: "POST",
@@ -20,6 +21,7 @@ export function u_propman(values) {
     })
 }
 export function c_propman(values) {
+    console.log(values);
     return request({
         url: "api/data?page=propman&action=c_propman",
         method: "POST",

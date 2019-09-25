@@ -1,14 +1,14 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="重要事項編號" style="width: 200px" @search="onSearch" />
+      <a-input-search placeholder="政府法令編號" style="width: 200px" @search="onSearch" />
       <span>
         <a-button
           type="primary"
           @click="()=>{
         this.$refs.newImportant.show()
         }"
-        >新增重要事項</a-button>
+        >新增政府法令</a-button>
       </span>
     </p>
     <a-table
@@ -21,6 +21,11 @@
         <a @click="()=>{
           $refs.editImportant.show(record)
           }">更多</a>
+      </template>
+      <template slot="extend" slot-scope="record">
+        <a @click="()=>{
+          $refs.extendDeadline.show(record.important_id)
+          }">延長期限</a>
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
@@ -40,20 +45,26 @@
     <editImportant ref="editImportant" @done="()=>{
     this.getTableData();
     }" />
+    <extendDeadline ref="extendDeadline" @done="()=>{
+    this.getTableData();
+    }" />
   </div>
 </template>
 <script>
 import newImportant from "./new";
 import editImportant from "./edit";
+import extendDeadline from "./extendDeadline";
 import { r_important, d_important } from "@/api/important.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
-  { title: "重要事項編號", dataIndex: "important_id" },
-  { title: "重要事項種類", width: "150px", dataIndex: "type" },
-  { title: "重要事項內容", dataIndex: "content" },
+  { title: "政府法令編號", dataIndex: "important_id" },
+  { title: "政府法令種類", width: "150px", dataIndex: "type" },
+  { title: "政府法令內容", dataIndex: "content" },
   { title: "知悉日期", dataIndex: "known_date" },
-  { title: "處理限期", dataIndex: "deadline" },
+  { title: "處理限期(最新)", dataIndex: "latest_deadline" },
+  { title: "n日後到期", dataIndex: "date_left" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
+  { width: "100px", scopedSlots: { customRender: "extend" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
 export default {
@@ -101,7 +112,7 @@ export default {
         });
     }
   },
-  components: { newImportant, editImportant }
+  components: { newImportant, editImportant, extendDeadline }
 };
 </script>
 <style lang="scss">

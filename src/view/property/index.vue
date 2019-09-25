@@ -33,7 +33,6 @@
         </a-popconfirm>
       </template>
     </a-table>
-    <tinymce v-model="content" ref="tinymce" :height="300"></tinymce>
     <newProperty ref="newProperty" @done="()=>{
       this.getTableData();
       }" />

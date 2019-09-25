@@ -17,7 +17,15 @@
           </p>
           <p class="item">
             <span class="label">職位</span>
-            <a-input v-model="info.position"></a-input>
+            <a-select v-model="info.position">
+              <a-select-option value="---">---請選擇職位---</a-select-option>
+              <a-select-option value="主席">主席</a-select-option>
+              <a-select-option value="副主席">副主席</a-select-option>
+              <a-select-option value="秘書">秘書</a-select-option>
+              <a-select-option value="司庫">司庫</a-select-option>
+              <a-select-option value="委員">委員</a-select-option>
+              <a-select-option value="其他">其他</a-select-option>
+            </a-select>
           </p>
           <p class="item">
             <span class="label">年度由</span>
@@ -36,8 +44,13 @@
             <a-date-picker format="DD/MM/YYYY" v-model="info.elected_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">個人簡介</span>
-            <a-input v-model="info.introduction"></a-input>
+            <span class="label">備註</span>
+            <tinymce-editor
+              api-key="mozvg0we1rlktvz6lus7pmfhq3u22gjcw0i5ndkthiwflpei"
+              v-model="info.introduction"
+              style="width:100%;height:400px;"
+              :init="{plugins: 'wordcount'}"
+            ></tinymce-editor>
           </p>
         </a-col>
       </a-row>
@@ -50,6 +63,7 @@
 </template>
 <script>
 import moment from "moment";
+import Editor from "@tinymce/tinymce-vue";
 import { u_oc } from "@/api/oc";
 export default {
   data() {
@@ -70,6 +84,7 @@ export default {
       }
     };
   },
+  components: { "tinymce-editor": Editor },
   created() {},
   methods: {
     show(info) {

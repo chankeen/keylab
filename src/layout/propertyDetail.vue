@@ -81,7 +81,7 @@ export default {
         { r_name: "property_oc", title: "Oc / 法團成員", icon: "team" },
         {
           r_name: "property_important",
-          title: "Important / 重要事項",
+          title: "Important / 政府法令",
           icon: "file"
         },
         {

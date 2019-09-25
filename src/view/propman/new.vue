@@ -34,8 +34,39 @@
           </p>
           <p class="item">
             <span class="label">職位</span>
-            <a-input placeholder="例如: 經理 / 執行 / 秘書" v-model="info.position"></a-input>
+            <a-select v-model="info.position">
+              <a-select-option value="---">--- 請選擇職位 ---</a-select-option>
+              <a-select-option value="分區經理">分區經理</a-select-option>
+              <a-select-option value="區經理">區經理</a-select-option>
+              <a-select-option value="大廈經理">大廈經理</a-select-option>
+              <a-select-option value="大廈主任">大廈主任</a-select-option>
+              <a-select-option value="工程主任">工程主任</a-select-option>
+              <a-select-option value="技工">技工</a-select-option>
+              <a-select-option value="行政文員">行政文員</a-select-option>
+              <a-select-option value="會計">會計</a-select-option>
+              <a-select-option value="保安主管">保安主管</a-select-option>
+              <a-select-option value="保安員">保安員</a-select-option>
+              <a-select-option value="清潔人員">清潔人員</a-select-option>
+            </a-select>
           </p>
+          <div v-if="info.position == '保安員'">
+            <p class="item">
+              <span class="label">出生年月日</span>
+              <a-date-picker format="DD/MM/YYYY" v-model="info.birth_date"></a-date-picker>
+            </p>
+            <p class="item">
+              <span class="label">保安証編號</span>
+              <a-input v-model="info.cert_no"></a-input>
+            </p>
+            <p class="item">
+              <span class="label">保安証到期日</span>
+              <a-date-picker format="DD/MM/YYYY" v-model="info.cert_due_date"></a-date-picker>
+            </p>
+            <p class="item">
+              <span class="label">體檢報告(70歲以上適用)</span>
+              <uploadFile ref="bodyCheckFile" v-model="info.body_check_file"></uploadFile>
+            </p>
+          </div>
         </a-col>
       </a-row>
       <p style="text-align:right">
@@ -48,12 +79,14 @@
 <script>
 import moment from "moment";
 import selectUser from "@/components/selectUser";
+import uploadFile from "@/components/uploadFile.vue";
 import { c_propman } from "@/api/propman";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
       info: {
         property_id: "",
         user_id: "",
@@ -64,10 +97,8 @@ export default {
       }
     };
   },
-  created() {
-    this;
-  },
-  components: { selectUser },
+  created() {},
+  components: { uploadFile, selectUser },
   methods: {
     onUserSelect(e) {
       console.log(e.list[e.selectedRowKeys[0]]);
@@ -82,16 +113,33 @@ export default {
           this.info[key] = "";
         }
       }
+      this.info.position = "---";
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
+    handle_submit_data(submit_info) {
+      //submit info data handling
+      if (submit_info.position == "保安員") {
+        submit_info.body_check_file = this.$refs.bodyCheckFile.get_file_info(
+          submit_info.body_check_file
+        );
+        submit_info.cert_due_date = submit_info.cert_due_date._isValid
+          ? submit_info.cert_due_date.format("YYYY-MM-DD")
+          : "";
+        submit_info.birth_date = submit_info.birth_date._isValid
+          ? submit_info.birth_date.format("YYYY-MM-DD")
+          : "";
+      }
+      submit_info.property_id = this.$route.params.bid;
+      return submit_info;
+    },
     onSubmit() {
-      this.info.property_id = this.$route.params.bid;
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      c_propman(this.info)
+      c_propman(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");

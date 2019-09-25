@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改/檢視重要事項"
+    title="修改/檢視政府法令"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -11,10 +11,15 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">重要事項種類</span>
+            <span class="label">政府法令種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="政府法令">政府法令</a-select-option>
-              <a-select-option value="其他事項">其他事項</a-select-option>
+              <a-select-option value="食環署">食環署</a-select-option>
+              <a-select-option value="土木工程署">土木工程署</a-select-option>
+              <a-select-option value="屋宇署">屋宇署</a-select-option>
+              <a-select-option value="消防署">消防署</a-select-option>
+              <a-select-option value="機電工程署">機電工程署</a-select-option>
+              <a-select-option value="法律訴頌">法律訴頌</a-select-option>
+              <a-select-option value="其他">其他</a-select-option>
             </a-select>
           </p>
           <p class="item">
@@ -22,16 +27,47 @@
             <a-date-picker format="DD/MM/YYYY" v-model="info.known_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">限期</span>
+            <span class="label">參考編號</span>
+            <a-input format="DD/MM/YYYY" v-model="info.ref_no"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">初始限期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.deadline"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">重要事項內容</span>
+            <span class="label">政府法令內容</span>
             <a-input v-model="info.content"></a-input>
           </p>
           <p class="item">
+            <span class="label">法令負責人</span>
+            <a-button
+              type="primary"
+              icon="search"
+              @click="()=>{
+              $refs.selectUser.showModal('',[])
+              }"
+            >Search</a-button>
+          </p>
+          <p class="item">
+            <span class="label">中文名稱</span>
+            <a-input readonly v-model="info.name_zh"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">英文名稱</span>
+            <a-input readonly v-model="info.name_en"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">電話號碼</span>
+            <a-input readonly v-model="info.login_tel"></a-input>
+          </p>
+          <p class="item">
             <span class="label">備註</span>
-            <a-input v-model="info.remarks"></a-input>
+            <tinymce-editor
+              api-key="mozvg0we1rlktvz6lus7pmfhq3u22gjcw0i5ndkthiwflpei"
+              v-model="info.remarks"
+              style="width:100%"
+              :init="{plugins: 'wordcount'}"
+            ></tinymce-editor>
           </p>
           <a-divider></a-divider>
           <p class="item">
@@ -42,6 +78,7 @@
           </p>
           <a-divider />
         </a-col>
+        <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
       </a-row>
 
       <p style="text-align:right">
@@ -52,7 +89,9 @@
 </template>
 <script>
 import moment from "moment";
+import Editor from "@tinymce/tinymce-vue";
 import uploadFile from "@/components/uploadFile.vue";
+import selectUser from "@/components/selectUser";
 import { u_important } from "@/api/important";
 export default {
   data() {
@@ -60,18 +99,31 @@ export default {
       visible: false,
       onSubmiting: false,
       submit_info: {},
-      info: {}
+      info: {
+        handler_user_id: "",
+        name_zh: "",
+        name_en: "",
+        login_tel: ""
+      }
     };
   },
   created() {},
-  components: { uploadFile },
+  components: { uploadFile, selectUser, "tinymce-editor": Editor },
   methods: {
     show(info) {
+      console.log(info);
       this.info = JSON.parse(JSON.stringify(info));
       this.info.known_date = moment(this.info.known_date, "YYYY-MM-DD");
       this.info.deadline = moment(this.info.deadline, "YYYY-MM-DD");
       this.visible = true;
       this.onSubmiting = false;
+    },
+    onUserSelect(e) {
+      console.log(e.list[e.selectedRowKeys[0]]);
+      this.info.handler_user_id = e.selectedRowKeys[0];
+      this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
+      this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
+      this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
     },
     onClose() {
       this.visible = false;

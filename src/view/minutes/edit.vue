@@ -11,10 +11,11 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">重要事項種類</span>
+            <span class="label">政府法令種類</span>
             <a-select v-model="info.type">
               <a-select-option value="常務會議">常務會議</a-select-option>
-              <a-select-option value="年度股東大會">年度股東大會</a-select-option>
+              <a-select-option value="年度業主大會">年度業主大會</a-select-option>
+              <a-select-option value="特別業主大會">特別業主大會</a-select-option>
               <a-select-option value="特別會議">特別會議</a-select-option>
               <a-select-option value="其他">其他</a-select-option>
             </a-select>

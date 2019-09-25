@@ -34,7 +34,15 @@
           </p>
           <p class="item">
             <span class="label">職位</span>
-            <a-input placeholder="例如: 司庫 / 主席 / 秘書 / 財務" v-model="info.position"></a-input>
+            <a-select v-model="info.position">
+              <a-select-option value="---">---請選擇職位---</a-select-option>
+              <a-select-option value="主席">主席</a-select-option>
+              <a-select-option value="副主席">副主席</a-select-option>
+              <a-select-option value="秘書">秘書</a-select-option>
+              <a-select-option value="司庫">司庫</a-select-option>
+              <a-select-option value="委員">委員</a-select-option>
+              <a-select-option value="其他">其他</a-select-option>
+            </a-select>
           </p>
           <p class="item">
             <span class="label">年度由</span>
@@ -51,10 +59,6 @@
           <p class="item">
             <span class="label">當選日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.elected_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">個人簡介</span>
-            <a-input placeholder="任意填寫" v-model="info.introduction"></a-input>
           </p>
         </a-col>
       </a-row>
@@ -90,7 +94,9 @@ export default {
       }
     };
   },
-  created() {},
+  created() {
+    this.info.position = "---";
+  },
   components: { selectUser },
   methods: {
     onUserSelect(e) {
