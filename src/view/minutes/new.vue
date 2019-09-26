@@ -70,8 +70,7 @@ export default {
         type: "",
         meeting_date: "",
         oc_term: "",
-        minutes_term: "",
-        minutes_file: []
+        minutes_term: ""
       }
     };
   },
@@ -92,7 +91,7 @@ export default {
       submit_info.meeting_date = submit_info.meeting_date._isValid
         ? submit_info.meeting_date.format("YYYY-MM-DD")
         : "";
-      submit_info.minutes_file = this.$refs.minutesFile.get_file_info(
+      submit_info.minutes_file = this.$refs.minutes_file.get_file_info(
         submit_info.minutes_file
       );
       submit_info.agenda_file = this.$refs.agendaFile.get_file_info(
