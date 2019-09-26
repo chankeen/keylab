@@ -91,19 +91,19 @@ export default {
     onSure() {
       this.visible = false;
       let list = {};
-      let idList = [];
+      this.dataSource.forEach(item => {
+        if (this.selectedRowKeys.includes(parseInt(item.user_id))) {
+          list[item.user_id] = item;
+        }
+      });
       console.log({
         context: this.context,
-        selectedRowKeys: this.selectedRowKeys
+        selectedRowKeys: this.selectedRowKeys,
+        list
       });
-      this.selectedRowKeys.forEach(item => {
-        list[this.dataSource[item].user_id] = this.dataSource[item];
-        idList.push(this.dataSource[item].user_id);
-      });
-
       this.$emit("done", {
         context: this.context,
-        selectedRowKeys: idList,
+        selectedRowKeys: this.selectedRowKeys,
         list
       });
     },
