@@ -28,10 +28,6 @@
             <span class="label">文書日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.instrument_date"></a-date-picker>
           </p>
-          <p class="item">
-            <span class="label">備註</span>
-            <a-input v-model="info.remarks"></a-input>
-          </p>
           <a-divider></a-divider>
           <p class="item">
             <span class="label">Unit File File</span>

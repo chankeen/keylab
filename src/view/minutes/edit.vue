@@ -32,9 +32,24 @@
             <span class="label">第N次</span>
             <a-input-number :min="1" :max="999" v-model="info.minutes_term"></a-input-number>
           </p>
+          <p class="item">
+            <span class="label">備註</span>
+            <tinymce-editor
+              api-key="mozvg0we1rlktvz6lus7pmfhq3u22gjcw0i5ndkthiwflpei"
+              v-model="info.remarks"
+              style="width:100%"
+              :init="{plugins: 'wordcount'}"
+            ></tinymce-editor>
+          </p>
           <a-divider></a-divider>
           <p class="item">
-            <span class="label">相關文件</span>
+            <span class="label">議程文件</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile ref="agendaFile" v-model="info.agenda_file"></uploadFile>
+            </span>
+          </p>
+          <p class="item">
+            <span class="label">會議紀錄文件</span>
             <span style="text-align:left;width:100%">
               <uploadFile ref="minutesFile" v-model="info.minutes_file"></uploadFile>
             </span>
@@ -50,6 +65,7 @@
 </template>
 <script>
 import moment from "moment";
+import Editor from "@tinymce/tinymce-vue";
 import uploadFile from "@/components/uploadFile.vue";
 import { u_minutes } from "@/api/minutes";
 export default {
@@ -61,7 +77,7 @@ export default {
       info: {}
     };
   },
-  components: { uploadFile },
+  components: { uploadFile, "tinymce-editor": Editor },
   created() {},
   methods: {
     show(info) {

@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改/檢視管理費"
+    title="修改單位紀錄"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -17,20 +17,25 @@
           <p class="item">
             <span class="label">紀錄種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="欠交管理費">欠交管理費</a-select-option>
-              <a-select-option value="投訴">投訴</a-select-option>
+              <a-select-option value="欠其他款項">欠其他款項</a-select-option>
+              <a-select-option value="管理費按金">管理費按金</a-select-option>
               <a-select-option value="法律問題">法律問題</a-select-option>
-              <a-select-option value="裝修許可">裝修許可</a-select-option>
+              <a-select-option value="裝修申請">裝修申請</a-select-option>
               <a-select-option value="其他">其他</a-select-option>
             </a-select>
           </p>
           <p class="item">
-            <span class="label">文書日期</span>
+            <span class="label">紀錄日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.instrument_date"></a-date-picker>
           </p>
           <p class="item">
             <span class="label">備註</span>
-            <a-input v-model="info.remarks"></a-input>
+            <tinymce-editor
+              api-key="mozvg0we1rlktvz6lus7pmfhq3u22gjcw0i5ndkthiwflpei"
+              v-model="info.remarks"
+              style="width:100%"
+              :init="{plugins: 'wordcount'}"
+            ></tinymce-editor>
           </p>
           <a-divider></a-divider>
           <p class="item">
@@ -51,6 +56,7 @@
 </template>
 <script>
 import moment from "moment";
+import Editor from "@tinymce/tinymce-vue";
 import uploadFile from "@/components/uploadFile.vue";
 import { u_unit_file } from "@/api/unit_file";
 export default {
@@ -64,7 +70,7 @@ export default {
   created() {
     //this.get_data();
   },
-  components: { uploadFile },
+  components: { uploadFile, "tinymce-editor": Editor },
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));

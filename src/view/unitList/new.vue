@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="新增法團命令"
+    title="新增單位"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -10,9 +10,13 @@
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
-          <p class="item" hidden>
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
+          <p class="item">
+            <span class="label">物業名稱</span>
+            <a-select :options="blockOptions" v-model="info.block"></a-select>
+          </p>
+          <p class="item" v-show="info.block == '添加新物業'">
+            <span class="label">請輸入物業名稱</span>
+            <a-input v-model="info.newblock"></a-input>
           </p>
           <p class="item">
             <span class="label">單位層數</span>
@@ -21,6 +25,13 @@
           <p class="item">
             <span class="label">單位號數</span>
             <a-input v-model="info.unit"></a-input>
+          </p>
+          <a-divider />
+          <p class="item">
+            <span class="label">單位相關檔案(jpg,png or pdf)</span>
+            <span style="text-align:left;width:100%">
+              <uploadFile ref="uploadFile" v-model="info.file"></uploadFile>
+            </span>
           </p>
         </a-col>
       </a-row>
@@ -33,38 +44,57 @@
 </template>
 <script>
 import moment from "moment";
+import uploadFile from "@/components/uploadFile.vue";
 import { c_unit_list } from "@/api/unit_list";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
+      blockOptions: [],
       info: {
-        property_id: "",
-        floor: "",
-        unit: ""
+        block: ""
       }
     };
   },
+  components: { uploadFile },
   created() {},
   methods: {
-    show() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          this.info[key] = "";
-        }
-      }
-      this.info.property_id = this.$route.params.bid;
+    show(blockList) {
+      this.blockOptions = [];
+      console.log(blockList);
+      this.blockOptions = blockList;
+      // this.blockOptions.push({
+      //   value: "曉明閣",
+      //   label: "曉明閣",
+      //   key: "曉明閣"
+      // });
+      // this.blockOptions.push({
+      //   value: "曉光閣",
+      //   label: "曉光閣",
+      //   key: "曉光閣"
+      // });
+      this.blockOptions.push({ value: "添加新物業", label: "添加新物業" });
+      this.info.block = blockOptions[0].value;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
+    handle_submit_data(submit_info) {
+      //submit info data handling
+      submit_info.file = this.$refs.uploadFile.get_file_info(submit_info.file);
+      submit_info.property_id = this.$route.params.bid;
+      if ((submit_info.block = "添加新物業"))
+        submit_info.block = submit_info.newblock;
+      return submit_info;
+    },
     onSubmit() {
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      console.log(this.info);
-      c_unit_list(this.info)
+      c_unit_list(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");

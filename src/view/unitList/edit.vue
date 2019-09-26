@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改/檢視政府法令"
+    title="修改單位檔案"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -10,21 +10,35 @@
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
-          <p class="item" hidden>
-            <span class="label">物業編號</span>
-            <a-input v-model="info.property_id"></a-input>
+          <p class="item">
+            <span class="label">物業名稱</span>
+            <a-input disabled v-model="info.block"></a-input>
           </p>
           <p class="item">
             <span class="label">單位層數</span>
-            <a-input v-model="info.floor"></a-input>
+            <a-input disabled v-model="info.floor"></a-input>
           </p>
           <p class="item">
             <span class="label">單位號數</span>
-            <a-input v-model="info.unit"></a-input>
+            <a-input disabled v-model="info.unit"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">備註</span>
+            <tinymce-editor
+              api-key="mozvg0we1rlktvz6lus7pmfhq3u22gjcw0i5ndkthiwflpei"
+              v-model="info.remarks"
+              style="width:100%"
+              :init="{plugins: 'wordcount'}"
+            ></tinymce-editor>
           </p>
         </a-col>
       </a-row>
-
+      <p class="item">
+        <span class="label">單位相關檔案(jpg,png or pdf)</span>
+        <span style="text-align:left;width:100%">
+          <uploadFile v-model="info.file"></uploadFile>
+        </span>
+      </p>
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
@@ -33,15 +47,19 @@
 </template>
 <script>
 import moment from "moment";
+import uploadFile from "@/components/uploadFile.vue";
+import Editor from "@tinymce/tinymce-vue";
 import { u_unit_list } from "@/api/unit_list";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
+      submit_info: {},
       info: {}
     };
   },
+  components: { uploadFile, "tinymce-editor": Editor },
   created() {
     //this.get_data();
   },
