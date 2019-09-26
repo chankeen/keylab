@@ -14,7 +14,7 @@
         :rowSelection="{
           selectedRowKeys: selectedRowKeys,
           onChange: onSelectChange,
-          type: this.selectType
+          type:this.selectType
         }"
         :columns="columns"
         :dataSource="tableData"
@@ -63,7 +63,7 @@ export default {
       r_users(sessionStorage.getItem("admin_wp_id"))
         .then(res => {
           res.list.forEach(item => {
-            this.$set(item, "id", parseInt(item.user_id));
+            this.$set(item, "key", parseInt(item.user_id));
           });
           this.tableData = res.list;
           this.dataSource = this.tableData;
@@ -85,21 +85,25 @@ export default {
         //set these entity not show
       );
     },
-    onSelectChange(selectedRowKeys) {
+    onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;
     },
     onSure() {
       this.visible = false;
       let list = {};
-      let idList = [];
-      this.selectedRowKeys.forEach(item => {
-        list[this.dataSource[item].id] = this.dataSource[item];
-        idList.push(this.dataSource[item].id);
+      this.dataSource.forEach(item => {
+        if (this.selectedRowKeys.includes(parseInt(item.user_id))) {
+          list[item.user_id] = item;
+        }
       });
-
+      console.log({
+        context: this.context,
+        selectedRowKeys: this.selectedRowKeys,
+        list
+      });
       this.$emit("done", {
         context: this.context,
-        selectedRowKeys: idList,
+        selectedRowKeys: this.selectedRowKeys,
         list
       });
     },

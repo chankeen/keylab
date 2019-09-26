@@ -101,7 +101,7 @@ export default {
   components: { uploadFile, selectUser },
   methods: {
     onUserSelect(e) {
-      console.log(e.list[e.selectedRowKeys[0]]);
+      console.log(e);
       this.info.user_id = e.selectedRowKeys[0];
       this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
       this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
