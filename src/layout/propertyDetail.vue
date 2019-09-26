@@ -94,11 +94,11 @@ export default {
           title: "Unit List / 單位列表",
           icon: "ordered-list"
         },
-        {
-          r_name: "property_unit_fee",
-          title: "Unit Fee / 管理費",
-          icon: "pay-circle"
-        },
+        // {
+        //   r_name: "property_unit_fee",
+        //   title: "Unit Fee / 管理費",
+        //   icon: "pay-circle"
+        // },
         {
           r_name: "property_unit_file",
           title: "Unit File / 單位紀錄",

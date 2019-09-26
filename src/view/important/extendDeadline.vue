@@ -28,7 +28,7 @@
             <a-collapse-panel
               v-if="extends_data.length > 0"
               style="margin-top:5px;margin-bottom:5px"
-              :header="'延期紀錄 - '+index"
+              :header="'延期紀錄 - '+(index+1)"
               v-for="(extend,index) in extends_data"
               :key="index"
             >
