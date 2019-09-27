@@ -62,25 +62,14 @@ export default {
   created() {},
   methods: {
     show(blockList) {
-      this.blockOptions = [];
-      console.log(blockList);
-      this.blockOptions = blockList;
-      // this.blockOptions.push({
-      //   value: "曉明閣",
-      //   label: "曉明閣",
-      //   key: "曉明閣"
-      // });
-      // this.blockOptions.push({
-      //   value: "曉光閣",
-      //   label: "曉光閣",
-      //   key: "曉光閣"
-      // });
+      Object.assign(this.blockOptions, blockList);
       this.blockOptions.push({ value: "添加新物業", label: "添加新物業" });
-      this.info.block = blockOptions[0].value;
+      this.info.block = this.blockOptions[0].value;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
+      this.blockOptions = [];
       this.visible = false;
     },
     handle_submit_data(submit_info) {

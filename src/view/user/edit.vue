@@ -11,6 +11,13 @@
             </a-select>
           </p>
           <p class="item">
+            <span class="label">Type</span>
+            <a-select v-model="info.type">
+              <a-select-option value="個人">個人</a-select-option>
+              <a-select-option value="公司">公司</a-select-option>
+            </a-select>
+          </p>
+          <p class="item">
             <span class="label">Chinese Name</span>
             <a-input v-model="info.name_zh"></a-input>
           </p>
@@ -23,8 +30,16 @@
             <a-input maxlength="8" v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
+            <span class="label">Backup Tel</span>
+            <a-input maxlength="8" v-model="info.backup_tel"></a-input>
+          </p>
+          <p class="item">
             <span class="label">Email</span>
             <a-input v-model="info.email"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">Fax</span>
+            <a-input placeholder="例如: chantaiman@gmail.com" v-model="info.fax"></a-input>
           </p>
         </a-col>
       </a-row>

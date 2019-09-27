@@ -44,6 +44,10 @@
             <a-date-picker format="DD/MM/YYYY" v-model="info.elected_date"></a-date-picker>
           </p>
           <p class="item">
+            <span class="label">單位</span>
+            <a-input v-model="info.unit"></a-input>
+          </p>
+          <p class="item">
             <span class="label">備註</span>
             <tinymce-editor
               api-key="mozvg0we1rlktvz6lus7pmfhq3u22gjcw0i5ndkthiwflpei"

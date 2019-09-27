@@ -17,9 +17,24 @@
           <p class="item">
             <span class="label">工程種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="冷氣">冷氣</a-select-option>
-              <a-select-option value="電梯">電梯</a-select-option>
+              <a-select-option value="清潔">清潔</a-select-option>
+              <a-select-option value="電梯/扶手電梯保養">電梯/扶手電梯保養</a-select-option>
+              <a-select-option value="防盜及閉路電視">防盜及閉路電視</a-select-option>
+              <a-select-option value="消防年檢">消防年檢</a-select-option>
+              <a-select-option value="冷氣機系統">冷氣機系統</a-select-option>
+              <a-select-option value="清洗水缸">清洗水缸</a-select-option>
+              <a-select-option value="５年大廈固定電力裝置檢查">５年大廈固定電力裝置檢查</a-select-option>
+              <a-select-option value="法團常年法律顧問">法團常年法律顧問</a-select-option>
+              <a-select-option value="大廈全保">大廈全保</a-select-option>
+              <a-select-option value="火險(公眾地方)">火險(公眾地方)</a-select-option>
+              <a-select-option value="公眾責任保險">公眾責任保險</a-select-option>
+              <a-select-option value="第三者保險(法團)">第三者保險(法團)</a-select-option>
+              <a-select-option value="添加新種類">添加新種類</a-select-option>
             </a-select>
+          </p>
+          <p class="item" v-if="info.type == '添加新種類'">
+            <span class="label">輸入新種類</span>
+            <a-input v-model="info.new_type"></a-input>
           </p>
           <p class="item">
             <span class="label">合約由</span>

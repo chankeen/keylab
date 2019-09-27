@@ -85,6 +85,7 @@ export default {
           this.tableData = res.list;
           this.dataSource = res.list;
           //get block list
+          this.blockList = [];
           this.tableData.forEach((unitlist, index) => {
             if (!this.blockList.includes(unitlist.block))
               this.blockList.push({

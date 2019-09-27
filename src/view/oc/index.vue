@@ -48,6 +48,8 @@ const columns = [
   { title: "第N屆", dataIndex: "term" },
   { title: "名稱(中文)", dataIndex: "name_zh" },
   { title: "名稱(英文)", dataIndex: "name_en" },
+  { title: "電話", dataIndex: "login_tel" },
+  { title: "單位", dataIndex: "unit" },
   { title: "職位", dataIndex: "position" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }

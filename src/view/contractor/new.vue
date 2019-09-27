@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="新增法團成員"
+    title="新增承辦商"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -33,40 +33,15 @@
             <a-input readonly v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
-            <span class="label">職位</span>
-            <a-select v-model="info.position">
-              <a-select-option value="---">---請選擇職位---</a-select-option>
-              <a-select-option value="主席">主席</a-select-option>
-              <a-select-option value="副主席">副主席</a-select-option>
-              <a-select-option value="秘書">秘書</a-select-option>
-              <a-select-option value="司庫">司庫</a-select-option>
-              <a-select-option value="委員">委員</a-select-option>
-              <a-select-option value="其他">其他</a-select-option>
-            </a-select>
+            <span class="label">種類</span>
+            <a-select :options="blockOptions" v-model="info.type"></a-select>
           </p>
-          <p class="item">
-            <span class="label">年度由</span>
-            <a-input placeholder="例如: 2019" maxlength="4" v-model="info.year_from"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">年度至</span>
-            <a-input placeholder="例如: 2020" maxlength="4" v-model="info.year_to"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">第N屆</span>
-            <a-input-number :min="1" :max="99" v-model="info.term"></a-input-number>
-          </p>
-          <p class="item">
-            <span class="label">當選日期</span>
-            <a-date-picker format="DD/MM/YYYY" v-model="info.elected_date"></a-date-picker>
-          </p>
-          <p class="item">
-            <span class="label">單位</span>
-            <a-input v-model="info.unit"></a-input>
+          <p class="item" v-if="info.type == '添加新種類'">
+            <span class="label">輸入新種類</span>
+            <a-input v-model="info.new_type"></a-input>
           </p>
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
@@ -75,59 +50,65 @@
   </a-drawer>
 </template>
 <script>
-import moment from "moment";
 import selectUser from "@/components/selectUser";
-import { c_oc } from "@/api/oc";
+import { c_contractor } from "@/api/contractor";
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
       submit_info: {},
+      blockOptions: [],
       info: {
         property_id: "",
-        name_zh: "",
         user_id: "",
+        name_zh: "",
         name_en: "",
-        position: "",
-        year_from: "",
-        year_to: "",
-        term: "",
-        elected_date: "",
-        introduction: ""
+        login_tel: "",
+        type: "",
+        remarks: ""
       }
     };
   },
-  created() {
-    this.info.position = "---";
-  },
+  created() {},
   components: { selectUser },
   methods: {
     onUserSelect(e) {
+      console.log(e);
       this.info.user_id = e.selectedRowKeys[0];
       this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
       this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
       this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
     },
-    show() {
-      this.info.elected_date = null;
+    show(blockList) {
+      //reset all input
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          this.info[key] = "";
+        }
+      }
+      Object.assign(this.blockOptions, blockList);
+      this.blockOptions.push({ value: "添加新種類", label: "添加新種類" });
+      this.info.type = this.blockOptions[0].value;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
+      //on leave clear status
+      this.blockOptions = [];
       this.visible = false;
     },
     handle_submit_data(submit_info) {
-      submit_info.elected_date = submit_info.elected_date._isValid
-        ? submit_info.elected_date.format("YYYY-MM-DD")
-        : "";
+      //submit info data handling
+      if (submit_info.type == "添加新種類")
+        submit_info.type = submit_info.new_type;
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      c_oc(this.handle_submit_data(this.submit_info))
+      c_contractor(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
@@ -136,10 +117,8 @@ export default {
           } else {
             this.$message.error("添加失敗 - api return - " + res.error);
           }
-          this.onSubmiting = false;
         })
         .catch(err => {
-          this.onSubmiting = false;
           this.$message.error("添加失敗 - system error - " + err);
         });
     }

@@ -50,6 +50,16 @@ const router = new Router({
           component: () => import("@/view/propman")
         },
         {
+          path: "propertyContractor",
+          name: "property_contractor",
+          component: () => import("@/view/contractor")
+        },
+        {
+          path: "propertyNotice",
+          name: "property_notice",
+          component: () => import("@/view/notice")
+        },
+        {
           path: "propertyImportant",
           name: "property_important",
           component: () => import("@/view/important")

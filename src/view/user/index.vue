@@ -51,11 +51,12 @@ import uuiddv1 from "uuid/v1";
 const columns = [
   { title: "User ID", dataIndex: "user_id" },
   { title: "Status", dataIndex: "status" },
+  { title: "Type", dataIndex: "type" },
   { title: "Chinese Name", dataIndex: "name_zh" },
   { title: "English Name", dataIndex: "name_en" },
-  { title: "Login Tel", width: "100px", dataIndex: "login_tel" },
+  { title: "Login Tel", dataIndex: "login_tel" },
   { title: "Email", dataIndex: "email" },
-  { title: "Created Date", width: "100px", dataIndex: "creation_datetime" },
+  { title: "Fax", dataIndex: "fax" },
   { scopedSlots: { customRender: "detail" } },
   { scopedSlots: { customRender: "delete" } }
 ];

@@ -80,9 +80,19 @@ export default {
         },
         { r_name: "property_oc", title: "Oc / 法團成員", icon: "team" },
         {
+          r_name: "property_contractor",
+          title: "Contractor / 承辦商",
+          icon: "tool"
+        },
+        {
+          r_name: "property_notice",
+          title: "Notice / 大廈通告",
+          icon: "file-text"
+        },
+        {
           r_name: "property_important",
           title: "Important / 政府法令",
-          icon: "file"
+          icon: "exclamation-circle"
         },
         {
           r_name: "property_minutes",
@@ -92,7 +102,7 @@ export default {
         {
           r_name: "property_unit_list",
           title: "Unit List / 單位列表",
-          icon: "ordered-list"
+          icon: "block"
         },
         // {
         //   r_name: "property_unit_fee",

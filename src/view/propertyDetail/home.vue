@@ -76,7 +76,7 @@
         <p class="item">
           <span class="label">地契檔案(jpg,png or pdf)</span>
           <span style="text-align:left;width:100%">
-            <uploadFile v-model="info.dmc_file"></uploadFile>
+            <uploadFile ref="dmcFile" v-model="info.dmc_file"></uploadFile>
           </span>
         </p>
         <p style="text-align:right">
@@ -136,7 +136,7 @@ export default {
       sumbmit_info.floor_plan_file = this.$refs.uploadFile.get_file_info(
         sumbmit_info.floor_plan_file
       );
-      sumbmit_info.dmc_file = this.$refs.uploadFile.get_file_info(
+      sumbmit_info.dmc_file = this.$refs.dmcFile.get_file_info(
         sumbmit_info.dmc_file
       );
       if (sumbmit_info.oc_exist == true) {

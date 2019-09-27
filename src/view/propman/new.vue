@@ -59,6 +59,15 @@
               <a-input v-model="info.cert_no"></a-input>
             </p>
             <p class="item">
+              <span class="label">編更</span>
+              <a-select v-model="info.shift">
+                <a-select-option value="---">---請選擇編更---</a-select-option>
+                <a-select-option value="日更">日更</a-select-option>
+                <a-select-option value="夜更">夜更</a-select-option>
+                <a-select-option value="替更">替更</a-select-option>
+              </a-select>
+            </p>
+            <p class="item">
               <span class="label">保安証到期日</span>
               <a-date-picker format="DD/MM/YYYY" v-model="info.cert_due_date"></a-date-picker>
             </p>
@@ -114,6 +123,7 @@ export default {
         }
       }
       this.info.position = "---";
+      this.info.shift = "---";
       this.visible = true;
       this.onSubmiting = false;
     },

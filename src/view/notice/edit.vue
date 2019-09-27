@@ -41,14 +41,6 @@
               <a-input disabled v-model="info.age"></a-input>
             </p>
             <p class="item">
-              <span class="label">編更</span>
-              <a-select v-model="info.shift">
-                <a-select-option value="日更">日更</a-select-option>
-                <a-select-option value="夜更">夜更</a-select-option>
-                <a-select-option value="替更">替更</a-select-option>
-              </a-select>
-            </p>
-            <p class="item">
               <span class="label">保安証編號</span>
               <a-input v-model="info.cert_no"></a-input>
             </p>
@@ -130,14 +122,12 @@ export default {
         submit_info.body_check_file = this.$refs.bodyCheckFile.get_file_info(
           submit_info.body_check_file
         );
-        if (submit_info.cert_due_date != null)
-          submit_info.cert_due_date = submit_info.cert_due_date._isValid
-            ? submit_info.cert_due_date.format("YYYY-MM-DD")
-            : "";
-        if (submit_info.birth_date != null)
-          submit_info.birth_date = submit_info.birth_date._isValid
-            ? submit_info.birth_date.format("YYYY-MM-DD")
-            : "";
+        submit_info.cert_due_date = submit_info.cert_due_date._isValid
+          ? submit_info.cert_due_date.format("YYYY-MM-DD")
+          : "";
+        submit_info.birth_date = submit_info.birth_date._isValid
+          ? submit_info.birth_date.format("YYYY-MM-DD")
+          : "";
       }
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
