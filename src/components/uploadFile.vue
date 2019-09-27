@@ -1,11 +1,13 @@
 <template>
   <div class="uploadfile">
     <a-upload
+      :accept="'.doc,.docx,.pdf,.xls,.png,.jpg,.jpeg'"
       :action="action_url"
       listType="picture"
       name="orm_file"
       :defaultFileList="List"
       :fileList="List"
+      :beforeUpload="beforeUpload"
       @change="handleChange"
       :remove="onRemoveFile"
     >
@@ -20,6 +22,7 @@ export default {
   data() {
     return {
       List: [],
+      parent_value: [],
       action_url: this.$store.getters.domain + "api/upload-file/"
     };
   },
@@ -31,18 +34,43 @@ export default {
   props: ["value"],
   methods: {
     handleChange(info) {
-      this.value = info.fileList.filter(item => item.status !== "removed");
-      this.$emit("input", this.value);
+      console.log("handleChange: " + info.file.status);
+      console.log(JSON.parse(JSON.stringify(info)));
+      //if failed in before upload, this function still triggered, but item without status
+      this.parent_value = info.fileList.filter(
+        item =>
+          item.status !== "removed" &&
+          item.status !== "error" &&
+          item.hasOwnProperty("status")
+      );
+      this.$emit("input", this.parent_value);
       if (info.file.status !== "uploading") {
       }
       if (info.file.status === "done") {
         info.fileList[info.fileList.length - 1].uid = info.file.response.id;
         info.fileList[info.fileList.length - 1].url = info.file.response.url;
         delete info.file.lastModified;
-        this.$message.success(`${info.file.name} file uploaded successfully`);
+        //returned by api case handle
+        if (info.file.response.error) {
+          this.$message.error(
+            `${info.file.name} file upload failed - api reponse - ${info.file.response.error}`
+          );
+        } else {
+          this.$message.success(`${info.file.name} file uploaded successfully`);
+        }
       } else if (info.file.status === "error") {
-        this.$message.error(`${info.file.name} file upload failed.`);
+        //http error, file size bigger than php.ini setting will also trigger this error
+        this.$message.error(
+          `${info.file.name} file upload failed - http response code - ${info.file.error.status}`
+        );
       }
+    },
+    beforeUpload(file) {
+      const isLt25M = file.size / 1024 / 1024 < 25;
+      if (!isLt25M) {
+        this.$message.error("檔案不能大於25MB!");
+      }
+      return isLt25M;
     },
     onRemoveFile(file) {
       if (file["url"] == undefined) return true;
@@ -70,8 +98,10 @@ export default {
   },
   watch: {
     value: {
+      //監視外面的變化 更新component 模樣
       immediate: true,
       handler(nval, oval) {
+        console.log("handler");
         this.List = nval;
       }
     }

@@ -1,11 +1,11 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="物管人員名稱" style="width: 200px" @search="onSearch" />
+      <a-input-search placeholder="通告ID" style="width: 200px" @search="onSearch" />
       <span>
         <a-button type="primary" @click="()=>{
         this.$refs.newRecord.show()
-        }">新增物管人員</a-button>
+        }">新增通告</a-button>
       </span>
     </p>
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
@@ -18,7 +18,7 @@
         <a-popconfirm
           v-if="tableData.length"
           title="Sure to delete?"
-          @confirm="() => onDelete(record.propman_id)"
+          @confirm="() => onDelete(record.notice_id)"
         >
           <a>
             <a-icon type="delete"></a-icon>
@@ -37,13 +37,12 @@
 <script>
 import newRecord from "./new";
 import edit from "./edit";
-import { r_propman, d_propman } from "@/api/propman.js";
+import { r_notice, d_notice } from "@/api/notice.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
-  { title: "名稱(中文)", dataIndex: "name_zh" },
-  { title: "名稱(英文)", dataIndex: "name_en" },
-  { title: "電話號碼", dataIndex: "login_tel" },
-  { title: "職位", dataIndex: "display_position" },
+  { title: "通告ID", dataIndex: "notice_id" },
+  { title: "通告日期", dataIndex: "notice_date" },
+  { title: "通告標題", dataIndex: "title" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
@@ -72,7 +71,7 @@ export default {
     },
     getTableData() {
       this.onTableLoading = true;
-      r_propman(this.$route.params.bid)
+      r_notice(this.$route.params.bid)
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
@@ -81,7 +80,7 @@ export default {
         .catch(err => {});
     },
     onDelete(cid) {
-      d_propman(cid)
+      d_notice(cid)
         .then(res => {
           if (res.status) {
             this.getTableData();

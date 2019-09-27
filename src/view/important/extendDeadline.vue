@@ -15,7 +15,7 @@
             <a-date-picker format="DD/MM/YYYY" v-model="info.deadline"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">相關交件(jpg,png or pdf)</span>
+            <span class="label">相關交件(最大25MB)</span>
             <span style="text-align:left;width:100%">
               <uploadFile ref="uploadFile" v-model="info.file"></uploadFile>
             </span>

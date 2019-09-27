@@ -28,7 +28,7 @@
           </p>
           <a-divider />
           <p class="item">
-            <span class="label">單位相關檔案(jpg,png or pdf)</span>
+            <span class="label">單位相關檔案(最大25MB)</span>
             <span style="text-align:left;width:100%">
               <uploadFile ref="uploadFile" v-model="info.file"></uploadFile>
             </span>

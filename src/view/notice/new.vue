@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="新增物管人員"
+    title="新增通告"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -11,76 +11,32 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">從用戶中揀選</span>
-            <a-button
-              type="primary"
-              icon="search"
-              @click="()=>{
-              $refs.selectUser.showModal('',[])
-              }"
-            >Search</a-button>
+            <span class="label">通告日期</span>
+            <a-date-picker format="DD/MM/YYYY" v-model="info.notice_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">中文名稱</span>
-            <a-input readonly v-model="info.name_zh"></a-input>
+            <span class="label">通告標題</span>
+            <a-input v-model="info.title"></a-input>
           </p>
-          <p class="item">
-            <span class="label">英文名稱</span>
-            <a-input readonly v-model="info.name_en"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">電話號碼</span>
-            <a-input readonly v-model="info.login_tel"></a-input>
-          </p>
-          <p class="item">
-            <span class="label">職位</span>
-            <a-select v-model="info.position">
-              <a-select-option value="---">--- 請選擇職位 ---</a-select-option>
-              <a-select-option value="分區經理">分區經理</a-select-option>
-              <a-select-option value="區經理">區經理</a-select-option>
-              <a-select-option value="大廈經理">大廈經理</a-select-option>
-              <a-select-option value="大廈主任">大廈主任</a-select-option>
-              <a-select-option value="工程主任">工程主任</a-select-option>
-              <a-select-option value="技工">技工</a-select-option>
-              <a-select-option value="行政文員">行政文員</a-select-option>
-              <a-select-option value="會計">會計</a-select-option>
-              <a-select-option value="保安主管">保安主管</a-select-option>
-              <a-select-option value="保安員">保安員</a-select-option>
-              <a-select-option value="清潔人員">清潔人員</a-select-option>
-            </a-select>
-          </p>
-          <div v-if="info.position == '保安員'">
-            <p class="item">
-              <span class="label">出生年月日</span>
-              <a-date-picker format="DD/MM/YYYY" v-model="info.birth_date"></a-date-picker>
-            </p>
-            <p class="item">
-              <span class="label">保安証編號</span>
-              <a-input v-model="info.cert_no"></a-input>
-            </p>
-            <p class="item">
-              <span class="label">保安証到期日</span>
-              <a-date-picker format="DD/MM/YYYY" v-model="info.cert_due_date"></a-date-picker>
-            </p>
-            <p class="item">
-              <span class="label">體檢報告(70歲以上適用)</span>
-              <uploadFile ref="bodyCheckFile" v-model="info.body_check_file"></uploadFile>
-            </p>
-          </div>
         </a-col>
+        <a-divider />
+        <p class="item">
+          <span class="label">通告檔案(最大25MB)</span>
+          <span style="text-align:left;width:100%">
+            <uploadFile ref="uploadFile" v-model="info.notice_file"></uploadFile>
+          </span>
+        </p>
       </a-row>
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
-      <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
   </a-drawer>
 </template>
 <script>
 import moment from "moment";
-import selectUser from "@/components/selectUser";
 import uploadFile from "@/components/uploadFile.vue";
-import { c_propman } from "@/api/propman";
+import { c_notice } from "@/api/notice";
 export default {
   data() {
     return {
@@ -89,31 +45,24 @@ export default {
       submit_info: {},
       info: {
         property_id: "",
-        user_id: "",
-        position: "",
-        name_zh: "",
-        name_en: "",
-        login_tel: ""
+        notice_file: [],
+        notice_date: "",
+        remarks: ""
       }
     };
   },
   created() {},
-  components: { uploadFile, selectUser },
+  components: { uploadFile },
   methods: {
-    onUserSelect(e) {
-      console.log(e);
-      this.info.user_id = e.selectedRowKeys[0];
-      this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
-      this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
-      this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
-    },
     show() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
           this.info[key] = "";
         }
       }
-      this.info.position = "---";
+      //init value
+      this.info.notice_date = null;
+      this.info.notice_file = [];
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -122,24 +71,20 @@ export default {
     },
     handle_submit_data(submit_info) {
       //submit info data handling
-      if (submit_info.position == "保安員") {
-        submit_info.body_check_file = this.$refs.bodyCheckFile.get_file_info(
-          submit_info.body_check_file
-        );
-        submit_info.cert_due_date = submit_info.cert_due_date._isValid
-          ? submit_info.cert_due_date.format("YYYY-MM-DD")
+      submit_info.notice_file = this.$refs.uploadFile.get_file_info(
+        submit_info.notice_file
+      );
+      if (submit_info.notice_date != null)
+        submit_info.notice_date = submit_info.notice_date._isValid
+          ? submit_info.notice_date.format("YYYY-MM-DD")
           : "";
-        submit_info.birth_date = submit_info.birth_date._isValid
-          ? submit_info.birth_date.format("YYYY-MM-DD")
-          : "";
-      }
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      c_propman(this.handle_submit_data(this.submit_info))
+      c_notice(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");

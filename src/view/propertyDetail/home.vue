@@ -67,14 +67,14 @@
         </p>
         <!-- Floor Plan FIle -->
         <p class="item">
-          <span class="label">圖則檔案(jpg,png or pdf)</span>
+          <span class="label">圖則檔案(最大25MB)</span>
           <span style="text-align:left;width:100%">
             <uploadFile ref="uploadFile" v-model="info.floor_plan_file"></uploadFile>
           </span>
         </p>
         <!-- DMC FIle -->
         <p class="item">
-          <span class="label">地契檔案(jpg,png or pdf)</span>
+          <span class="label">地契檔案(最大25MB)</span>
           <span style="text-align:left;width:100%">
             <uploadFile ref="dmcFile" v-model="info.dmc_file"></uploadFile>
           </span>
