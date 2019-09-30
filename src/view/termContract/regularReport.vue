@@ -11,193 +11,110 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">相關定期合約編號</span>
-            <a-input v-model="info.term_contract_id"></a-input>
-          </p>
-          <p class="item">
             <span class="label">檢查日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.checking_date"></a-date-picker>
           </p>
           <p class="item">
-            <span class="label">檢查種類</span>
-            <a-select v-model="info.type">
-              <a-select-option value="冷氣">冷氣</a-select-option>
-              <a-select-option value="電梯">電梯</a-select-option>
-              <a-select-option value="其他">其他</a-select-option>
-            </a-select>
+            <span class="label">檢查簡介</span>
+            <a-input placeholder="請填寫簡介" v-model="info.subject"></a-input>
           </p>
           <p class="item">
-            <span class="label">檢查負責人</span>
-            <a-input
-              v-model="info.handler"
-              readonly
-              @click="()=>{
-              this.$refs.selectUser.showModal('handler',[]);
-              }"
-            ></a-input>
-          </p>
-          <p class="item">
-            <span class="label">是否需要額外工程合約</span>
-            <a-select v-model="info.extra_contract">
-              <a-select-option value="否">否</a-select-option>
-              <a-select-option value="是">是</a-select-option>
-            </a-select>
-          </p>
-          <p class="item">
-            <span class="label">上載檢查報告檔案</span>
+            <span class="label">檢查報告檔案</span>
             <span style="text-align:left;width:100%">
-              <uploadFile v-model="info.regular_report_file"></uploadFile>
+              <uploadFile ref="regularReportFile" v-model="info.regular_report_file"></uploadFile>
             </span>
+          </p>
+          <p class="item">
+            <span class="label">備註</span>
+            <a-input placeholder="請填寫備註" v-model="info.remarks"></a-input>
           </p>
         </a-col>
       </a-row>
-
       <p style="text-align:right">
         <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
       </p>
-
-      <a-row>
-        <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
-          <template slot="detail" slot-scope="record">
-            <a @click="()=>{
-              $refs.edittermContract.show(record)
-              }">建立合約</a>
-          </template>
-          <template slot="delete" slot-scope="record">
-            <a-popconfirm
-              v-if="tableData.length"
-              title="Sure to delete?"
-              @confirm="() => onDelete(record.regular_report_id)"
-            >
-              <a>
-                <a-icon type="delete"></a-icon>
-              </a>
-            </a-popconfirm>
-          </template>
-        </a-table>
-      </a-row>
+      <a-divider />
+      <contractReport ref="contractReport" v-model="regular_report_list" @delete="getTableData();"></contractReport>
     </div>
-    <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
   </a-drawer>
 </template>
 <script>
-import selectUser from "@/components/selectUser";
 import moment from "moment";
+import contractReport from "@/components/contractReport";
 import uploadFile from "@/components/uploadFile.vue";
 import {
-  c_regular_report,
-  d_regular_report,
-  r_regular_report,
-  u_regular_report
-} from "@/api/regular_report";
+  c_term_contract_regular_report,
+  d_term_contract_regular_report,
+  r_term_contract_regular_report,
+  u_term_contract_regular_report
+} from "@/api/term_contract_regular_report";
 
-import uuiddv1 from "uuid/v1";
-const columns = [
-  { title: "檢查日期", dataIndex: "checking_date", key: "checking_date" },
-  { title: "額外合約", dataIndex: "extra_contract", key: "extra_contract" },
-  { title: "負責人", dataIndex: "handler", key: "handler" },
-  { width: "100px", scopedSlots: { customRender: "detail" } },
-  { width: "100px", scopedSlots: { customRender: "delete" } }
-];
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
-      info: { handler: "" },
-      dataSource: [],
-      columns,
-      onTableLoading: false
+      info: {
+        checking_date: null,
+        regular_report_file: [],
+        remarks: ""
+      },
+      submit_info: {},
+      regular_report_list: []
     };
   },
-  components: { uploadFile, selectUser },
-  created() {
-    this.getTableData();
-  },
+  components: { uploadFile, contractReport },
+  created() {},
   methods: {
-    onUserSelect(e) {
-      this.$set(this.info, e.context, e.selectedRowKeys[0]);
-    },
     show(term_contract_id) {
-      this.visible = true;
-      this.onSubmiting = false;
+      //init data
       this.info.term_contract_id = term_contract_id;
+      this.getTableData();
     },
     getTableData() {
-      this.onTableLoading = true;
-      this.onTableLoading = false;
-      r_regular_report(this.info.term_contract_id)
+      r_term_contract_regular_report(this.info.term_contract_id)
         .then(res => {
-          this.onTableLoading = false;
-          this.tableData = res.list;
-          this.dataSource = res.list;
+          //init data
+          this.regular_report_list = res.list;
+          this.info.checking_date = null;
+          this.info.regular_report_file = [];
+          this.info.remarks = "";
+          //init status
+          this.visible = true;
+          this.onSubmiting = false;
         })
         .catch(err => {});
     },
     onClose() {
       this.visible = false;
     },
-    get_file_info(item) {
-      //get info of file
-      item.forEach(value => {
-        for (var key in value) {
-          if (
-            key == "name" ||
-            key == "url" ||
-            key == "uid" ||
-            key == "status"
-          ) {
-            continue;
-          }
-          delete value[key];
-        }
-      });
-      return item;
-    },
-    onDelete(regular_report_id) {
-      d_regular_report(regular_report_id)
-        .then(res => {
-          if (res.status) {
-            this.getTableData();
-          } else {
-          }
-        })
-        .catch(err => {});
+    handle_submit_data(submit_info) {
+      submit_info.regular_report_file = this.$refs.regularReportFile.get_file_info(
+        submit_info.regular_report_file
+      );
+      if (submit_info.checking_date != null)
+        submit_info.checking_date = submit_info.checking_date._isValid
+          ? submit_info.checking_date.format("YYYY-MM-DD")
+          : "";
+      return submit_info;
     },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (
-            typeof this.info[key] == "object" &&
-            !Array.isArray(this.info[key])
-          ) {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
-      this.info.regular_report_file = this.get_file_info(
-        this.info.regular_report_file
-      );
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      c_regular_report(this.info)
+      c_term_contract_regular_report(this.handle_submit_data(this.submit_info))
         .then(res => {
-          console.log(res);
           if (res.status) {
             this.$message.success("成功添加");
-            this.visible = false;
-            this.$emit("done", {});
+            this.getTableData();
           } else {
-            this.$message.error("添加失敗");
+            this.$message.error("添加失敗 - api reponse - " + res.last_error);
           }
           this.onSubmiting = false;
         })
         .catch(err => {
           this.onSubmiting = false;
-          this.$message.error("添加失敗");
+          this.$message.error("添加失敗 - server error ");
         });
-      this.getTableData();
     }
   }
 };

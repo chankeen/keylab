@@ -38,7 +38,7 @@
           @click="()=>{
           $refs.regularReport.show(record.term_contract_id)
           }"
-        >提交檢查報告</a>
+        >檢查報告</a>
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
@@ -84,6 +84,7 @@ import edittermContract from "./edit";
 import individualContract from "./individualContract";
 import regularReport from "./regularReport";
 import { r_term_contract, d_term_contract } from "@/api/term_contract.js";
+import { r_term_contract_related_entity } from "@/api/term_contract_related_entity";
 import uuiddv1 from "uuid/v1";
 const columns = [
   {
@@ -101,13 +102,26 @@ const columns = [
   },
   {
     width: "100px",
-    title: "合約期至",
+    title: "相關工程公司",
+    width: "150px",
+    dataIndex: "contractor_name_zh",
+    key: "contractor_name_zh"
+  },
+  {
+    width: "100px",
+    title: "合約開結",
+    dataIndex: "contract_end_date",
+    key: "contract_start_date"
+  },
+  {
+    width: "100px",
+    title: "合約完結",
     dataIndex: "contract_end_date",
     key: "contract_end_date"
   },
   {
     width: "100px",
-    title: "合約週期",
+    title: "工作週期",
     dataIndex: "job_period",
     key: "job_period"
   },
@@ -116,24 +130,6 @@ const columns = [
     title: "N日後到期",
     dataIndex: "end_day_diff",
     key: "end_day_diff"
-  },
-  {
-    width: "100px",
-    title: "開工日期",
-    dataIndex: "work_start_date",
-    key: "work_start_date"
-  },
-  {
-    width: "100px",
-    title: "完工日期",
-    dataIndex: "work_end_date",
-    key: "work_end_date"
-  },
-  {
-    width: "100px",
-    title: "跟進人",
-    dataIndex: "buyer_name_zh",
-    key: "buyer_name_zh"
   },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "120px", scopedSlots: { customRender: "report" } },
