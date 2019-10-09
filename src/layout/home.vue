@@ -86,16 +86,9 @@ export default {
       this.breadcrumb.push(item.title);
     },
     admin_logout() {
-      logout()
-        .then(res => {
-          if (res.status) {
-            sessionStorage.token = "";
-            this.$router.push({ path: "/login" });
-          } else {
-            this.$message.error("登出失敗");
-          }
-        })
-        .catch(err => {});
+      sessionStorage.token = "";
+      this.$message.success("登出成功");
+      this.$router.push({ path: "/login" });
     }
   }
 };

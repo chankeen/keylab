@@ -11,25 +11,19 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">工程種類</span>
-            <a-select v-model="info.type">
-              <a-select-option value="清潔">清潔</a-select-option>
-              <a-select-option value="電梯/扶手電梯保養">電梯/扶手電梯保養</a-select-option>
-              <a-select-option value="防盜及閉路電視">防盜及閉路電視</a-select-option>
-              <a-select-option value="消防年檢">消防年檢</a-select-option>
-              <a-select-option value="冷氣機系統">冷氣機系統</a-select-option>
-              <a-select-option value="清洗水缸">清洗水缸</a-select-option>
-              <a-select-option value="５年大廈固定電力裝置檢查">５年大廈固定電力裝置檢查</a-select-option>
-              <a-select-option value="法團常年法律顧問">法團常年法律顧問</a-select-option>
-              <a-select-option value="大廈全保">大廈全保</a-select-option>
-              <a-select-option value="火險(公眾地方)">火險(公眾地方)</a-select-option>
-              <a-select-option value="公眾責任保險">公眾責任保險</a-select-option>
-              <a-select-option value="第三者保險(法團)">第三者保險(法團)</a-select-option>
-              <a-select-option value="添加新種類">添加新種類</a-select-option>
+            <span class="label required">合約狀態</span>
+            <a-select v-model="info.status">
+              <a-select-option value="生效中">生效中</a-select-option>
+              <a-select-option value="以往合約">以往合約</a-select-option>
+              <a-select-option value="待處理">待處理</a-select-option>
             </a-select>
           </p>
+          <p class="item">
+            <span class="label required">工程種類</span>
+            <a-select :options="typeOptions" v-model="info.type"></a-select>
+          </p>
           <p class="item" v-if="info.type == '添加新種類'">
-            <span class="label">輸入新種類</span>
+            <span class="label required">輸入新種類</span>
             <a-input v-model="info.new_type"></a-input>
           </p>
           <p class="item">
@@ -45,7 +39,7 @@
             <a-input v-model="info.amount"></a-input>
           </p>
           <p class="item">
-            <span class="label">合約工程公司</span>
+            <span class="label required">合約工程公司</span>
             <a-input
               v-model="info.contractor_name_zh"
               readonly
@@ -89,7 +83,7 @@
         </a-col>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
       <selectRelatedEntity
         :selectType="'radio'"
@@ -104,17 +98,27 @@ import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
 import { c_term_contract } from "@/api/term_contract";
 import selectRelatedEntity from "@/components/selectRelatedEntity";
+import { isHasVal } from "@/utils/validate";
+
 export default {
   data() {
     return {
       visible: false,
       onSubmiting: false,
+      typeOptions: [],
       info: {
+        type: "",
         contract_file: [],
         tender_file: [],
         contract_start_date: null,
         contract_end_date: null,
-        contractor_name_zh: "請選擇工程公司"
+        contractor_name_zh: "",
+        contractor_id: 0,
+        amount: "",
+        content: "",
+        job_period_unit: "",
+        job_period_value: "",
+        new_type: ""
       },
       submit_info: {}
     };
@@ -123,17 +127,26 @@ export default {
   created() {},
   methods: {
     onRelatedEntitySelect(e) {
-      console.log(e);
-      this.info.contractor_id = e.related_id;
-      this.info.contractor_name_zh = e.name_zh;
+      {
+        console.log(e);
+        if (e.hasOwnProperty("related_id")) {
+          this.info.contractor_id = e.related_id;
+          this.info.contractor_name_zh = e.name_zh;
+        }
+      }
       //this.$set(this.info, e.context, e.selectedRowKeys[0]);
     },
-    show() {
+    show(typeList) {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
           this.info[key] = "";
         }
       }
+      Object.assign(this.typeOptions, typeList);
+
+      this.info.type = this.typeOptions[0].value;
+
+      this.info.status = "生效中";
       this.info.contract_file = [];
       this.info.tender_file = [];
       this.info.contract_start_date = null;
@@ -143,6 +156,7 @@ export default {
       this.onSubmiting = false;
     },
     onClose() {
+      this.typeOptions = [];
       this.visible = false;
     },
     handle_submit_data(submit_info) {
@@ -161,8 +175,40 @@ export default {
         submit_info.contract_end_date = submit_info.contract_end_date._isValid
           ? submit_info.contract_end_date.format("YYYY-MM-DD")
           : "";
+
+      if (submit_info.type == "添加新種類")
+        submit_info.type = submit_info.new_type;
+      else submit_info.type = submit_info.type;
+
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      if (this.info.type == "添加新種類") {
+        var mandatory_property = [
+          "status",
+          "type",
+          "new_type",
+          "contractor_id"
+        ];
+      } else {
+        var mandatory_property = ["status", "type", "contractor_id"];
+      }
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!isHasVal(this.info[mandatory_property[i]])) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);
@@ -171,10 +217,10 @@ export default {
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
-            this.visible = false;
+            this.onClose();
             this.$emit("done", {});
           } else {
-            this.$message.error("添加失敗 - api reponse - " + res.last_error);
+            this.$message.error("添加失敗 - api reponse - " + res.error);
           }
           this.onSubmiting = false;
         })

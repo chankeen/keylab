@@ -11,7 +11,7 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">從用戶中揀選</span>
+            <span class="label required">從用戶中揀選</span>
             <a-button
               type="primary"
               icon="search"
@@ -20,22 +20,21 @@
               }"
             >Search</a-button>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.user_id != ''">
             <span class="label">中文名稱</span>
             <a-input readonly v-model="info.name_zh"></a-input>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.user_id != ''">
             <span class="label">英文名稱</span>
             <a-input readonly v-model="info.name_en"></a-input>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.user_id != ''">
             <span class="label">電話號碼</span>
             <a-input readonly v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
-            <span class="label">職位</span>
+            <span class="label required">職位</span>
             <a-select v-model="info.position">
-              <a-select-option value="---">--- 請選擇職位 ---</a-select-option>
               <a-select-option value="分區經理">分區經理</a-select-option>
               <a-select-option value="區經理">區經理</a-select-option>
               <a-select-option value="大廈經理">大廈經理</a-select-option>
@@ -61,7 +60,6 @@
             <p class="item">
               <span class="label">編更</span>
               <a-select v-model="info.shift">
-                <a-select-option value="---">---請選擇編更---</a-select-option>
                 <a-select-option value="日更">日更</a-select-option>
                 <a-select-option value="夜更">夜更</a-select-option>
                 <a-select-option value="替更">替更</a-select-option>
@@ -79,7 +77,7 @@
         </a-col>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
       <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
@@ -90,6 +88,8 @@ import moment from "moment";
 import selectUser from "@/components/selectUser";
 import uploadFile from "@/components/uploadFile.vue";
 import { c_propman } from "@/api/propman";
+import { isHasVal } from "@/utils/validate";
+
 export default {
   data() {
     return {
@@ -102,7 +102,12 @@ export default {
         position: "",
         name_zh: "",
         name_en: "",
-        login_tel: ""
+        login_tel: "",
+        cert_due_date: null,
+        body_check_file: [],
+        cert_no: "",
+        birth_date: null,
+        shift: "日更"
       }
     };
   },
@@ -111,10 +116,12 @@ export default {
   methods: {
     onUserSelect(e) {
       console.log(e);
-      this.info.user_id = e.selectedRowKeys[0];
-      this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
-      this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
-      this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
+      if (e.list[e.selectedRowKeys[0]].length != 0) {
+        this.info.user_id = e.selectedRowKeys[0];
+        this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
+        this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
+        this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
+      }
     },
     show() {
       for (const key in this.info) {
@@ -122,8 +129,13 @@ export default {
           this.info[key] = "";
         }
       }
-      this.info.position = "---";
-      this.info.shift = "---";
+      this.info.position = "分區經理";
+      //保安員
+      this.info.shift = "日更";
+      this.info.cert_due_date = null;
+      this.info.body_check_file = [];
+      this.info.cert_no = "";
+      this.info.birth_date = null;
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -136,15 +148,41 @@ export default {
         submit_info.body_check_file = this.$refs.bodyCheckFile.get_file_info(
           submit_info.body_check_file
         );
-        submit_info.cert_due_date = submit_info.cert_due_date._isValid
-          ? submit_info.cert_due_date.format("YYYY-MM-DD")
-          : "";
-        submit_info.birth_date = submit_info.birth_date._isValid
-          ? submit_info.birth_date.format("YYYY-MM-DD")
-          : "";
+        if (submit_info.cert_due_date != null) {
+          submit_info.cert_due_date = submit_info.cert_due_date._isValid
+            ? submit_info.cert_due_date.format("YYYY-MM-DD")
+            : "";
+        } else {
+          submit_info.cert_due_date = "0000-00-00";
+        }
+        if (submit_info.birth_date != null) {
+          submit_info.birth_date = submit_info.birth_date._isValid
+            ? submit_info.birth_date.format("YYYY-MM-DD")
+            : "";
+        } else {
+          submit_info.birth_date = "0000-00-00";
+        }
       }
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["name_zh"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!isHasVal(this.info[mandatory_property[i]])) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

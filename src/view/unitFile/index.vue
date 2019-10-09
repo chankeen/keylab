@@ -49,10 +49,12 @@ import editunitFile from "./edit";
 import { r_unit_file, d_unit_file } from "@/api/unit_file.js";
 import uuiddv1 from "uuid/v1";
 const columns = [
-  { title: "單位紀錄編號", dataIndex: "unit_file_id", key: "unit_file_id" },
-  { title: "單位編號", width: "150px", dataIndex: "unit_id", key: "unit_id" },
-  { title: "紀錄種類", dataIndex: "type", key: "type" },
-  { title: "文書日期", dataIndex: "instrument_date", key: "instrument_date" },
+  { title: "單位紀錄編號", dataIndex: "unit_file_id" },
+  { title: "單位座數", width: "150px", dataIndex: "block" },
+  { title: "單位樓層", width: "150px", dataIndex: "floor" },
+  { title: "單位號數", width: "150px", dataIndex: "unit" },
+  { title: "紀錄種類", dataIndex: "type" },
+  { title: "文書日期", dataIndex: "instrument_date" },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];

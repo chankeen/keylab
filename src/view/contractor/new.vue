@@ -11,7 +11,7 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">從用戶中揀選</span>
+            <span class="label required">從用戶中揀選</span>
             <a-button
               type="primary"
               icon="search"
@@ -20,30 +20,30 @@
               }"
             >Search</a-button>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.user_id != ''">
             <span class="label">中文名稱</span>
             <a-input readonly v-model="info.name_zh"></a-input>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.user_id != ''">
             <span class="label">英文名稱</span>
             <a-input readonly v-model="info.name_en"></a-input>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.user_id != ''">
             <span class="label">電話號碼</span>
             <a-input readonly v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
-            <span class="label">種類</span>
+            <span class="label required">種類</span>
             <a-select :options="blockOptions" v-model="info.type"></a-select>
           </p>
           <p class="item" v-if="info.type == '添加新種類'">
-            <span class="label">輸入新種類</span>
+            <span class="label required">輸入新種類</span>
             <a-input v-model="info.new_type"></a-input>
           </p>
         </a-col>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
       <selectUser :selectType="'radio'" ref="selectUser" @done="onUserSelect"></selectUser>
     </div>
@@ -52,6 +52,8 @@
 <script>
 import selectUser from "@/components/selectUser";
 import { c_contractor } from "@/api/contractor";
+import { isHasVal } from "@/utils/validate";
+
 export default {
   data() {
     return {
@@ -66,7 +68,8 @@ export default {
         name_en: "",
         login_tel: "",
         type: "",
-        remarks: ""
+        remarks: "",
+        new_type: ""
       }
     };
   },
@@ -75,10 +78,12 @@ export default {
   methods: {
     onUserSelect(e) {
       console.log(e);
-      this.info.user_id = e.selectedRowKeys[0];
-      this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
-      this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
-      this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
+      if (e.list[e.selectedRowKeys[0]].length != 0) {
+        this.info.user_id = e.selectedRowKeys[0];
+        this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
+        this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
+        this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
+      }
     },
     show(blockList) {
       //reset all input
@@ -104,6 +109,27 @@ export default {
         submit_info.type = submit_info.new_type;
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      if (this.info.type == "添加新種類")
+        var mandatory_property = ["name_zh", "new_type"];
+      else var mandatory_property = ["name_zh"];
+
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!isHasVal(this.info[mandatory_property[i]])) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

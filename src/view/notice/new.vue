@@ -21,14 +21,14 @@
         </a-col>
         <a-divider />
         <p class="item">
-          <span class="label">通告檔案(最大25MB)</span>
+          <span class="label required">通告檔案(最大25MB)</span>
           <span style="text-align:left;width:100%">
             <uploadFile ref="uploadFile" v-model="info.notice_file"></uploadFile>
           </span>
         </p>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
   </a-drawer>
@@ -47,6 +47,7 @@ export default {
         property_id: "",
         notice_file: [],
         notice_date: "",
+        title: "",
         remarks: ""
       }
     };
@@ -80,6 +81,24 @@ export default {
           : "";
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["notice_file"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!this.info[mandatory_property[i]].length > 0) {
+            this.$message.error("請上載至少1個檔寨");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

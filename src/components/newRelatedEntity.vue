@@ -4,7 +4,7 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">從物管人員, 法團成員和承辦商中揀選</span>
+            <span class="label required">從物管人員, 法團成員和承辦商中揀選</span>
             <a-button
               type="primary"
               icon="search"
@@ -13,11 +13,11 @@
               }"
             >Search</a-button>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.related_id != ''">
             <span class="label">中文名稱</span>
             <a-input readonly v-model="info.name_zh" disabled></a-input>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.related_id != ''">
             <span class="label">種類</span>
             <a-input readonly v-model="info.display_type" disabled></a-input>
           </p>
@@ -28,7 +28,7 @@
         </a-col>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
     <selectRelatedEntity
@@ -40,7 +40,10 @@
 </template>
 <script>
 import { c_term_contract_related_entity } from "@/api/term_contract_related_entity";
+import { c_individual_contract_related_entity } from "@/api/individual_contract_related_entity";
 import selectRelatedEntity from "@/components/selectRelatedEntity";
+import { isHasVal } from "@/utils/validate";
+
 export default {
   data() {
     return {
@@ -55,62 +58,90 @@ export default {
       }
     };
   },
+  props: ["contracttype", "contractid"],
   components: { selectRelatedEntity },
   created() {},
   methods: {
     onRelatedEntitySelect(e) {
+      console.log(e);
       if (e.hasOwnProperty("related_id")) {
-        console.log(e);
         this.info.display_type = e.display_type;
         this.info.type = e.type;
         this.info.related_id = e.related_id;
         this.info.name_zh = e.name_zh;
+        this.info.login_tel = e.login_tel;
       }
     },
-    show(term_contract_id) {
+    show() {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key) && !Array.isArray(this.info[key])) {
           this.info[key] = "";
         }
       }
-      this.info.term_contract_id = term_contract_id;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
       this.visible = false;
     },
-    onSubmit() {
-      // for (const key in this.info) {
-      //   if (this.info.hasOwnProperty(key)) {
-      //     if (
-      //       typeof this.info[key] == "object" &&
-      //       !Array.isArray(this.info[key])
-      //     ) {
-      //       this.info[key] = this.info[key]._isValid
-      //         ? this.info[key].format("YYYY-MM-DD")
-      //         : "";
-      //     }
-      //   }
-      // }
-
-      this.onSubmiting = true;
-
-      c_term_contract_related_entity(this.info)
-        .then(res => {
-          if (res.status) {
-            this.$message.success("成功添加");
-            this.visible = false;
-            this.$emit("done", {});
-          } else {
-            this.$message.error("添加失敗");
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["related_id"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!isHasVal(this.info[mandatory_property[i]])) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
           }
-          this.onSubmiting = false;
-        })
-        .catch(err => {
-          this.onSubmiting = false;
-          this.$message.error("server error - 添加失敗");
-        });
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
+    },
+    onSubmit() {
+      this.onSubmiting = true;
+      if (this.contracttype == "term") {
+        this.info.term_contract_id = this.contractid;
+        c_term_contract_related_entity(this.info)
+          .then(res => {
+            if (res.status) {
+              this.$message.success("成功添加");
+              this.visible = false;
+              this.$emit("submit");
+            } else {
+              this.$message.error("添加失敗");
+            }
+            this.onSubmiting = false;
+          })
+          .catch(err => {
+            this.onSubmiting = false;
+            this.$message.error("server error - 添加失敗");
+          });
+      } else if (this.contracttype == "individual") {
+        this.info.individual_contract_id = this.contractid;
+        c_individual_contract_related_entity(this.info)
+          .then(res => {
+            if (res.status) {
+              this.$message.success("成功添加");
+              this.visible = false;
+              this.$emit("submit");
+            } else {
+              this.$message.error("添加失敗");
+            }
+            this.onSubmiting = false;
+          })
+          .catch(err => {
+            this.onSubmiting = false;
+            this.$message.error("server error - 添加失敗");
+          });
+      } else {
+        this.$message.error("添加失敗 - Type error");
+        this.onSubmiting = false;
+      }
     }
   }
 };
@@ -133,4 +164,3 @@ export default {
   }
 }
 </style>
-

@@ -58,7 +58,7 @@
         </a-col>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
   </a-drawer>
@@ -82,7 +82,17 @@ export default {
   methods: {
     show(info) {
       this.info = JSON.parse(JSON.stringify(info));
-      this.info.meeting_date = moment(this.info.meeting_date, "YYYY-MM-DD");
+      if (this.info.meeting_date == "0000-00-00") {
+        this.info.meeting_date = null;
+      } else {
+        this.info.meeting_date = moment(this.info.meeting_date, "YYYY-MM-DD");
+      }
+      if (this.info.agenda_file == null || this.info.agenda_file == "") {
+        this.info.agenda_file = [];
+      }
+      if (this.info.minutes_file == null || this.info.minutes_file == "") {
+        this.info.minutes_file = [];
+      }
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -91,14 +101,37 @@ export default {
     },
     handle_submit_data(submit_info) {
       //submit info data handling
-      submit_info.meeting_date = submit_info.meeting_date._isValid
-        ? submit_info.meeting_date.format("YYYY-MM-DD")
-        : "";
+      if (submit_info.meeting_date != null) {
+        submit_info.meeting_date = submit_info.meeting_date._isValid
+          ? submit_info.meeting_date.format("YYYY-MM-DD")
+          : "";
+      } else {
+        submit_info.meeting_date = "0000-00-00";
+      }
+
       submit_info.minutes_file = this.$refs.minutesFile.get_file_info(
         submit_info.minutes_file
       );
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["meeting_date"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (this.info[mandatory_property[i]] == null) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

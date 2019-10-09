@@ -150,7 +150,7 @@ export default {
   },
   created() {
     this.menu_style = this.memu_300;
-    this.headTitle = this.$route.params.info.name_en;
+    this.headTitle = this.$route.params.info.name_zh;
     //麵包屑
     this.breadcrumb.push("Home");
     this.memu.some(item => {
@@ -178,16 +178,9 @@ export default {
       // }
     },
     admin_logout() {
-      logout()
-        .then(res => {
-          if (res.status) {
-            sessionStorage.token = "";
-            this.$router.push({ path: "/login" });
-          } else {
-            this.$message.error("登出失敗");
-          }
-        })
-        .catch(err => {});
+      sessionStorage.token = "";
+      this.$message.success("登出成功");
+      this.$router.push({ path: "/login" });
     }
   }
 };

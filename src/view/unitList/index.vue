@@ -87,11 +87,12 @@ export default {
           //get block list
           this.blockList = [];
           this.tableData.forEach((unitlist, index) => {
-            if (!this.blockList.includes(unitlist.block))
+            if (!this.blockList.some(({ value }) => value === unitlist.block)) {
               this.blockList.push({
                 value: unitlist.block,
                 label: unitlist.block
               });
+            }
           });
         })
         .catch(err => {});

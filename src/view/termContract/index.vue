@@ -10,7 +10,7 @@
         <a-button
           type="primary"
           @click="()=>{
-        this.$refs.newtermContract.show()
+        this.$refs.newtermContract.show(typeList)
         }"
         >新增常規合約</a-button>
       </span>
@@ -21,18 +21,22 @@
       :loading="onTableLoading"
       :scroll="{x:'1500px'}"
     >
+      <template
+        slot="job_period_display"
+        slot-scope="record"
+      >{{job_period_display(record.job_period_unit,record.job_period_value)}}</template>
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $refs.edittermContract.show(record)
+          $refs.edittermContract.show(record,typeList)
           }">更多</a>
       </template>
-      <template slot="indContract" slot-scope="record">
+      <!-- <template slot="indContract" slot-scope="record">
         <a
           @click="()=>{
           $refs.individualContract.show(record.term_contract_id)
           }"
         >額外合約</a>
-      </template>
+      </template>-->
       <template slot="report" slot-scope="record">
         <a
           @click="()=>{
@@ -52,88 +56,73 @@
         </a-popconfirm>
       </template>
     </a-table>
-    <newtermContract
-      ref="newtermContract"
-      @done="()=>{
-      this.getTableData(this.$route.params.bid);
-      }"
-    />
-    <edittermContract
-      ref="edittermContract"
-      @done="()=>{
-    this.getTableData(this.$route.params.bid);
-    }"
-    />
-    <individualContract
-      ref="individualContract"
-      @done="()=>{
-    this.getTableData(this.$route.params.bid);
-    }"
-    />
-    <regularReport
-      ref="regularReport"
-      @done="()=>{
-    this.getTableData(this.$route.params.bid);
-    }"
-    />
+    <newtermContract ref="newtermContract" @done="()=>{
+      this.getTableData();
+      }" />
+    <edittermContract ref="edittermContract" @done="()=>{
+    this.getTableData();
+    }" />
+    <!-- <individualContract ref="individualContract" @done="()=>{
+    this.getTableData();
+    }" />-->
+    <regularReport ref="regularReport" @done="()=>{
+    this.getTableData();
+    }" />
   </div>
 </template>
 <script>
 import newtermContract from "./new";
 import edittermContract from "./edit";
-import individualContract from "./individualContract";
+// import individualContract from "./individualContract";
 import regularReport from "./regularReport";
 import { r_term_contract, d_term_contract } from "@/api/term_contract.js";
 import { r_term_contract_related_entity } from "@/api/term_contract_related_entity";
 import uuiddv1 from "uuid/v1";
+import { get_termContractType } from "./termContractUtil";
 const columns = [
   {
     width: "100px",
     title: "常規合約編號",
-    dataIndex: "term_contract_id",
-    key: "term_contract_id"
+    dataIndex: "term_contract_id"
+  },
+  {
+    width: "100px",
+    title: "常規合約狀態",
+    dataIndex: "status"
   },
   {
     width: "100px",
     title: "常規合約種類",
-    width: "150px",
-    dataIndex: "type",
-    key: "type"
+    dataIndex: "type"
   },
   {
     width: "100px",
     title: "相關工程公司",
-    width: "150px",
-    dataIndex: "contractor_name_zh",
-    key: "contractor_name_zh"
+    dataIndex: "contractor_name_zh"
   },
   {
     width: "100px",
     title: "合約開結",
-    dataIndex: "contract_end_date",
-    key: "contract_start_date"
+    dataIndex: "contract_start_date"
   },
   {
     width: "100px",
     title: "合約完結",
-    dataIndex: "contract_end_date",
-    key: "contract_end_date"
-  },
-  {
-    width: "100px",
-    title: "工作週期",
-    dataIndex: "job_period",
-    key: "job_period"
+    dataIndex: "contract_end_date"
   },
   {
     width: "100px",
     title: "N日後到期",
-    dataIndex: "end_day_diff",
-    key: "end_day_diff"
+    dataIndex: "end_day_diff"
+  },
+  {
+    width: "100px",
+    title: "工作週期",
+    scopedSlots: { customRender: "job_period_display" }
   },
   { width: "100px", scopedSlots: { customRender: "detail" } },
-  { width: "120px", scopedSlots: { customRender: "report" } },
-  { width: "120px", scopedSlots: { customRender: "indContract" } },
+  { width: "100px", scopedSlots: { customRender: "report" } },
+  // { width: "120px", scopedSlots: { customRender: "indContract" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
 export default {
@@ -141,6 +130,7 @@ export default {
     return {
       tableData: [],
       dataSource: [],
+      typeList: [],
       columns,
       onTableLoading: false
     };
@@ -163,25 +153,49 @@ export default {
           this.onTableLoading = false;
           this.tableData = res.list;
           this.dataSource = res.list;
+          this.typeList = [];
+          //get type from termContractUtil.js
+          this.typeList = get_termContractType();
+          //get current type from db
+          this.tableData.forEach((list, index) => {
+            if (!this.typeList.some(({ value }) => value === list.type)) {
+              this.typeList.push({
+                value: list.type,
+                label: list.type
+              });
+            }
+          });
+          //add new type
+          this.typeList.push({ value: "添加新種類", label: "添加新種類" });
         })
         .catch(err => {});
+    },
+    job_period_display(unit, value) {
+      if (value == 0) {
+        return "不適用";
+      } else {
+        return "每隔" + value + unit;
+      }
     },
     onDelete(term_contract_id) {
       d_term_contract(term_contract_id)
         .then(res => {
           if (res.status) {
             this.getTableData();
+            this.$message.success("成功刪除");
           } else {
+            this.$message.error("刪除失敗 - api return - " + res.error);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error("刪除失敗 - system error - " + err);
+        });
     }
   },
   components: {
     newtermContract,
     edittermContract,
-    regularReport,
-    individualContract
+    regularReport
   }
 };
 </script>

@@ -11,9 +11,8 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">政府法令種類</span>
+            <span class="label required">政府法令種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="---">--- 請選擇種類 ---</a-select-option>
               <a-select-option value="食環署">食環署</a-select-option>
               <a-select-option value="土木工程署">土木工程署</a-select-option>
               <a-select-option value="屋宇署">屋宇署</a-select-option>
@@ -49,21 +48,21 @@
               }"
             >Search</a-button>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.handler_user_id != ''">
             <span class="label">中文名稱</span>
             <a-input readonly v-model="info.name_zh"></a-input>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.handler_user_id != ''">
             <span class="label">英文名稱</span>
             <a-input readonly v-model="info.name_en"></a-input>
           </p>
-          <p class="item">
+          <p class="item" v-if="info.handler_user_id != ''">
             <span class="label">電話號碼</span>
             <a-input readonly v-model="info.login_tel"></a-input>
           </p>
           <a-divider></a-divider>
           <p class="item">
-            <span class="label">相關文件</span>
+            <span class="label required">相關文件</span>
             <span style="text-align:left;width:100%">
               <uploadFile ref="importantFile" v-model="info.important_file"></uploadFile>
             </span>
@@ -74,7 +73,7 @@
       </a-row>
 
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
   </a-drawer>
@@ -84,6 +83,8 @@ import moment from "moment";
 import uploadFile from "@/components/uploadFile";
 import selectUser from "@/components/selectUser";
 import { c_important } from "@/api/important";
+import { isHasVal, isArray } from "@/utils/validate";
+
 export default {
   data() {
     return {
@@ -96,6 +97,7 @@ export default {
         known_date: "",
         deadline: "",
         content: "",
+        ref_no: "",
         remarks: "",
         important_file: [],
         handler_user_id: "",
@@ -110,15 +112,23 @@ export default {
   methods: {
     onUserSelect(e) {
       console.log(e.list[e.selectedRowKeys[0]]);
-      this.info.handler_user_id = e.selectedRowKeys[0];
-      this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
-      this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
-      this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
+      if (e.list[e.selectedRowKeys[0]].length != 0) {
+        this.info.handler_user_id = e.selectedRowKeys[0];
+        this.info.name_zh = e.list[e.selectedRowKeys[0]].name_zh;
+        this.info.name_en = e.list[e.selectedRowKeys[0]].name_en;
+        this.info.login_tel = e.list[e.selectedRowKeys[0]].login_tel;
+      }
     },
     show() {
-      this.info.type = "---";
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          this.info[key] = "";
+        }
+      }
+      this.info.type = "食環署";
       this.info.known_date = null;
       this.info.deadline = null;
+      this.info.important_file = [];
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -127,17 +137,51 @@ export default {
     },
     handle_submit_data(submit_info) {
       //submit info data handling
-      submit_info.known_date = submit_info.known_date._isValid
-        ? submit_info.known_date.format("YYYY-MM-DD")
-        : "";
-      submit_info.deadline = submit_info.deadline._isValid
-        ? submit_info.deadline.format("YYYY-MM-DD")
-        : "";
+      var date_property = ["known_date", "deadline"];
+
+      for (let i = 0; i < date_property.length; i++) {
+        var check_date = submit_info[date_property[i]];
+        console.log(check_date);
+        if (check_date != null) {
+          check_date = check_date._isValid
+            ? check_date.format("YYYY-MM-DD")
+            : "";
+        } else {
+          check_date = "";
+        }
+        submit_info[date_property[i]] = check_date;
+      }
+
       submit_info.important_file = this.$refs.importantFile.get_file_info(
         submit_info.important_file
       );
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["type", "important_file"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (isArray(this.info[mandatory_property[i]])) {
+            if (!this.info[mandatory_property[i]].length > 0) {
+              this.$message.error("請上載至少1個檔寨");
+              return false;
+            }
+          } else {
+            if (!isHasVal(this.info[mandatory_property[i]])) {
+              this.$message.error("請檢查必須填寫的資料");
+              return false;
+            }
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

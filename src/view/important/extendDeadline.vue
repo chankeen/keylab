@@ -11,7 +11,7 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">延期期限</span>
+            <span class="label required">延期期限</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.deadline"></a-date-picker>
           </p>
           <p class="item">
@@ -21,7 +21,7 @@
             </span>
           </p>
           <p style="text-align:right">
-            <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+            <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
           </p>
           <a-divider />
           <a-collapse>
@@ -70,7 +70,8 @@ export default {
       onSubmiting: false,
       submit_info: {},
       info: {
-        file: []
+        file: [],
+        deadline: null
       },
       extends_data: []
     };
@@ -83,6 +84,7 @@ export default {
     show(important_id) {
       console.log(important_id);
       this.info.important_id = important_id;
+      this.info.deadline = null;
       this.get_deadline_data();
       //this.info.known_date = moment(this.info.known_date, "YYYY-MM-DD");
       this.visible = true;
@@ -119,12 +121,42 @@ export default {
     },
     handle_submit_data(submit_info) {
       //submit info data handling
-      submit_info.deadline = submit_info.deadline._isValid
-        ? submit_info.deadline.format("YYYY-MM-DD")
-        : "";
+      var date_property = ["deadline"];
+
+      for (let i = 0; i < date_property.length; i++) {
+        var check_date = submit_info[date_property[i]];
+        console.log(check_date);
+        if (check_date != null) {
+          check_date = check_date._isValid
+            ? check_date.format("YYYY-MM-DD")
+            : "";
+        } else {
+          check_date = "";
+        }
+        submit_info[date_property[i]] = check_date;
+      }
+
       submit_info.file = this.$refs.uploadFile.get_file_info(submit_info.file);
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["deadline"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (this.info[mandatory_property[i]] == null) {
+            this.$message.error("請填寫必要日期");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

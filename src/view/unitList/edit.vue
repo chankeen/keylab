@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改單位檔案"
+    title="修改單位列表"
     placement="right"
     :closable="false"
     @close="onClose"
@@ -36,7 +36,7 @@
       <p class="item">
         <span class="label">單位相關檔案(最大25MB)</span>
         <span style="text-align:left;width:100%">
-          <uploadFile v-model="info.file"></uploadFile>
+          <uploadFile ref="uploadFile" v-model="info.file"></uploadFile>
         </span>
       </p>
       <p style="text-align:right">
@@ -68,22 +68,23 @@ export default {
       this.info = JSON.parse(JSON.stringify(info));
       this.visible = true;
       this.onSubmiting = false;
+      if (this.info.file == null || this.info.file == "") {
+        this.info.file = [];
+      }
     },
     onClose() {
       this.visible = false;
     },
+    handle_submit_data(submit_info) {
+      //submit info data handling
+      submit_info.file = this.$refs.uploadFile.get_file_info(submit_info.file);
+      submit_info.property_id = this.$route.params.bid;
+      return submit_info;
+    },
     onSubmit() {
-      for (const key in this.info) {
-        if (this.info.hasOwnProperty(key)) {
-          if (typeof this.info[key] == "object") {
-            this.info[key] = this.info[key]._isValid
-              ? this.info[key].format("YYYY-MM-DD")
-              : "";
-          }
-        }
-      }
+      Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
-      u_unit_list(this.info)
+      u_unit_list(this.handle_submit_data(this.submit_info))
         .then(res => {
           if (res.status) {
             this.$message.success("更新成功");

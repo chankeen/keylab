@@ -11,9 +11,8 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">政府法令種類</span>
+            <span class="label required">會議種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="---">--- 請選擇種類 ---</a-select-option>
               <a-select-option value="常務會議">常務會議</a-select-option>
               <a-select-option value="年度業主大會">年度業主大會</a-select-option>
               <a-select-option value="特別業主大會">特別業主大會</a-select-option>
@@ -22,7 +21,7 @@
             </a-select>
           </p>
           <p class="item">
-            <span class="label">會議日期</span>
+            <span class="label required">會議日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.meeting_date"></a-date-picker>
           </p>
           <p class="item">
@@ -50,7 +49,7 @@
         </a-col>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
   </a-drawer>
@@ -59,6 +58,7 @@
 import moment from "moment";
 import uploadFile from "@/components/uploadFile.vue";
 import { c_minutes } from "@/api/minutes";
+
 export default {
   data() {
     return {
@@ -78,7 +78,12 @@ export default {
   created() {},
   methods: {
     show() {
-      this.info.type = "---";
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          this.info[key] = "";
+        }
+      }
+      this.info.type = "常務會議";
       this.info.meeting_date = null;
       this.visible = true;
       this.onSubmiting = false;
@@ -88,9 +93,13 @@ export default {
     },
     handle_submit_data(submit_info) {
       //submit info data handling
-      submit_info.meeting_date = submit_info.meeting_date._isValid
-        ? submit_info.meeting_date.format("YYYY-MM-DD")
-        : "";
+      if (submit_info.meeting_date != null) {
+        submit_info.meeting_date = submit_info.meeting_date._isValid
+          ? submit_info.meeting_date.format("YYYY-MM-DD")
+          : "";
+      } else {
+        submit_info.meeting_date = "0000-00-00";
+      }
       submit_info.minutes_file = this.$refs.minutesFile.get_file_info(
         submit_info.minutes_file
       );
@@ -99,6 +108,24 @@ export default {
       );
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["meeting_date"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (this.info[mandatory_property[i]] == null) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

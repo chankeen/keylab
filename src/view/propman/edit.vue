@@ -16,7 +16,7 @@
             <a-input v-model="info.login_tel" disabled></a-input>
           </p>
           <p class="item">
-            <span class="label">職位</span>
+            <span class="label required">職位</span>
             <a-select v-model="info.position">
               <a-select-option value="分區經理">分區經理</a-select-option>
               <a-select-option value="區經理">區經理</a-select-option>
@@ -37,8 +37,8 @@
               <a-date-picker format="DD/MM/YYYY" v-model="info.birth_date"></a-date-picker>
             </p>
             <p class="item">
-              <span class="label">年齡</span>
-              <a-input disabled v-model="info.age"></a-input>
+              <span class="label">年齡(自動計算)</span>
+              <a-input disabled v-model="age"></a-input>
             </p>
             <p class="item">
               <span class="label">編更</span>
@@ -73,7 +73,7 @@
         </a-col>
       </a-row>
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
   </a-modal>
@@ -82,6 +82,7 @@
 import moment from "moment";
 import Editor from "@tinymce/tinymce-vue";
 import uploadFile from "@/components/uploadFile.vue";
+import { isHasVal } from "@/utils/validate";
 import { u_propman } from "@/api/propman";
 export default {
   data() {
@@ -142,6 +143,24 @@ export default {
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
     },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["name_zh"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!isHasVal(this.info[mandatory_property[i]])) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
+    },
     onSubmit() {
       Object.assign(this.submit_info, this.info);
       this.onSubmiting = true;
@@ -160,6 +179,12 @@ export default {
           this.onSubmiting = false;
           this.$message.error("更新失敗 - system error - " + err);
         });
+    }
+  },
+  computed: {
+    age() {
+      if (this.info.birth_date == null) return "不適用";
+      else return moment().diff(this.info.birth_date, "years");
     }
   }
 };

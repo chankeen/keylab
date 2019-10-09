@@ -11,7 +11,7 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">物業狀態</span>
+            <span class="label required">物業狀態</span>
             <a-select v-model="info.status">
               <a-select-option value="正常">正常</a-select-option>
               <a-select-option value="暫停">暫停</a-select-option>
@@ -19,9 +19,9 @@
             </a-select>
           </p>
           <p class="item">
-            <span class="label">物業種類</span>
+            <span class="label required">物業種類</span>
             <a-select v-model="info.type">
-              <a-select-option value="---">---請選擇物業種類---</a-select-option>
+              <!-- <a-select-option value="---">---請選擇物業種類---</a-select-option> -->
               <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
               <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
               <a-select-option value="屋苑大廈">屋苑大廈</a-select-option>
@@ -30,7 +30,7 @@
             </a-select>
           </p>
           <p class="item">
-            <span class="label">物業中文名稱</span>
+            <span class="label required">物業中文名稱</span>
             <a-input v-model="info.name_zh" placeholder="例如: 萬利豐中心"></a-input>
           </p>
           <p class="item">
@@ -46,7 +46,7 @@
             <a-input v-model="info.address_en" placeholder="例如: 8-12 Stanley Street"></a-input>
           </p>
           <p class="item">
-            <span class="label">是否擁有業主立案法團</span>
+            <span class="label required">是否擁有業主立案法團</span>
             <a-switch v-model="info.oc_exist"></a-switch>
           </p>
           <p class="item">
@@ -82,13 +82,14 @@
       </a-row>
 
       <p style="text-align:right">
-        <a-button type="primary" :loading="onSubmiting" @click="onSubmit">Submit</a-button>
+        <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
   </a-drawer>
 </template>
 <script>
 import moment from "moment";
+import { isHasVal } from "@/utils/validate";
 import uploadFile from "@/components/uploadFile.vue";
 import { c_property } from "@/api/property.js";
 export default {
@@ -119,14 +120,14 @@ export default {
   created() {},
   methods: {
     show() {
-      // for (const key in this.info) {
-      //   if (this.info.hasOwnProperty(key)) {
-      //     this.info[key] = "";
-      //   }
-      // }
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          this.info[key] = "";
+        }
+      }
       this.info.oc_exist = true;
       this.info.status = "正常";
-      this.info.type = "---";
+      this.info.type = "單棟式大廈";
       this.info.floor_plan_file = [];
       this.info.dmc_file = [];
       this.visible = true;
@@ -151,6 +152,22 @@ export default {
       }
       sumbmit_info.admin_wp_id = sessionStorage.getItem("admin_wp_id");
       return sumbmit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["status", "type", "name_zh"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!isHasVal(this.info[mandatory_property[i]])) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

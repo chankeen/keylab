@@ -3,7 +3,7 @@
     <a-row>
       <a-col>
         <p class="item">
-          <span class="label">物業狀態</span>
+          <span class="label required">物業狀態</span>
           <a-select v-model="info.status">
             <a-select-option value="正常">正常</a-select-option>
             <a-select-option value="暫停">暫停</a-select-option>
@@ -11,7 +11,7 @@
           </a-select>
         </p>
         <p class="item">
-          <span class="label">物業種類</span>
+          <span class="label required">物業種類</span>
           <a-select v-model="info.type">
             <a-select-option value="單棟式大廈">單棟式大廈</a-select-option>
             <a-select-option value="大型屋苑大廈">大型屋苑大廈</a-select-option>
@@ -21,7 +21,7 @@
           </a-select>
         </p>
         <p class="item">
-          <span class="label">物業中文名稱</span>
+          <span class="label required">物業中文名稱</span>
           <a-input v-model="info.name_zh"></a-input>
         </p>
         <p class="item">
@@ -37,7 +37,7 @@
           <a-input v-model="info.address_en"></a-input>
         </p>
         <p class="item">
-          <span class="label">是否擁有業主立案法團</span>
+          <span class="label required">是否擁有業主立案法團</span>
           <a-switch v-model="info.oc_exist"></a-switch>
         </p>
         <p class="item">
@@ -80,13 +80,7 @@
           </span>
         </p>
         <p style="text-align:right">
-          <a-button
-            type="primary"
-            :loading="onSubmiting"
-            @click="()=>{
-            onSubmit()
-            }"
-          >Submit</a-button>
+          <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
         </p>
       </a-col>
     </a-row>
@@ -96,6 +90,7 @@
 <script>
 import moment from "moment";
 import Editor from "@tinymce/tinymce-vue";
+import { isHasVal } from "@/utils/validate";
 import uploadFile from "@/components/uploadFile.vue";
 import { r_property, u_property } from "@/api/property.js";
 export default {
@@ -145,6 +140,24 @@ export default {
         sumbmit_info.oc_exist = 0;
       }
       return sumbmit_info;
+    },
+    submit_validation() {
+      //check mandatory
+      var mandatory_property = ["status", "type", "name_zh"];
+      for (let i = 0; i < mandatory_property.length; i++) {
+        console.log(mandatory_property[i]);
+        console.log(this.info.hasOwnProperty(mandatory_property[i]));
+        if (this.info.hasOwnProperty(mandatory_property[i])) {
+          if (!isHasVal(this.info[mandatory_property[i]])) {
+            this.$message.error("請檢查必須填寫的資料");
+            return false;
+          }
+        } else {
+          this.$message.error("mandatory status wrong");
+          return false;
+        }
+      }
+      return this.onSubmit();
     },
     onSubmit() {
       Object.assign(this.submit_info, this.info);

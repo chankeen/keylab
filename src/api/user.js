@@ -9,12 +9,12 @@ export function login(login, password) {
         })
     })
 }
-export function logout() {
+export function logout(wp_id) {
     return request({
         url: "api/logout",
         method: "POST",
         data: Qs.stringify({
-
+            wp_id
         })
     })
 }
