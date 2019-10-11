@@ -1,8 +1,8 @@
 {
-  "name": "esolution",
-  "version": "1.0.0",
-  "description": "",
-  "author": "Roger.G <2319743089@qq.com>",
+  "name": "KeyMana",
+  "version": "1.0.1",
+  "description": "Beta Version for internal testing (Grandview and Senmax)",
+  "author": "Keen Chan <chankeen332334@gmail.com>",
   "private": true,
   "scripts": {
     "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",

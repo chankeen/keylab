@@ -11,7 +11,7 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label">政府法令種類</span>
+            <span class="label required">會議種類</span>
             <a-select v-model="info.type">
               <a-select-option value="常務會議">常務會議</a-select-option>
               <a-select-option value="年度業主大會">年度業主大會</a-select-option>
@@ -21,7 +21,7 @@
             </a-select>
           </p>
           <p class="item">
-            <span class="label">會議日期</span>
+            <span class="label required">會議日期</span>
             <a-date-picker format="DD/MM/YYYY" v-model="info.meeting_date"></a-date-picker>
           </p>
           <p class="item">
