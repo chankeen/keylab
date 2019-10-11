@@ -109,6 +109,10 @@ export default {
         submit_info.meeting_date = "0000-00-00";
       }
 
+      submit_info.agenda_file = this.$refs.agendaFile.get_file_info(
+        submit_info.agenda_file
+      );
+
       submit_info.minutes_file = this.$refs.minutesFile.get_file_info(
         submit_info.minutes_file
       );
