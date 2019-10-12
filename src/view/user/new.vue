@@ -67,6 +67,7 @@ export default {
       visible: false,
       onSubmiting: false,
       info: {
+        type: "",
         status: "",
         name_zh: "",
         name_en: "",

@@ -105,6 +105,7 @@ export default {
       typeOptions: [],
       locationOptions: [],
       info: {
+        status: "",
         contract_file: [],
         tender_file: [],
         waranty_period: null,
