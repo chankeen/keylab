@@ -43,21 +43,28 @@ import editMinutes from "./edit";
 import { r_minutes, d_minutes } from "@/api/minutes.js";
 import uuiddv1 from "uuid/v1";
 import { get_minutes_type_select_options } from "./minutesUtils";
-const columns = [
-  { title: "會議紀錄編號", dataIndex: "minutes_id", key: "minutes_id" },
-  { title: "會議紀錄種類", width: "150px", dataIndex: "type", key: "type" },
-  { title: "第N屆", dataIndex: "oc_term", key: "oc_term" },
-  { title: "第N次", dataIndex: "minutes_term", key: "minutes_term" },
-  { title: "會議日期", dataIndex: "meeting_date", key: "meeting_date" },
+//sort function added
+var columns = [
+  { title: "會議紀錄編號", dataIndex: "minutes_id" },
+  { title: "會議紀錄種類", width: "150px", dataIndex: "type" },
+  { title: "第N屆", dataIndex: "oc_term" },
+  { title: "第N次", dataIndex: "minutes_term" },
+  {
+    title: "會議日期",
+    dataIndex: "meeting_date",
+    sorter: (a, b) => new Date(b.meeting_date) - new Date(a.meeting_date)
+  },
   { width: "100px", scopedSlots: { customRender: "detail" } },
   { width: "100px", scopedSlots: { customRender: "delete" } }
 ];
+
 export default {
   data() {
     return {
       tableData: [],
       dataSource: [],
       typeList: [],
+      typeListFilters: [],
       columns,
       onTableLoading: false
     };
@@ -89,6 +96,13 @@ export default {
               });
             }
           });
+          //filter function added
+          this.typeListFilters = this.typeList.map(({ value, label }) => {
+            return { value: value, text: label };
+          });
+          this.columns[1].filters = this.typeListFilters;
+          this.columns[1].onFilter = (value, record) =>
+            record.type.indexOf(value) === 0;
         })
         .catch(err => {});
     },
