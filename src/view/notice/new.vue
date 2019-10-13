@@ -16,7 +16,11 @@
           </p>
           <p class="item">
             <span class="label">通告標題</span>
-            <a-input v-model="info.title"></a-input>
+            <a-select :options="titleOptions" v-model="info.title"></a-select>
+          </p>
+          <p class="item" v-if="info.title == '添加新標題'">
+            <span class="label">輸入新標題</span>
+            <a-input v-model="info.new_title"></a-input>
           </p>
         </a-col>
         <a-divider />
@@ -43,7 +47,9 @@ export default {
       visible: false,
       onSubmiting: false,
       submit_info: {},
+      titleOptions: [],
       info: {
+        new_title: "",
         property_id: "",
         notice_file: [],
         notice_date: "",
@@ -55,12 +61,15 @@ export default {
   created() {},
   components: { uploadFile },
   methods: {
-    show() {
+    show(titleList) {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
           this.info[key] = "";
         }
       }
+      Object.assign(this.titleOptions, titleList);
+      this.titleOptions.push({ value: "添加新標題", label: "添加新標題" });
+      this.info.title = this.titleOptions[0].value;
       //init value
       this.info.notice_date = null;
       this.info.notice_file = [];
@@ -68,13 +77,18 @@ export default {
       this.onSubmiting = false;
     },
     onClose() {
+      this.onSubmiting = false;
+      this.titleOptions = [];
       this.visible = false;
+      this.$emit("done", {});
     },
     handle_submit_data(submit_info) {
       //submit info data handling
       submit_info.notice_file = this.$refs.uploadFile.get_file_info(
         submit_info.notice_file
       );
+      if (submit_info.title == "添加新標題")
+        submit_info.title = submit_info.new_title;
       if (submit_info.notice_date != null)
         submit_info.notice_date = submit_info.notice_date._isValid
           ? submit_info.notice_date.format("YYYY-MM-DD")
@@ -107,13 +121,14 @@ export default {
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
-            this.visible = false;
-            this.$emit("done", {});
+            this.onClose();
           } else {
+            this.onSubmiting = false;
             this.$message.error("添加失敗 - api return - " + res.error);
           }
         })
         .catch(err => {
+          this.onSubmiting = false;
           this.$message.error("添加失敗 - system error - " + err);
         });
     }

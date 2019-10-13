@@ -21,9 +21,19 @@ const router = new Router({
           component: () => import("@/view/property")
         },
         {
-          path: "user",
-          name: "home_user",
-          component: () => import("@/view/user")
+          path: "userPropman",
+          name: "home_Propman",
+          component: () => import("@/view/userPropman")
+        },
+        {
+          path: "userOc",
+          name: "home_Oc",
+          component: () => import("@/view/userOc")
+        },
+        {
+          path: "userContractor",
+          name: "home_Contractor",
+          component: () => import("@/view/userContractor")
         }
       ]
     },

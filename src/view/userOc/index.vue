@@ -1,27 +1,33 @@
 <template>
   <div>
     <p class="header">
-      <a-input-search placeholder="通告ID" style="width: 200px" @search="onSearch" />
+      <a-input-search
+        placeholder="用戶中文名 / 用戶英文名 / 電話 / 電郵"
+        style="width: 600px"
+        @search="onSearch"
+      />
       <span>
-        <a-button
-          type="primary"
-          @click="()=>{
-        this.$refs.newRecord.show(titleList)
-        }"
-        >新增通告</a-button>
+        <a-button type="primary" @click="()=>{
+        this.$refs.newRecord.show()
+        }">新增用戶</a-button>
       </span>
     </p>
-    <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
+    <a-table
+      :columns="columns"
+      :rowKey="record => record.user_id"
+      :dataSource="tableData"
+      :loading="onTableLoading"
+    >
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-            $refs.edit.show(record,titleList)
+          $refs.edit.show(record)
           }">修改</a>
       </template>
       <template slot="delete" slot-scope="record">
         <a-popconfirm
           v-if="tableData.length"
           title="Sure to delete?"
-          @confirm="() => onDelete(record.notice_id)"
+          @confirm="() => onDelete(record.user_id)"
         >
           <a>
             <a-icon type="delete"></a-icon>
@@ -40,28 +46,28 @@
 <script>
 import newRecord from "./new";
 import edit from "./edit";
-import { r_notice, d_notice } from "@/api/notice.js";
+import { r_users, d_users } from "@/api/users.js";
 import uuiddv1 from "uuid/v1";
-var columns = [
-  { title: "通告ID", dataIndex: "notice_id" },
-  {
-    title: "通告日期",
-    dataIndex: "notice_date",
-    sorter: (a, b) => new Date(b.notice_date) - new Date(a.notice_date)
-  },
-  { title: "通告標題", dataIndex: "title" },
-  { width: "100px", scopedSlots: { customRender: "detail" } },
-  { width: "100px", scopedSlots: { customRender: "delete" } }
+const columns = [
+  { title: "User ID", dataIndex: "user_id" },
+  { title: "Status", dataIndex: "status" },
+  { title: "Type", dataIndex: "type" },
+  { title: "Chinese Name", dataIndex: "name_zh" },
+  { title: "English Name", dataIndex: "name_en" },
+  { title: "Login Tel", dataIndex: "login_tel" },
+  { title: "Email", dataIndex: "email" },
+  { title: "Fax", dataIndex: "fax" },
+  { scopedSlots: { customRender: "detail" } },
+  { scopedSlots: { customRender: "delete" } }
 ];
 export default {
   data() {
     return {
       tableData: [],
       dataSource: [],
-      titleList: [],
-      titleListFilters: [],
       columns,
-      onTableLoading: false
+      onTableLoading: false,
+      admin_wp_id: 0
     };
   },
   created() {
@@ -72,43 +78,32 @@ export default {
       const dataSource = [...this.dataSource];
       this.tableData = dataSource.filter(
         item =>
-          (item.ccn + item.cen).toLowerCase().indexOf(val.toLowerCase()) > -1
+          (item.name_zh + item.name_en + item.login_tel + item.email)
+            .toLowerCase()
+            .indexOf(val.toLowerCase()) > -1
       );
       if (val == "") {
         this.tableData = this.dataSource;
       }
     },
+    //獲取表格數據
     getTableData() {
       this.onTableLoading = true;
-      r_notice(this.$route.params.bid)
+      r_users(sessionStorage.getItem("admin_wp_id"), "Oc")
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;
           this.dataSource = res.list;
-          this.titleList = [];
-          res.list.forEach(element => {
-            if (!this.titleList.some(({ value }) => value === element.title)) {
-              this.titleList.push({
-                value: element.title,
-                label: element.title
-              });
-            }
-          });
-          this.titleListFilters = this.titleList.map(({ value, label }) => {
-            return { value: value, text: label };
-          });
-          this.columns[2].filters = this.titleListFilters;
-          this.columns[2].onFilter = (value, record) =>
-            record.title.indexOf(value) === 0;
         })
         .catch(err => {});
     },
-    onDelete(cid) {
-      d_notice(cid)
+    onDelete(user_id) {
+      d_users(user_id)
         .then(res => {
+          console.log(res);
           if (res.status) {
             this.getTableData();
-            this.$message.success("成功刪除");
+            this.$message.success("刪除成功");
           } else {
             this.$message.error("刪除失敗 - api return - " + res.error);
           }

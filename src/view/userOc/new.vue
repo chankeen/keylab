@@ -1,5 +1,12 @@
 <template>
-  <a-modal title="Edit User Record" @close="onClose" v-model="visible" width="600px" :footer="null">
+  <a-drawer
+    title="Add User Record"
+    placement="right"
+    :closable="false"
+    @close="onClose"
+    :visible="visible"
+    width="600px"
+  >
     <div class="new-pmaster-modal">
       <a-row>
         <a-col>
@@ -19,15 +26,15 @@
           </p>
           <p class="item">
             <span class="label required">Chinese Name</span>
-            <a-input v-model="info.name_zh"></a-input>
+            <a-input placeholder="例如: 陳大文" v-model="info.name_zh"></a-input>
           </p>
           <p class="item">
             <span class="label">English Name</span>
-            <a-input v-model="info.name_en"></a-input>
+            <a-input placeholder="Chan Tai Man" v-model="info.name_en"></a-input>
           </p>
           <p class="item">
             <span class="label required">Login Tel</span>
-            <a-input maxlength="8" v-model="info.login_tel"></a-input>
+            <a-input placeholder="例如: 98769876" maxlength="8" v-model="info.login_tel"></a-input>
           </p>
           <p class="item">
             <span class="label">Backup Tel</span>
@@ -35,7 +42,7 @@
           </p>
           <p class="item">
             <span class="label">Email</span>
-            <a-input v-model="info.email"></a-input>
+            <a-input placeholder="例如: chantaiman@gmail.com" v-model="info.email"></a-input>
           </p>
           <p class="item">
             <span class="label">Fax</span>
@@ -48,11 +55,10 @@
         <a-button type="primary" :loading="onSubmiting" @click="submit_validation">Submit</a-button>
       </p>
     </div>
-  </a-modal>
+  </a-drawer>
 </template>
 <script>
-import moment from "moment";
-import { u_users } from "@/api/users";
+import { c_users } from "@/api/users.js";
 import { isHasVal } from "@/utils/validate";
 
 export default {
@@ -61,22 +67,31 @@ export default {
       visible: false,
       onSubmiting: false,
       info: {
+        type: "",
         status: "",
+        category: "",
         name_zh: "",
         name_en: "",
         login_tel: "",
+        backup_tel: "",
         email: "",
-        created_by: "",
-        creation_datetime: ""
+        fax: "",
+        created_by: ""
       }
     };
   },
-  created() {
-    //this.get_client();
-  },
+  created() {},
   methods: {
-    show(info) {
-      this.info = JSON.parse(JSON.stringify(info));
+    show() {
+      //added for non null result
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          this.info[key] = "";
+        }
+      }
+      this.info.category = "oc";
+      this.info.status = "正常";
+      this.info.type = "個人";
       this.visible = true;
       this.onSubmiting = false;
     },
@@ -102,22 +117,31 @@ export default {
       return this.onSubmit();
     },
     onSubmit() {
+      for (const key in this.info) {
+        if (this.info.hasOwnProperty(key)) {
+          if (typeof this.info[key] == "object") {
+            this.info[key] = this.info[key]._isValid
+              ? this.info[key].format("YYYY-MM-DD")
+              : "";
+          }
+        }
+      }
       this.onSubmiting = true;
-      u_users(this.info)
+      this.info.created_by = sessionStorage.admin_wp_id;
+      console.log(this.info);
+      c_users(this.info)
         .then(res => {
           if (res.status) {
-            this.$message.success("更新成功");
+            this.$message.success("成功添加");
             this.visible = false;
-            this.onSubmiting = false;
             this.$emit("done", {});
           } else {
-            this.onSubmiting = false;
-            this.$message.error("更新失敗 - api return - " + res.error);
+            this.$message.error("添加失敗 - api return - " + res.error);
           }
         })
         .catch(err => {
-          this.onSubmiting = false;
-          this.$message.error("更新失敗 - system error -" + err);
+          this.visible = false;
+          this.$message.error("添加失敗 - system error - " + err);
         });
     }
   }

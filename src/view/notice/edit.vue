@@ -10,7 +10,11 @@
             </p>
             <p class="item">
               <span class="label">通告標題</span>
-              <a-input v-model="info.title"></a-input>
+              <a-select :options="titleOptions" v-model="info.title"></a-select>
+            </p>
+            <p class="item" v-if="info.title == '添加新標題'">
+              <span class="label">輸入新標題</span>
+              <a-input v-model="info.new_title"></a-input>
             </p>
           </a-col>
           <p class="item">
@@ -48,6 +52,7 @@ export default {
       visible: false,
       onSubmiting: false,
       submit_info: {},
+      titleOptions: [],
       info: {
         property_id: "",
         user_id: "",
@@ -59,8 +64,11 @@ export default {
   components: { uploadFile, "tinymce-editor": Editor },
   created() {},
   methods: {
-    show(info) {
+    show(info, titleList) {
       this.info = JSON.parse(JSON.stringify(info));
+      Object.assign(this.titleOptions, titleList);
+      this.titleOptions.push({ value: "添加新標題", label: "添加新標題" });
+      this.info.title = this.titleOptions[0].value;
       if (this.info.notice_date == "0000-00-00") {
         this.info.notice_date = null;
       } else {
@@ -69,17 +77,23 @@ export default {
       if (this.info.notice_file == null || this.info.notice_file == "") {
         this.info.notice_file = [];
       }
+      this.$set(this.info, "new_title", "");
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
+      this.titleOptions = [];
       this.visible = false;
+      this.$emit("done", {});
     },
     handle_submit_data(submit_info) {
       //submit info data handling
       submit_info.notice_file = this.$refs.uploadFile.get_file_info(
         submit_info.notice_file
       );
+      if (submit_info.title == "添加新標題")
+        submit_info.title = submit_info.new_title;
+
       if (submit_info.notice_date != null)
         submit_info.notice_date = submit_info.notice_date._isValid
           ? submit_info.notice_date.format("YYYY-MM-DD")
@@ -112,8 +126,7 @@ export default {
         .then(res => {
           if (res.status) {
             this.$message.success("更新成功");
-            this.visible = false;
-            this.$emit("done", {});
+            this.onClose();
           } else {
             this.onSubmiting = false;
             this.$message.error("更新失敗 - api return - " + res.error);

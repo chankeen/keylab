@@ -18,6 +18,8 @@
               <a-select-option value="屋宇署">屋宇署</a-select-option>
               <a-select-option value="消防署">消防署</a-select-option>
               <a-select-option value="機電工程署">機電工程署</a-select-option>
+              <a-select-option value="水務署">水務署</a-select-option>
+              <a-select-option value="警務署">警務署</a-select-option>
               <a-select-option value="法律訴頌">法律訴頌</a-select-option>
               <a-select-option value="其他">其他</a-select-option>
             </a-select>

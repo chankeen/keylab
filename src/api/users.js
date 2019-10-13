@@ -11,12 +11,12 @@ export function c_users(values) {
         })
     })
 }
-export function r_users(admin_wp_id) {
+export function r_users(admin_wp_id, category) {
     return request({
         url: "api/data?page=users&action=r_users",
         method: "POST",
         data: Qs.stringify({
-            admin_wp_id
+            admin_wp_id, category
         })
     })
 }

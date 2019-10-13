@@ -69,6 +69,7 @@ export default {
       info: {
         type: "",
         status: "",
+        category: "",
         name_zh: "",
         name_en: "",
         login_tel: "",
@@ -88,6 +89,7 @@ export default {
           this.info[key] = "";
         }
       }
+      this.info.category = "contractor";
       this.info.status = "正常";
       this.info.type = "個人";
       this.visible = true;

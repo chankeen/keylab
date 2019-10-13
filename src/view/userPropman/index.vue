@@ -89,7 +89,7 @@ export default {
     //獲取表格數據
     getTableData() {
       this.onTableLoading = true;
-      r_users(sessionStorage.getItem("admin_wp_id"))
+      r_users(sessionStorage.getItem("admin_wp_id"), "propman")
         .then(res => {
           this.onTableLoading = false;
           this.tableData = res.list;

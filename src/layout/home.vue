@@ -57,8 +57,20 @@ export default {
           key: uuidv1()
         },
         {
-          r_name: "home_user",
-          title: "Users / Entity ",
+          r_name: "home_Propman",
+          title: "Users -  Propman / 用戶 - 物管人員 ",
+          icon: "team",
+          key: uuidv1()
+        },
+        {
+          r_name: "home_Oc",
+          title: "Users - OC / 用戶 - 法團成員 ",
+          icon: "team",
+          key: uuidv1()
+        },
+        {
+          r_name: "home_Contractor",
+          title: "Users - Contractor / 用戶 - 承辦商",
           icon: "team",
           key: uuidv1()
         }

@@ -91,7 +91,7 @@ export default {
         },
         {
           r_name: "property_important",
-          title: "Important / 政府法令",
+          title: "Government Order / 政府法令",
           icon: "exclamation-circle"
         },
         {
