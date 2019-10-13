@@ -12,13 +12,11 @@
         <a-col>
           <p class="item">
             <span class="label required">會議種類</span>
-            <a-select v-model="info.type">
-              <a-select-option value="常務會議">常務會議</a-select-option>
-              <a-select-option value="年度業主大會">年度業主大會</a-select-option>
-              <a-select-option value="特別業主大會">特別業主大會</a-select-option>
-              <a-select-option value="特別會議">特別會議</a-select-option>
-              <a-select-option value="其他">其他</a-select-option>
-            </a-select>
+            <a-select :options="typeOptions" v-model="info.type"></a-select>
+          </p>
+          <p class="item" v-if="info.type == '添加新種類'">
+            <span class="label required">輸入新種類</span>
+            <a-input v-model="info.new_type"></a-input>
           </p>
           <p class="item">
             <span class="label required">會議日期</span>
@@ -65,7 +63,9 @@ export default {
       visible: false,
       onSubmiting: false,
       submit_info: {},
+      typeOptions: [],
       info: {
+        new_type: "",
         property_id: "",
         type: "",
         meeting_date: "",
@@ -77,19 +77,24 @@ export default {
   components: { uploadFile },
   created() {},
   methods: {
-    show() {
+    show(typeList) {
       for (const key in this.info) {
         if (this.info.hasOwnProperty(key)) {
           this.info[key] = "";
         }
       }
-      this.info.type = "常務會議";
       this.info.meeting_date = null;
+      //get type
+      Object.assign(this.typeOptions, typeList);
+      this.typeOptions.push({ value: "添加新種類", label: "添加新種類" });
+      this.info.type = this.typeOptions[0].value;
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
+      this.typeOptions = [];
       this.visible = false;
+      this.$emit("done", {});
     },
     handle_submit_data(submit_info) {
       //submit info data handling
@@ -106,17 +111,25 @@ export default {
       submit_info.agenda_file = this.$refs.agendaFile.get_file_info(
         submit_info.agenda_file
       );
+      if (submit_info.type == "添加新種類")
+        submit_info.type = submit_info.new_type;
+
       submit_info.property_id = this.$route.params.bid;
       return submit_info;
     },
     submit_validation() {
       //check mandatory
-      var mandatory_property = ["meeting_date"];
+      if (this.info.type == "添加新種類")
+        var mandatory_property = ["meeting_date", "new_type"];
+      else var mandatory_property = ["meeting_date", "type"];
       for (let i = 0; i < mandatory_property.length; i++) {
         console.log(mandatory_property[i]);
         console.log(this.info.hasOwnProperty(mandatory_property[i]));
         if (this.info.hasOwnProperty(mandatory_property[i])) {
-          if (this.info[mandatory_property[i]] == null) {
+          if (
+            this.info[mandatory_property[i]] == null ||
+            this.info[mandatory_property[i]] == ""
+          ) {
             this.$message.error("請檢查必須填寫的資料");
             return false;
           }
@@ -134,8 +147,7 @@ export default {
         .then(res => {
           if (res.status) {
             this.$message.success("成功添加");
-            this.visible = false;
-            this.$emit("done", {});
+            this.onClose();
           } else {
             this.$message.error("添加失敗 - api return - " + res.error);
           }

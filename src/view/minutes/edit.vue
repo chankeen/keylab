@@ -12,13 +12,11 @@
         <a-col>
           <p class="item">
             <span class="label required">會議種類</span>
-            <a-select v-model="info.type">
-              <a-select-option value="常務會議">常務會議</a-select-option>
-              <a-select-option value="年度業主大會">年度業主大會</a-select-option>
-              <a-select-option value="特別業主大會">特別業主大會</a-select-option>
-              <a-select-option value="特別會議">特別會議</a-select-option>
-              <a-select-option value="其他">其他</a-select-option>
-            </a-select>
+            <a-select :options="typeOptions" v-model="info.type"></a-select>
+          </p>
+          <p class="item" v-if="info.type == '添加新種類'">
+            <span class="label required">輸入新種類</span>
+            <a-input v-model="info.new_type"></a-input>
           </p>
           <p class="item">
             <span class="label required">會議日期</span>
@@ -73,6 +71,7 @@ export default {
     return {
       visible: false,
       onSubmiting: false,
+      typeOptions: [],
       submit_info: {},
       info: {}
     };
@@ -80,7 +79,7 @@ export default {
   components: { uploadFile, "tinymce-editor": Editor },
   created() {},
   methods: {
-    show(info) {
+    show(info, typeList) {
       this.info = JSON.parse(JSON.stringify(info));
       if (this.info.meeting_date == "0000-00-00") {
         this.info.meeting_date = null;
@@ -93,11 +92,17 @@ export default {
       if (this.info.minutes_file == null || this.info.minutes_file == "") {
         this.info.minutes_file = [];
       }
+      Object.assign(this.typeOptions, typeList);
+      this.typeOptions.push({ value: "添加新種類", label: "添加新種類" });
+
+      this.$set(this.info, "new_type", "");
       this.visible = true;
       this.onSubmiting = false;
     },
     onClose() {
+      this.typeOptions = [];
       this.visible = false;
+      this.$emit("done", {});
     },
     handle_submit_data(submit_info) {
       //submit info data handling
@@ -108,6 +113,9 @@ export default {
       } else {
         submit_info.meeting_date = "0000-00-00";
       }
+
+      if (submit_info.type == "添加新種類")
+        submit_info.type = submit_info.new_type;
 
       submit_info.agenda_file = this.$refs.agendaFile.get_file_info(
         submit_info.agenda_file
@@ -121,7 +129,9 @@ export default {
     },
     submit_validation() {
       //check mandatory
-      var mandatory_property = ["meeting_date"];
+      if (this.info.type == "添加新種類")
+        var mandatory_property = ["meeting_date", "new_type"];
+      else var mandatory_property = ["meeting_date", "type"];
       for (let i = 0; i < mandatory_property.length; i++) {
         console.log(mandatory_property[i]);
         console.log(this.info.hasOwnProperty(mandatory_property[i]));
@@ -144,8 +154,7 @@ export default {
         .then(res => {
           if (res.status) {
             this.$message.success("修改成功");
-            this.visible = false;
-            this.$emit("done", {});
+            this.onClose();
           } else {
             this.$message.error("修改失敗 - api return - " + res.error);
           }

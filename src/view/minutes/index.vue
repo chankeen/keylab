@@ -6,7 +6,7 @@
         <a-button
           type="primary"
           @click="()=>{
-        this.$refs.newMinutes.show()
+        this.$refs.newMinutes.show(typeList)
         }"
         >新增會議紀錄</a-button>
       </span>
@@ -14,7 +14,7 @@
     <a-table :columns="columns" :dataSource="tableData" :loading="onTableLoading">
       <template slot="detail" slot-scope="record">
         <a @click="()=>{
-          $refs.editMinutes.show(record)
+          $refs.editMinutes.show(record,typeList)
           }">更多</a>
       </template>
       <template slot="delete" slot-scope="record">
@@ -42,6 +42,7 @@ import newMinutes from "./new";
 import editMinutes from "./edit";
 import { r_minutes, d_minutes } from "@/api/minutes.js";
 import uuiddv1 from "uuid/v1";
+import { get_minutes_type_select_options } from "./minutesUtils";
 const columns = [
   { title: "會議紀錄編號", dataIndex: "minutes_id", key: "minutes_id" },
   { title: "會議紀錄種類", width: "150px", dataIndex: "type", key: "type" },
@@ -56,6 +57,7 @@ export default {
     return {
       tableData: [],
       dataSource: [],
+      typeList: [],
       columns,
       onTableLoading: false
     };
@@ -78,6 +80,15 @@ export default {
           this.onTableLoading = false;
           this.tableData = res.list;
           this.dataSource = res.list;
+          this.typeList = get_minutes_type_select_options();
+          res.list.forEach(element => {
+            if (!this.typeList.some(({ value }) => value === element.type)) {
+              this.typeList.push({
+                value: element.type,
+                label: element.type
+              });
+            }
+          });
         })
         .catch(err => {});
     },
