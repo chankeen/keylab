@@ -26,6 +26,14 @@
             <a-input v-model="info.name_en"></a-input>
           </p>
           <p class="item">
+            <span class="label">Chinese Address</span>
+            <a-input placeholder="例如: 加連威老道43號" v-model="info.address_zh"></a-input>
+          </p>
+          <p class="item">
+            <span class="label">English Address</span>
+            <a-input placeholder="43 GRANVILLE ROAD" v-model="info.address_en"></a-input>
+          </p>
+          <p class="item">
             <span class="label required">Login Tel</span>
             <a-input maxlength="8" v-model="info.login_tel"></a-input>
           </p>

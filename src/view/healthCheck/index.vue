@@ -4,7 +4,7 @@
       <h1>大廈相關人員</h1>
     </a-row>
     <a-row :gutter="16">
-      <a-col v-for="obj in entity_list" class="gutter-row" :span="6">
+      <a-col :key="key" v-for="(obj,key) in entity_list" class="gutter-row" :span="6">
         <a-card :headStyle="{'background-color': obj.color}" :loading="false" :title="obj.title">
           <a-progress type="dashboard" :percent="obj.percent" />
           <a-statistic :value="obj.count" valueClass="demo-class">
@@ -19,7 +19,7 @@
       <h1>大廈檔案</h1>
     </a-row>
     <a-row :gutter="16">
-      <a-col v-for="obj in document_list" class="gutter-row" :span="6">
+      <a-col :key="key" v-for="(obj,key) in document_list" class="gutter-row" :span="6">
         <a-card :headStyle="{'background-color': obj.color}" :loading="false" :title="obj.title">
           <a-progress type="dashboard" :percent="obj.percent" />
           <a-statistic :value="obj.count" valueClass="demo-class">
@@ -34,7 +34,7 @@
       <h1>大廈工程合約</h1>
     </a-row>
     <a-row :gutter="16">
-      <a-col v-for="obj in contract_list" class="gutter-row" :span="6">
+      <a-col :key="key" v-for="(obj,key) in contract_list" class="gutter-row" :span="6">
         <a-card :headStyle="{'background-color': obj.color}" :loading="false" :title="obj.title">
           <a-progress type="dashboard" :percent="obj.percent" />
           <a-statistic :value="obj.count" valueClass="demo-class">
@@ -49,7 +49,7 @@
       <h1>大廈單位資料</h1>
     </a-row>
     <a-row :gutter="16">
-      <a-col v-for="obj in unit_list" class="gutter-row" :span="6">
+      <a-col :key="key" v-for="(obj,key) in unit_list" class="gutter-row" :span="6">
         <a-card :headStyle="{'background-color': obj.color}" :loading="false" :title="obj.title">
           <a-progress type="dashboard" :percent="obj.percent" />
           <a-statistic :value="obj.count" valueClass="demo-class">
@@ -97,7 +97,7 @@ class dashobj {
   }
 
   set_percent() {
-    this.percent = (this.count / this.threshold) * 100;
+    this.percent = Math.ceil((this.count / this.threshold) * 100);
   }
 
   set_color() {

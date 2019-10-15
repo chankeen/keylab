@@ -84,7 +84,7 @@ export default {
           //get block list
           this.blockList = [];
           this.tableData.forEach((unitlist, index) => {
-            if (!this.blockList.includes(unitlist.type))
+            if (!this.blockList.some(({ value }) => value === unitlist.type))
               this.blockList.push({
                 value: unitlist.type,
                 label: unitlist.type
