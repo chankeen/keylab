@@ -46,7 +46,7 @@
               type="primary"
               icon="search"
               @click="()=>{
-              $refs.selectUser.showModal('',[])
+              $refs.selectUser.showModal('',[],'all')
               }"
             >Search</a-button>
           </p>

@@ -49,18 +49,17 @@ export default {
     };
   },
   props: ["selectType"],
-  created() {
-    this.getTableData();
-  },
+  created() {},
   computed: {
     hasSelected() {
       return this.selectedRowKeys.length > 0;
     }
   },
   methods: {
-    getTableData() {
+    getTableData(category) {
       this.loading = true;
-      r_users(sessionStorage.getItem("admin_wp_id"))
+      console.log(category);
+      r_users(sessionStorage.getItem("admin_wp_id"), category)
         .then(res => {
           res.list.forEach(item => {
             this.$set(item, "key", parseInt(item.user_id));
@@ -74,16 +73,12 @@ export default {
           this.loading = false;
         });
     },
-    showModal(context, disabledEntityList = []) {
+    showModal(context, disabledEntityList = [], category) {
       this.context = context || "";
       this.selectedRowKeys = []; //clear select
       this.visible = true;
       this.search_text = "";
-      this.tableData = this.dataSource;
-      this.tableData = this.tableData.filter(
-        item => !disabledEntityList.includes(item.id)
-        //set these entity not show
-      );
+      this.getTableData(category);
     },
     onSelectChange(selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys;

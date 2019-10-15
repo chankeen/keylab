@@ -123,6 +123,11 @@ export default {
           r_name: "property_individual_contract",
           title: "Individual Contract / 一次性合約",
           icon: "file-exclamation"
+        },
+        {
+          r_name: "property_healthCheck",
+          title: "System Health Check / 檢查表",
+          icon: "table"
         }
       ],
       breadcrumb: [],

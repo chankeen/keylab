@@ -93,10 +93,14 @@ export default {
         .then(res => {
           if (res.status) {
             this.getTableData();
+            this.$message.success("成功刪除");
           } else {
+            this.$message.error("刪除失敗 - api return - " + res.error);
           }
         })
-        .catch(err => {});
+        .catch(err => {
+          this.$message.error("刪除失敗 - system error - " + err);
+        });
     }
   },
   components: { newunitFile, editunitFile }

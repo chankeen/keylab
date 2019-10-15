@@ -11,12 +11,12 @@
       <a-row>
         <a-col>
           <p class="item">
-            <span class="label required">從用戶中揀選</span>
+            <span class="label required">從 用戶 - 物管人員 中揀選</span>
             <a-button
               type="primary"
               icon="search"
               @click="()=>{
-              $refs.selectUser.showModal('',[])
+              $refs.selectUser.showModal('',[],'propman')
               }"
             >Search</a-button>
           </p>
