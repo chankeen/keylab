@@ -80,6 +80,7 @@ import { r_unit_file } from "@/api/unit_file.js";
 import { r_notice } from "@/api/notice.js";
 import { r_important } from "@/api/important.js";
 import { r_minutes } from "@/api/minutes.js";
+import { r_insurance_claims } from "@/api/insurance_claims";
 
 class dashobj {
   constructor(title, get_data, threshold, percent, count) {
@@ -170,6 +171,13 @@ export default {
       new dashobj(
         "會議紀錄",
         r_minutes(this.property_id),
+        this.document_threshold,
+        0,
+        0
+      ),
+      new dashobj(
+        "保險索償",
+        r_insurance_claims(this.property_id),
         this.document_threshold,
         0,
         0
