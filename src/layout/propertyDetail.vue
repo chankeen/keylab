@@ -125,6 +125,16 @@ export default {
           icon: "file-exclamation"
         },
         {
+          r_name: "property_insurance_claims",
+          title: "Insurance Claims / 保險索償",
+          icon: "insurance"
+        },
+        {
+          r_name: "property_notes",
+          title: "Miscellaneous / 雜項",
+          icon: "ellipsis"
+        },
+        {
           r_name: "property_healthCheck",
           title: "System Health Check / 檢查表",
           icon: "table"

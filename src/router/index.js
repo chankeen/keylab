@@ -105,6 +105,16 @@ const router = new Router({
           component: () => import("@/view/individualContract")
         },
         {
+          path: "propertyInsuranceClaims",
+          name: "property_insurance_claims",
+          component: () => import("@/view/insuranceClaims")
+        },
+        {
+          path: "propertyNotes",
+          name: "property_notes",
+          component: () => import("@/view/notes")
+        },
+        {
           path: "healthCheck",
           name: "property_healthCheck",
           component: () => import("@/view/healthCheck")
