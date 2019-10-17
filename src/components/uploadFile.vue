@@ -7,6 +7,7 @@
       name="orm_file"
       :defaultFileList="List"
       :fileList="List"
+      :multiple="true"
       :beforeUpload="beforeUpload"
       @change="handleChange"
       :remove="onRemoveFile"
@@ -47,9 +48,13 @@ export default {
       if (info.file.status !== "uploading") {
       }
       if (info.file.status === "done") {
-        info.fileList[info.fileList.length - 1].uid = info.file.response.id;
-        info.fileList[info.fileList.length - 1].url = info.file.response.url;
-        delete info.file.lastModified;
+        info.fileList.forEach((fileObj, index) => {
+          if (fileObj.uid == info.file.uid) {
+            info.fileList[index].uid = info.file.response.id;
+            info.fileList[index].url = info.file.response.url;
+            delete info.file.lastModified;
+          }
+        });
         //returned by api case handle
         if (info.file.response.error) {
           this.$message.error(
