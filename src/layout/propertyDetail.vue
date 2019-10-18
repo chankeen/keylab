@@ -40,6 +40,7 @@
             }"
           />
           <span class="head_title">{{headTitle}}</span>
+          <!-- <ErrorLog></ErrorLog> -->
           <a-dropdown>
             <a-menu slot="overlay">
               <a-menu-item
@@ -56,6 +57,11 @@
               <a-icon type="user" />
             </p>
           </a-dropdown>
+          <!-- <p class="user">
+            <a-badge :dot="true" @click.native="dialogTableVisible=true">
+              <a-icon class="font-size:25px" type="exclamation" />
+            </a-badge>
+          </p>-->
         </a-layout-header>
         <a-layout-content :style="{ height: '100vh', margin: '24px 16px 0', overflow: 'initial' }">
           <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">
@@ -68,6 +74,7 @@
 </template>
 <script>
 import { logout } from "@/api/user.js";
+import ErrorLog from "@/components/ErrorLog";
 export default {
   data() {
     return {
@@ -163,6 +170,9 @@ export default {
       }
     };
   },
+  components: {
+    ErrorLog
+  },
   created() {
     this.menu_style = this.memu_300;
     this.headTitle = this.$route.params.info.name_zh;
@@ -210,6 +220,12 @@ export default {
   }
   .trigger {
     font-size: 24px;
+  }
+  .bug-icon {
+    cursor: pointer;
+    width: auto;
+    height: 31px;
+    float: right;
   }
   .user {
     cursor: pointer;

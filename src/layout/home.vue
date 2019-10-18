@@ -45,6 +45,7 @@
 </template>
 <script>
 import uuidv1 from "uuid/v1";
+import ErrorLog from "@/components/ErrorLog";
 import { logout } from "@/api/user.js";
 export default {
   data() {
@@ -89,6 +90,9 @@ export default {
         return true;
       }
     });
+  },
+  components: {
+    ErrorLog
   },
   methods: {
     onMenuSelect(item) {

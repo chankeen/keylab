@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import store from "../store"
+import NProgress from 'nprogress' // progress bar
 Vue.use(Router)
 const router = new Router({
   routes: [
@@ -137,10 +138,17 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
+  // start progress bar
+  NProgress.start()
   if (to.path !== "/login" && !sessionStorage.token) {
     return next("/login");
   }
   next();
 });
+
+router.afterEach(() => {
+  // finish progress bar
+  NProgress.done()
+})
 
 export default router;

@@ -5,7 +5,10 @@ import App from './App'
 import store from "./store"
 import router from './router'
 import ant from 'ant-design-vue'
+import './utils/error-log.js' // error log
 import "ant-design-vue/dist/antd.less"
+import 'nprogress/nprogress.css' // progress bar style
+
 Vue.use(ant)
 
 Vue.config.productionTip = false

@@ -1,4 +1,5 @@
 import axios from "axios";
+import NProgress from 'nprogress' // progress bar
 
 // create an axios instance
 const service = axios.create({
@@ -10,6 +11,7 @@ const service = axios.create({
 //request interceptor
 service.interceptors.request.use(
   config => {
+    NProgress.start()
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.common["Authorization"] = token;
@@ -36,7 +38,8 @@ service.interceptors.response.use(res => {
   //   localStorage.setItem('TOKEN', '')
   //   window.location.reload()
   // }
-   return res.data
+  NProgress.done()
+  return res.data
 }, error => {
   // Toast(error.message)
   // Indicator.close()
