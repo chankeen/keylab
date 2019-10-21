@@ -57,11 +57,7 @@
               <a-icon type="user" />
             </p>
           </a-dropdown>
-          <!-- <p class="user">
-            <a-badge :dot="true" @click.native="dialogTableVisible=true">
-              <a-icon class="font-size:25px" type="exclamation" />
-            </a-badge>
-          </p>-->
+          <ErrorLog class="user"></ErrorLog>
         </a-layout-header>
         <a-layout-content :style="{ height: '100vh', margin: '24px 16px 0', overflow: 'initial' }">
           <div :style="{ padding: '24px', background: '#fff', textAlign: 'center' }">

@@ -1,49 +1,54 @@
 <template>
   <div v-if="errorLogs.length>0">
-    <a-badge :dot="true" @click.native="dialogTableVisible=true"></a-badge>
+    <a-badge :count="errorLogsCount" :offset="[5,0]" @click="()=>dialogTableVisible=true">
+      <a-icon style="font-size:25px;" type="exception" />
+    </a-badge>
 
-    <!-- <el-dialog :visible.sync="dialogTableVisible" width="80%" append-to-body>
+    <a-modal @ok="()=>dialogTableVisible=false" v-model="dialogTableVisible" width="90%">
       <div slot="title">
         <span style="padding-right: 10px;">Error Log</span>
-        <el-button size="mini" type="primary" icon="el-icon-delete" @click="clearAll">Clear All</el-button>
+        <a-button type="primary" icon="delete" @click="clearAll">Clear All</a-button>
       </div>
-      <el-table :data="errorLogs" border>
-        <el-table-column label="Message">
-          <template slot-scope="{row}">
-            <div>
-              <span class="message-title">Msg:</span>
-              <el-tag type="danger">{{ row.err.message }}</el-tag>
-            </div>
-            <br />
-            <div>
-              <span class="message-title" style="padding-right: 10px;">Info:</span>
-              <el-tag type="warning">{{ row.vm.$vnode.tag }} error in {{ row.info }}</el-tag>
-            </div>
-            <br />
-            <div>
-              <span class="message-title" style="padding-right: 16px;">Url:</span>
-              <el-tag type="success">{{ row.url }}</el-tag>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="Stack">
-          <template slot-scope="scope">{{ scope.row.err.stack }}</template>
-        </el-table-column>
-      </el-table>
-    </el-dialog>-->
+      <a-table :columns="columns" :dataSource="errorLogs" bordered>
+        <template slot="message" slot-scope="row">
+          <div>
+            <span class="message-title">Msg:</span>
+            <a-tag type="danger">{{ row.err.message }}</a-tag>
+          </div>
+          <br />
+          <div>
+            <span class="message-title" style="padding-right: 10px;">Info:</span>
+            <a-tag type="normal">{{ row.vm.$vnode.tag }} error in {{ row.info }}</a-tag>
+          </div>
+          <br />
+          <div>
+            <span class="message-title" style="padding-right: 16px;">Url:</span>
+            <a-tag type="primary">{{ row.url }}</a-tag>
+          </div>
+        </template>
+        <template slot="stack" slot-scope="row">{{row.err.stack }}</template>
+      </a-table>
+    </a-modal>
   </div>
 </template>
 
 <script>
+const columns = [
+  { title: "訊息", scopedSlots: { customRender: "message" } },
+  { title: "詳情", scopedSlots: { customRender: "stack" } }
+];
 export default {
   name: "ErrorLog",
   data() {
     return {
+      columns,
+      errorLogsCount: 0,
       dialogTableVisible: false
     };
   },
   computed: {
     errorLogs() {
+      this.errorLogsCount = this.$store.getters.errorLogs.length;
       return this.$store.getters.errorLogs;
     }
   },
