@@ -17,7 +17,7 @@
       <template slot="detail" slot-scope="record">
         <a
           @click="()=>{
-          $router.push({name:'property_home',params:{bid:record.property_id,info:record},})
+          $router.push({name:'property_home',params:{bid:record.property_id,info:record}})
           }"
         >更多</a>
       </template>

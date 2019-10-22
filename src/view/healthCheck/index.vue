@@ -146,7 +146,7 @@ export default {
         0
       ),
       new dashobj(
-        "物管人員",
+        "承辦商",
         r_contractor(this.property_id),
         this.entity_threshold,
         0,
